@@ -1,0 +1,292 @@
+
+<h1 class="sectionedit1" id="rdf_example">RDF Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "RDF Example" [1-27] -->
+<h2 class="sectionedit2" id="rdf_exampleinfo">rdf_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = RDF Example
+   2 description = Demonstrates an RDF mapping using the RDF mapping API.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = rdf_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "rdf_example.info" [28-248] -->
+<h2 class="sectionedit3" id="rdf_exampleinstall">rdf_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Install file for RDF Example module.
+   5  *
+   6  * To demonstrate hook_rdf_mapping, this module creates it&#039;s own node type. For
+   7  * more information on creating node types, see Node Example.
+   8  */
+   9 
+  10 /**
+  11  * Implements hook_install().
+  12  *
+  13  * - Create photo, summary fields.
+  14  * - Create photo, summary instances.
+  15  *
+  16  * @see node_type_set_defaults()
+  17  * @see field_info_instance()
+  18  * @see field_update_instance()
+  19  * @see field_create_field()
+  20  * @see field_create_instance()
+  21  *
+  22  * @ingroup rdf_example
+  23  */
+  24 function rdf_example_install() {
+  25   // use get_t() to get the name of our localization function for translation
+  26   // during install, when t() is not available.
+  27   $t = get_t();
+  28 
+  29   // Define the node type.
+  30   $rdf_example = array(
+  31     &#039;type&#039; =&gt; &#039;recipe&#039;,
+  32     &#039;name&#039; =&gt; $t(&#039;Recipe&#039;),
+  33     &#039;base&#039; =&gt; &#039;node_content&#039;,
+  34     &#039;description&#039; =&gt; $t(&#039;The recipe node is defined to demonstrate RDF mapping.&#039;),
+  35   );
+  36 
+  37   // Set additional defaults and save the content type.
+  38   $content_type = node_type_set_defaults($rdf_example);
+  39   node_type_save($content_type);
+  40 
+  41   // Create all the fields we are adding to our content type.
+  42   // http://api.drupal.org/api/function/field_create_field/7
+  43   foreach (_rdf_example_installed_fields() as $field) {
+  44     field_create_field($field);
+  45   }
+  46 
+  47   // Create all the instances for our fields.
+  48   // http://api.drupal.org/api/function/field_create_instance/7
+  49   foreach (_rdf_example_installed_instances() as $instance) {
+  50     $instance[&#039;entity_type&#039;] = &#039;node&#039;;
+  51     $instance[&#039;bundle&#039;] = $rdf_example[&#039;type&#039;];
+  52     field_create_instance($instance);
+  53   }
+  54 }
+  55 
+  56 /**
+  57  * Return a structured array defining the fields created by this content type.
+  58  *
+  59  * @ingroup rdf_example
+  60  */
+  61 function _rdf_example_installed_fields() {
+  62   $t = get_t();
+  63   return array(
+  64     &#039;recipe_photo&#039; =&gt; array(
+  65       &#039;field_name&#039; =&gt; &#039;recipe_photo&#039;,
+  66       &#039;cardinality&#039; =&gt; 1,
+  67       &#039;type&#039;        =&gt; &#039;image&#039;,
+  68     ),
+  69     &#039;recipe_summary&#039; =&gt; array(
+  70       &#039;field_name&#039;  =&gt; &#039;recipe_summary&#039;,
+  71       &#039;cardinality&#039; =&gt; 1,
+  72       &#039;type&#039;        =&gt; &#039;text&#039;,
+  73       &#039;settings&#039;    =&gt; array(
+  74         &#039;max_length&#039; =&gt; 500,
+  75       ),
+  76     ),
+  77   );
+  78 }
+  79 
+  80 /**
+  81  * Return a structured array defining the instances for this content type.
+  82  *
+  83  * @ingroup rdf_example
+  84  */
+  85 function _rdf_example_installed_instances() {
+  86   $t = get_t();
+  87   return array(
+  88     &#039;recipe_photo&#039; =&gt; array(
+  89       &#039;field_name&#039;  =&gt; &#039;recipe_photo&#039;,
+  90       &#039;label&#039;       =&gt; $t(&#039;Photo of the prepared dish&#039;),
+  91     ),
+  92     &#039;recipe_summary&#039; =&gt; array(
+  93       &#039;field_name&#039; =&gt; &#039;recipe_summary&#039;,
+  94       &#039;label&#039;       =&gt; $t(&#039;Short summary describing the dish&#039;),
+  95       &#039;widget&#039;      =&gt; array(
+  96         &#039;type&#039;    =&gt; &#039;text_textarea&#039;,
+  97       ),
+  98     ),
+  99   );
+ 100 }
+ 101 
+ 102 
+ 103 /**
+ 104  * Implements hook_uninstall().
+ 105  *
+ 106  * @ingroup rdf_example
+ 107  */
+ 108 function rdf_example_uninstall() {
+ 109   // Delete recipe content.
+ 110   $sql = &#039;SELECT nid FROM {node} n WHERE n.type = :type&#039;;
+ 111   $result = db_query($sql, array(&#039;:type&#039; =&gt; &#039;recipe&#039;));
+ 112   $nids = array();
+ 113   foreach ($result as $row) {
+ 114     $nids[] = $row-&gt;nid;
+ 115   }
+ 116   node_delete_multiple($nids);
+ 117 
+ 118   // Delete field instances for now.
+ 119   // Check status of http://drupal.org/node/1015846
+ 120   $instances = field_info_instances(&#039;node&#039;, &#039;recipe&#039;);
+ 121   foreach ($instances as $instance_name =&gt; $instance) {
+ 122     field_delete_instance($instance);
+ 123   }
+ 124 
+ 125   // Delete node type.
+ 126   node_type_delete(&#039;recipe&#039;);
+ 127 
+ 128   field_purge_batch(1000);
+ 129 }</pre>
+
+</div>
+<!-- EDIT3 SECTION "rdf_example.install" [249-4274] -->
+<h2 class="sectionedit4" id="rdf_examplemodule">rdf_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * This is an example outlining how a module can be used to define RDF mappings.
+   5  * We define mappings for a node type defined in this module. We also customize
+   6  * mappings for a node type that is defined in another module, node_example.
+   7  */
+   8 
+   9 /**
+  10  * @defgroup rdf_example Example: RDF
+  11  * @ingroup examples
+  12  * @{
+  13  * Example RDF Mapping.
+  14  */
+  15 
+  16 /**
+  17  * Implements hook_rdf_mapping().
+  18  *
+  19  * This hook should only be used to define the RDF mapping for an entity or
+  20  * bundle that has been defined by this module. On installation, this mapping
+  21  * will be saved to the database. To alter anything in this mapping after module
+  22  * installation (or to alter bundles defined in another module), the RDF CRUD
+  23  * functions should be used, as shown below.
+  24  */
+  25 function rdf_example_rdf_mapping() {
+  26   return array(
+  27     array(
+  28       &#039;type&#039; =&gt; &#039;node&#039;,
+  29       &#039;bundle&#039; =&gt; &#039;recipe&#039;,
+  30       &#039;mapping&#039; =&gt; array(
+  31         &#039;rdftype&#039; =&gt; array(&#039;v:Recipe&#039;),
+  32         // We don&#039;t use the default bundle mapping for title. Instead, we add
+  33         // the v:name property. We still want to use dc:title as well, though,
+  34         // so we include it in the array.
+  35         &#039;title&#039; =&gt; array(
+  36           &#039;predicates&#039; =&gt; array(&#039;dc:title&#039;, &#039;v:name&#039;),
+  37         ),
+  38         &#039;recipe_summary&#039; =&gt; array(
+  39           &#039;predicates&#039; =&gt; array(&#039;v:summary&#039;),
+  40         ),
+  41         // The photo URI isn&#039;t a string but instead points to a resource, so we
+  42         // indicate that the attribute type is rel. If type isn&#039;t specified, it
+  43         // defaults to property, which is used for string values.
+  44         &#039;recipe_photo&#039; =&gt; array(
+  45           &#039;predicates&#039; =&gt; array(&#039;v:photo&#039;),
+  46           &#039;type&#039;  =&gt; &#039;rel&#039;,
+  47         ),
+  48       ),
+  49     ),
+  50   );
+  51 }
+  52 
+  53 /*
+  54  * Implements hook_rdf_namespaces().
+  55  *
+  56  * This hook should be used to define any prefixes used by this module that are
+  57  * not already defined in core by rdf_rdf_namespaces.
+  58  *
+  59  * http://api.drupal.org/api/drupal/modules--rdf--rdf.api.php/function/hook_rdf_namespaces/7
+  60  */
+  61 function rdf_example_rdf_namespaces() {
+  62   return array(
+  63     // Google&#039;s namespace for their custom vocabularies.
+  64     &#039;v&#039; =&gt; &#039;http://rdf.data-vocabulary.org/#&#039;,
+  65   );
+  66 }
+  67 
+  68 /**
+  69  * Implements hook_help().
+  70  */
+  71 function rdf_example_help($path, $arg) {
+  72   switch ($path) {
+  73     case &#039;examples/rdf_example&#039;:
+  74       return &quot;&lt;p&gt;&quot; . t(
+  75         &quot;The RDF Example module provides RDF mappings for a custom node type and
+  76         alters another node type&#039;s RDF mapping.
+  77         You can check your RDF using a &lt;a href=&#039;!parser&#039;&gt;parser&lt;/a&gt; by copying
+  78         and pasting your HTML source code into the box. For clearest results,
+  79         use Turtle as your output format.&quot;,
+  80         array(&#039;!parser&#039; =&gt; url(&#039;http://www.w3.org/2007/08/pyRdfa/#distill_by_input&#039;))
+  81       ) . &quot;&lt;/p&gt;&quot;;
+  82   }
+  83 }
+  84 /**
+  85  * @} End of &quot;defgroup rdf_example&quot;.
+  86  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "rdf_example.module" [4275-7526] -->
+<h2 class="sectionedit5" id="rdf_exampletest">rdf_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Tests for rdf.module.
+   6  */
+   7 
+   8 /**
+   9  * Test RDFa markup generation.
+  10  *
+  11  * @ingroup rdf_example
+  12  */
+  13 class RdfExampleRdfaMarkupTestCase extends DrupalWebTestCase {
+  14   public static function getInfo() {
+  15     return array(
+  16       &#039;name&#039; =&gt; &#039;RDFa markup&#039;,
+  17       &#039;description&#039; =&gt; &#039;Test RDFa markup generation.&#039;,
+  18       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  19     );
+  20   }
+  21 
+  22   function setUp() {
+  23     parent::setUp(&#039;rdf&#039;, &#039;field_test&#039;, &#039;rdf_example&#039;);
+  24   }
+  25 
+  26   /**
+  27    * Create a recipe node of type blog and test whether the RDF mapping defined
+  28    * for this bundle is reflected in the markup.
+  29    */
+  30   function testAttributesInMarkup() {
+  31     $node = $this-&gt;drupalCreateNode(array(&#039;type&#039; =&gt; &#039;recipe&#039;));
+  32     $this-&gt;drupalGet(&#039;node/&#039; . $node-&gt;nid);
+  33     $isoDate = date(&#039;c&#039;, $node-&gt;changed);
+  34     $url = url(&#039;node/&#039; . $node-&gt;nid);
+  35 
+  36     // The title is mapped to dc:title and v:name and is exposed in a meta tag
+  37     // in the header.
+  38     $recipe_title = $this-&gt;xpath(&quot;//meta[contains(@property, &#039;dc:title&#039;) and contains(@property, &#039;v:name&#039;) and @content=&#039;$node-&gt;title&#039;]&quot;);
+  39     $this-&gt;assertTrue(!empty($recipe_title), &#039;Title is exposed with dc:title and v:name in meta element.&#039;);
+  40 
+  41     // Test that the type is applied and that the default mapping for date is
+  42     // used.
+  43     $recipe_meta = $this-&gt;xpath(&quot;//div[(@about=&#039;$url&#039;) and (@typeof=&#039;v:Recipe&#039;)]//span[contains(@property, &#039;dc:date&#039;) and contains(@property, &#039;dc:created&#039;) and @datatype=&#039;xsd:dateTime&#039; and @content=&#039;$isoDate&#039;]&quot;);
+  44     $this-&gt;assertTrue(!empty($recipe_meta), &#039;RDF type is present on post. Properties dc:date and dc:created are present on post date.&#039;);
+  45   }
+  46 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "rdf_example.test" [7527-] -->

@@ -1,0 +1,400 @@
+
+<p>
+<strong>File Handing
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Accessing the file system</div>
+</li>
+<li class="level1"><div class="li"> Reading Files</div>
+</li>
+<li class="level1"><div class="li"> Writing Files</div>
+</li>
+</ul>
+
+<p>
+<strong><abbr title="Operating System">OS</abbr> Module
+</strong>
+</p>
+
+<p>
+Python os module can be used to perform tasks such as finding the name of present working directory, changing current working directory, checking if certain files or directories exist at a location, creating new directories, deleting existing files or directories, walking through a directory and performing operations on every file in the directory that satisfies some user-defined criteria, and a lot more.
+</p>
+
+<p>
+getcwd()      : Where our currently logged on user is. <br/>
+
+chdir()       : Change Directory to move from one location<br/>
+
+listdir()     : LS command <br/>
+
+Path.Join()   : Build Directory Paths (Python program to be ported to multiple platforms) <br/>
+
+<abbr title="Operating System">OS</abbr>.name       : <abbr title="Operating System">OS</abbr> specific <br/>
+
+sys.platform  : Paths <br/>
+
+Shutil module : Batch copy and removal
+</p>
+<pre class="code">&gt;&gt;&gt; import os
+&gt;&gt;&gt; dir(os)
+[&#039;EX_CANTCREAT&#039;, &#039;EX_CONFIG&#039;, &#039;EX_DATAERR&#039;, &#039;EX_IOERR&#039;, &#039;EX_NOHOST&#039;, &#039;EX_NOINPUT&#039;, &#039;EX_NOPERM&#039;, &#039;EX_NOUSER&#039;, &#039;EX_OK&#039;, &#039;EX_OSERR&#039;, &#039;EX_OSFILE&#039;, &#039;EX_PROTOCOL&#039;, &#039;EX_SOFTWARE&#039;, &#039;EX_TEMPFAIL&#039;, &#039;EX_UNAVAILABLE&#039;, &#039;EX_USAGE&#039;, &#039;F_OK&#039;, &#039;MutableMapping&#039;, &#039;NGROUPS_MAX&#039;, &#039;O_APPEND&#039;, &#039;O_ASYNC&#039;, &#039;O_CREAT&#039;, &#039;O_DIRECT&#039;, &#039;O_DIRECTORY&#039;, &#039;O_DSYNC&#039;, &#039;O_EXCL&#039;, &#039;O_LARGEFILE&#039;, &#039;O_NDELAY&#039;, &#039;O_NOATIME&#039;, &#039;O_NOCTTY&#039;, &#039;O_NOFOLLOW&#039;, &#039;O_NONBLOCK&#039;, &#039;O_RDONLY&#039;, &#039;O_RDWR&#039;, &#039;O_RSYNC&#039;, &#039;O_SYNC&#039;, &#039;O_TRUNC&#039;, &#039;O_WRONLY&#039;, &#039;P_NOWAIT&#039;, &#039;P_NOWAITO&#039;, &#039;P_WAIT&#039;, &#039;R_OK&#039;, &#039;SEEK_CUR&#039;, &#039;SEEK_END&#039;, &#039;SEEK_SET&#039;, &#039;ST_APPEND&#039;, &#039;ST_MANDLOCK&#039;, &#039;ST_NOATIME&#039;, &#039;ST_NODEV&#039;, &#039;ST_NODIRATIME&#039;, &#039;ST_NOEXEC&#039;, &#039;ST_NOSUID&#039;, &#039;ST_RDONLY&#039;, &#039;ST_RELATIME&#039;, &#039;ST_SYNCHRONOUS&#039;, &#039;ST_WRITE&#039;, &#039;TMP_MAX&#039;, &#039;WCONTINUED&#039;, &#039;WCOREDUMP&#039;, &#039;WEXITSTATUS&#039;, &#039;WIFCONTINUED&#039;, &#039;WIFEXITED&#039;, &#039;WIFSIGNALED&#039;, &#039;WIFSTOPPED&#039;, &#039;WNOHANG&#039;, &#039;WSTOPSIG&#039;, &#039;WTERMSIG&#039;, &#039;WUNTRACED&#039;, &#039;W_OK&#039;, &#039;X_OK&#039;, &#039;_Environ&#039;, &#039;__all__&#039;, &#039;__builtins__&#039;, &#039;__cached__&#039;, &#039;__doc__&#039;, &#039;__file__&#039;, &#039;__name__&#039;, &#039;__package__&#039;, &#039;_copyreg&#039;, &#039;_execvpe&#039;, &#039;_exists&#039;, &#039;_exit&#039;, &#039;_get_exports_list&#039;, &#039;_get_masked_mode&#039;, &#039;_make_stat_result&#039;, &#039;_make_statvfs_result&#039;, &#039;_pickle_stat_result&#039;, &#039;_pickle_statvfs_result&#039;, &#039;_putenv&#039;, &#039;_spawnvef&#039;, &#039;_unsetenv&#039;, &#039;_wrap_close&#039;, &#039;abort&#039;, &#039;access&#039;, &#039;altsep&#039;, &#039;chdir&#039;, &#039;chmod&#039;, &#039;chown&#039;, &#039;chroot&#039;, &#039;close&#039;, &#039;closerange&#039;, &#039;confstr&#039;, &#039;confstr_names&#039;, &#039;ctermid&#039;, &#039;curdir&#039;, &#039;defpath&#039;, &#039;device_encoding&#039;, &#039;devnull&#039;, &#039;dup&#039;, &#039;dup2&#039;, &#039;environ&#039;, &#039;environb&#039;, &#039;errno&#039;, &#039;error&#039;, &#039;execl&#039;, &#039;execle&#039;, &#039;execlp&#039;, &#039;execlpe&#039;, &#039;execv&#039;, &#039;execve&#039;, &#039;execvp&#039;, &#039;execvpe&#039;, &#039;extsep&#039;, &#039;fchdir&#039;, &#039;fchmod&#039;, &#039;fchown&#039;, &#039;fdatasync&#039;, &#039;fdopen&#039;, &#039;fork&#039;, &#039;forkpty&#039;, &#039;fpathconf&#039;, &#039;fsdecode&#039;, &#039;fsencode&#039;, &#039;fstat&#039;, &#039;fstatvfs&#039;, &#039;fsync&#039;, &#039;ftruncate&#039;, &#039;get_exec_path&#039;, &#039;getcwd&#039;, &#039;getcwdb&#039;, &#039;getegid&#039;, &#039;getenv&#039;, &#039;getenvb&#039;, &#039;geteuid&#039;, &#039;getgid&#039;, &#039;getgroups&#039;, &#039;getloadavg&#039;, &#039;getlogin&#039;, &#039;getpgid&#039;, &#039;getpgrp&#039;, &#039;getpid&#039;, &#039;getppid&#039;, &#039;getresgid&#039;, &#039;getresuid&#039;, &#039;getsid&#039;, &#039;getuid&#039;, &#039;initgroups&#039;, &#039;isatty&#039;, &#039;kill&#039;, &#039;killpg&#039;, &#039;lchown&#039;, &#039;linesep&#039;, &#039;link&#039;, &#039;listdir&#039;, &#039;lseek&#039;, &#039;lstat&#039;, &#039;major&#039;, &#039;makedev&#039;, &#039;makedirs&#039;, &#039;minor&#039;, &#039;mkdir&#039;, &#039;mkfifo&#039;, &#039;mknod&#039;, &#039;name&#039;, &#039;nice&#039;, &#039;open&#039;, &#039;openpty&#039;, &#039;pardir&#039;, &#039;path&#039;, &#039;pathconf&#039;, &#039;pathconf_names&#039;, &#039;pathsep&#039;, &#039;pipe&#039;, &#039;popen&#039;, &#039;putenv&#039;, &#039;read&#039;, &#039;readlink&#039;, &#039;remove&#039;, &#039;removedirs&#039;, &#039;rename&#039;, &#039;renames&#039;, &#039;rmdir&#039;, &#039;sep&#039;, &#039;setegid&#039;, &#039;seteuid&#039;, &#039;setgid&#039;, &#039;setgroups&#039;, &#039;setpgid&#039;, &#039;setpgrp&#039;, &#039;setregid&#039;, &#039;setresgid&#039;, &#039;setresuid&#039;, &#039;setreuid&#039;, &#039;setsid&#039;, &#039;setuid&#039;, &#039;spawnl&#039;, &#039;spawnle&#039;, &#039;spawnlp&#039;, &#039;spawnlpe&#039;, &#039;spawnv&#039;, &#039;spawnve&#039;, &#039;spawnvp&#039;, &#039;spawnvpe&#039;, &#039;stat&#039;, &#039;stat_float_times&#039;, &#039;stat_result&#039;, &#039;statvfs&#039;, &#039;statvfs_result&#039;, &#039;strerror&#039;, &#039;supports_bytes_environ&#039;, &#039;symlink&#039;, &#039;sys&#039;, &#039;sysconf&#039;, &#039;sysconf_names&#039;, &#039;system&#039;, &#039;tcgetpgrp&#039;, &#039;tcsetpgrp&#039;, &#039;times&#039;, &#039;ttyname&#039;, &#039;umask&#039;, &#039;uname&#039;, &#039;unlink&#039;, &#039;unsetenv&#039;, &#039;urandom&#039;, &#039;utime&#039;, &#039;wait&#039;, &#039;wait3&#039;, &#039;wait4&#039;, &#039;waitpid&#039;, &#039;walk&#039;, &#039;write&#039;]</pre>
+<pre class="code">&gt;&gt;&gt; p = os.path.join(&#039;/home/mani/&#039;,&#039;pydev&#039;)
+&gt;&gt;&gt; p
+&#039;/home/mani/pydev&#039;
+&gt;&gt;&gt; os.listdir(p)
+[&#039;m11.py&#039;, &#039;m8.py&#039;, &#039;__pycache__&#039;, &#039;mod9.py&#039;, 
+&#039;lang.txt&#039;, &#039;m9.py&#039;, &#039;m10.py&#039;, &#039;if8.py&#039;, &#039;my11.py&#039;, 
+&#039;mod4.py&#039;, &#039;nugget3.py&#039;, &#039;if4.py&#039;, &#039;if1.py&#039;, &#039;mod8.py&#039;, 
+&#039;if2.py&#039;, &#039;spam.txt&#039;, &#039;mood2.py&#039;, &#039;mod9a.py&#039;, &#039;if5.py&#039;, &#039;if3.py&#039;]
+&gt;&gt;&gt; </pre>
+<pre class="code">&gt;&gt;&gt; os.name
+&#039;posix&#039;
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.platform
+&#039;linux2&#039;
+
+&gt;&gt;&gt; for param in os.environ.keys():
+	print(param, os.environ[param])
+</pre>
+<pre class="code">&gt;&gt;&gt; os.getcwd()
+&#039;/home/mani/pydev&#039;</pre>
+<pre class="code">&gt;&gt;&gt; os.listdir(os.curdir)
+[&#039;m11.py&#039;, &#039;m8.py&#039;, &#039;__pycache__&#039;, &#039;mod9.py&#039;, &#039;lang.txt&#039;, &#039;m9.py&#039;, &#039;m10.py&#039;, &#039;if8.py&#039;, &#039;my11.py&#039;, &#039;mod4.py&#039;, &#039;nugget3.py&#039;, &#039;if4.py&#039;, &#039;if1.py&#039;, &#039;mod8.py&#039;, &#039;if2.py&#039;, &#039;spam.txt&#039;, &#039;mood2.py&#039;, &#039;mod9a.py&#039;, &#039;if5.py&#039;, &#039;if3.py&#039;]</pre>
+<pre class="code">&gt;&gt;&gt; os.chdir(&#039;/home/mani&#039;)
+&gt;&gt;&gt; os.getcwd()
+&#039;/home/mani&#039;
+&gt;&gt;&gt; os.listdir(os.curdir)
+[&#039;.juniper_networks&#039;, &#039;.gstreamer-0.10&#039;, &#039;gitdev&#039;, &#039;GIT&#039;, 
+&#039;.mplayer&#039;, &#039;.dmrc&#039;, &#039;.drush&#039;, &#039;.bash_logout&#039;, &#039;temp.txt&#039;, 
+&#039;.goutputstream-8RD3LW&#039;, &#039;.pam_environment&#039;, &#039;drush-backups&#039;
+
+&gt;&gt;&gt; os.rename(&#039;workspace&#039;, &#039;workspace1&#039;)
+&gt;&gt;&gt; os.listdir(os.curdir)</pre>
+
+<p>
+<strong>Make New Folders
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; os.mkdir(&#039;morefiles&#039;)
+&gt;&gt;&gt; os.mkdir(&#039;deleteme&#039;)
+&gt;&gt;&gt; os.listdir(os.curdir)
+//Removing a folder presupposes that it is empty
+&gt;&gt;&gt; os.rmdir(&#039;deleteme&#039;)
+//Removing a file
+&gt;&gt;&gt; os.remove(&#039;junk.txt&#039;)</pre>
+
+<p>
+<strong>Opening Files
+</strong>
+</p>
+
+<p>
+Iterator is best method for reading
+</p>
+<pre class="code">// r -&gt; mode options: w,a,b
+w =&gt; create file, add initial content and close
+r =&gt; Add file
+a =&gt; Append 
+b =&gt; Binary (Open up Binary files)
+Better ways exist
+U =&gt; Universal new line character (standardized
+between Windows/mac/linux)
+//***********************************************
+mf = open(&#039;/home/mani/myfile.txt&#039;, &#039;r&#039;)
+
+WRITE
+
+mf.write(&#039;Hello, world!\n&#039;)
+OR
+mf.writelines() - Robust data entry e.g. a list
+
+READ
+
+mf.readline() =&gt; smaller files gets first line of a file
+Individual lines
+
+//Readlines - reads file into list of strings
+//List of Strings
+
+//Read single string
+mf.read() =&gt; entire file gets packed into a single string 
+
+mf.close() -&gt;Considered optional</pre>
+<pre class="code">// Create file with write mode
+&gt;&gt;&gt; f = open(&#039;testing.txt&#039;, &#039;w&#039;)
+
+// Add line 1
+&gt;&gt;&gt; f.write(&#039;The first line of text.\n&#039;)
+24
+
+// Add line 2
+&gt;&gt;&gt; f.write(&#039;The second line of text.\n&#039;)
+25
+
+// Close file
+&gt;&gt;&gt; f.close()
+
+// Open file
+&gt;&gt;&gt; f = open(&#039;testing.txt&#039;)
+
+// Read a line
+&gt;&gt;&gt; f.readline()
+&#039;The first line of text.\n&#039;
+
+// Read a line
+&gt;&gt;&gt; f.readline()
+&#039;The second line of text.\n&#039;
+
+// Read a line
+&gt;&gt;&gt; f.readline()
+&#039;&#039;
+
+// Cursor is at the end of the file - move it to the top
+&gt;&gt;&gt; f.seek(0)
+0
+
+// Read a file as a string
+&gt;&gt;&gt; f.read()
+&#039;The first line of text.\nThe second line of text.\n&#039;
+
+
+&gt;&gt;&gt; print(f.read())
+
+// Move cursor to the top
+&gt;&gt;&gt; f.seek(0)
+0
+
+// Print
+&gt;&gt;&gt; print(f.read())
+The first line of text.
+The second line of text.
+
+// Close file
+&gt;&gt;&gt; f.close()
+
+// Open file in Append mode
+&gt;&gt;&gt; f = open(&#039;testing.txt&#039; , &#039;a&#039;)
+
+// Write to it
+&gt;&gt;&gt; f.write(&#039;&#039;&#039;Now is the time for all good men..... to come to the aid of the party.&#039;&#039;&#039;)
+70
+
+// Close file
+&gt;&gt;&gt; f.close()
+
+// Open file
+&gt;&gt;&gt; f = open(&#039;testing.txt&#039;)
+
+// Print
+&gt;&gt;&gt; print(f.read())
+The first line of text.
+The second line of text.
+Now is the time for all good men..... to come to the aid of the party.
+&gt;&gt;&gt; f.close()
+
+// Create a list of names
+&gt;&gt;&gt; namelist = [&#039;Tim&#039;, &#039;Susan&#039;, &#039;Zoey&#039;]
+
+// Open file with write mode
+&gt;&gt;&gt; f = open(&#039;testing.txt&#039;, &#039;w&#039;)
+
+// Writelines will accept data types like list not write
+&gt;&gt;&gt; f.writelines(namelist)
+
+// Open file
+&gt;&gt;&gt; f = open(&#039;testing.txt&#039;)
+
+// Print file
+// Notice we didn`t append
+// rather we just wrote
+// so all previous content is gone
+&gt;&gt;&gt; print(f.read())
+TimSusanZoey
+&gt;&gt;&gt; type(f.read())
+&lt;class &#039;str&#039;&gt;</pre>
+
+<p>
+<strong>DEMO 2</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; f = open(&#039;lines.txt&#039;, &#039;w&#039;)
+&gt;&gt;&gt; f.write(&#039;perl\n&#039;)
+5
+&gt;&gt;&gt; f.write(&#039;python\n&#039;)
+7
+&gt;&gt;&gt; f.write(&#039;ruby\n&#039;)
+5
+&gt;&gt;&gt; f.write(&#039;erlang\n&#039;)
+7
+&gt;&gt;&gt; f.write(&#039;Alice\n&#039;)
+6
+&gt;&gt;&gt; f.write(&#039;ABC\n&#039;)
+4
+&gt;&gt;&gt; f.write(&#039;C\n&#039;)
+2
+&gt;&gt;&gt; f.write(&#039;BASIC\n&#039;)
+6
+&gt;&gt;&gt; f.write(&#039;Java\n&#039;)
+5
+&gt;&gt;&gt; f.close()
+&gt;&gt;&gt; f = open(&#039;lines.txt&#039;)
+&gt;&gt;&gt; print(f.read())
+perl
+python
+ruby
+erlang
+Alice
+ABC
+C
+BASIC
+Java
+
+&gt;&gt;&gt; f.close()
+&gt;&gt;&gt; for line in open(&#039;lines.txt&#039;).readlines():
+	print(line, end=&#039;&#039;)
+
+	
+perl
+python
+ruby
+erlang
+Alice
+ABC
+C
+BASIC
+Java
+&gt;&gt;&gt; </pre>
+
+<p>
+<strong>How to traverse directory structures</strong>
+</p>
+<pre class="code">os.walk()
+Generate the file names in a directory tree by walking the tree either top-down or bottom-up. For each directory in the tree rooted at directory top (including top itself), it yields a 3-tuple (dirpath, dirnames, filenames).</pre>
+
+<p>
+Walk the contents of a one or more directories recursively
+</p>
+<pre class="code">// Where are we Current Working Directory
+&gt;&gt;&gt; os.getcwd()
+&#039;/home/mani&#039;
+
+//Change directory to where you want
+&gt;&gt;&gt; os.chdir(&#039;/home/mani/files&#039;)
+
+// Get Current working directory
+&gt;&gt;&gt; os.getcwd()
+&#039;/home/mani/files&#039;
+
+// Check how many file, folders in root of current dir
+&gt;&gt;&gt; for root, dirs, files in os.walk(os.curdir) :
+	print(&#039;{0} has {1} files&#039;.format(root, len(files)))
+
+	
+. has 0 files
+./sub has 8 files</pre>
+
+<p>
+<strong>Glob Module</strong>
+</p>
+
+<p>
+<em>Pattern matching <br/>
+
+wildcard processing - Asterisk char to get all files of a particular extension. <br/>
+
+Regular Expressions - Regex</em> <br/>
+
+</p>
+<pre class="code">&gt;&gt;&gt; import glob
+&gt;&gt;&gt; glob.glob(&#039;/home/mani/files/sub/*.txt&#039;)
+[&#039;/home/mani/files/sub/Samurai Showdown 5.txt&#039;,
+ &#039;/home/mani/files/sub/Samurai Showdown 1.txt&#039;,
+ &#039;/home/mani/files/sub/Samurai Showdown 4.txt&#039;,
+ &#039;/home/mani/files/sub/ccnet domains.txt&#039;, 
+ &#039;/home/mani/files/sub/Samurai Showdown 5 special.txt&#039;, 
+ &#039;/home/mani/files/sub/ccna domains.txt&#039;, 
+ &#039;/home/mani/files/sub/Samurai Showdown 2.txt&#039;, 
+ &#039;/home/mani/files/sub/Samurai Showdown 3.txt&#039;]
+&gt;&gt;&gt; for name in glob.glob(&#039;/home/mani/files/*&#039;):
+	print(name)
+/home/mani/files/sub</pre>
+
+<p>
+glob.glob()
+</p>
+<pre class="code">&gt;&gt;&gt; import glob
+&gt;&gt;&gt; glob.glob(&#039;./[0-9].*&#039;)
+[&#039;./1.gif&#039;, &#039;./2.txt&#039;]
+&gt;&gt;&gt; glob.glob(&#039;*.gif&#039;)
+[&#039;1.gif&#039;, &#039;card.gif&#039;]
+&gt;&gt;&gt; glob.glob(&#039;?.gif&#039;)
+[&#039;1.gif&#039;]</pre>
+
+<p>
+The glob module finds all the pathnames matching a specified pattern according to the rules used by the Unix shell. No tilde expansion is done, but *, ?, and character ranges expressed with [] will be correctly matched. This is done by using the os.listdir() and fnmatch.fnmatch() functions in concert, and not by actually invoking a subshell. (For tilde and shell variable expansion, use os.path.expanduser() and os.path.expandvars().)
+</p>
+
+<p>
+<strong>Pickle Module
+</strong>
+</p>
+
+<p>
+Portable storage of structured data.
+</p>
+
+<p>
+Zip data like :
+XML, JSON , dictionaries, lists
+</p>
+
+<p>
+Issues: 
+Security <br/>
+
+Once you load it - it could open the gates of hell() <br/>
+
+</p>
+<pre class="code">// List Data Structure
+a = [&#039;globby&#039;, 2323, &#039;text&#039;, 23.2342]
+// import pickle
+import pickle
+// Create a file to serve as pickle repo
+// wb - Creating file in binary mode
+f = open(&#039;/home/mani/pick.txt&#039;, &#039;wb&#039;)
+// Take input and pack into output file
+// a is going into f
+pickle.dump(a,f)
+// close the pickle file
+f.close()
+// open function read the pickle file
+f2 = open(&#039;/home/mani/pick.txt&#039;, &#039;r&#039;)
+// Load
+a = pickle.load(f2)
+// Directly available
+a</pre>
+
+<p>
+<strong>Other File Types</strong>
+</p>
+
+<p>
+Python can handle CSV (Comma separated) and TSV (Tab Separated) files etcetera but what about other files.
+</p>
+
+<p>
+<em class="u">Images – 
+</em>Python Imaging Library (PIL)
+</p>
+
+<p>
+<em class="u">MS Office –
+</em>pywin32
+Python office (Excel)
+</p>
+
+<p>
+<em class="u">PDF</em> –
+ReportLab
+SWFTools (GFX Module)
+</p>

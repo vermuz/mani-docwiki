@@ -1,0 +1,30 @@
+
+<h1 class="sectionedit1" id="altering_the_page_array">Altering the page array</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Altering the page array" [1-39] -->
+<h2 class="sectionedit2" id="menu_manglerinfo">menu_mangler.info</h2>
+<div class="level2">
+<pre class="code">name = Menu Mangler
+description = Example of implementing hook_page_alter().
+core = 7.x
+dependencies[] = menu_magic</pre>
+
+</div>
+<!-- EDIT2 SECTION "menu_mangler.info" [40-200] -->
+<h2 class="sectionedit3" id="menu_manglermodule">menu_mangler.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+/**
+ * Implements hook_page_alter().
+ */
+function menu_mangler_page_alter(&amp;$page) {
+  if (arg(0) == &#039;magic&#039;) {
+    dsm($page);
+    $page[&#039;content&#039;][&#039;system_main&#039;][&#039;renderable_element&#039;][&#039;#type&#039;] = &#039;ol&#039;;
+  }
+}</pre>
+
+</div>
+<!-- EDIT3 SECTION "menu_mangler.module" [201-] -->

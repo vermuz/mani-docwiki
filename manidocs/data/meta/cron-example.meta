@@ -1,0 +1,25 @@
+a:2:{s:7:"current";a:9:{s:4:"date";a:2:{s:7:"created";i:1371263361;s:8:"modified";i:1371263427;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371263427;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"E";s:2:"id";s:12:"cron-example";s:4:"user";s:5:"admin";s:3:"sum";s:0:"";s:5:"extra";s:0:"";}s:11:"contributor";a:1:{s:5:"admin";s:4:"mani";}s:5:"title";s:12:"Cron Example";s:11:"description";a:2:{s:15:"tableofcontents";a:4:{i:0;a:4:{s:3:"hid";s:12:"cron_example";s:5:"title";s:12:"Cron Example";s:4:"type";s:2:"ul";s:5:"level";i:1;}i:1;a:4:{s:3:"hid";s:16:"cron_exampleinfo";s:5:"title";s:17:"cron_example.info";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:2;a:4:{s:3:"hid";s:18:"cron_examplemodule";s:5:"title";s:19:"cron_example.module";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:3;a:4:{s:3:"hid";s:16:"cron_exampletest";s:5:"title";s:17:"cron_example.test";s:4:"type";s:2:"ul";s:5:"level";i:2;}}s:8:"abstract";s:503:"cron_example.info
+
+
+  1 name = Cron example
+   2 description = Demonstrates hook_cron() and related features
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = cron_example.test
+
+
+cron_example.module
+
+
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Demonstrates use of the Cron API in Drupal - hook_cron()
+   6  */
+   7 
+   8 /**
+   9  * @defgroup cron_example Example: Cron
+  10  * @ingroup examples
+  11  * @{
+  12  * Example using Cron API, including hook_cron() and hook_cron_queue_in…";}s:8:"internal";a:2:{s:5:"cache";b:1;s:3:"toc";b:1;}s:8:"relation";a:1:{s:10:"firstimage";s:0:"";}}s:10:"persistent";a:5:{s:4:"date";a:2:{s:7:"created";i:1371263361;s:8:"modified";i:1371263427;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371263427;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"E";s:2:"id";s:12:"cron-example";s:4:"user";s:5:"admin";s:3:"sum";s:0:"";s:5:"extra";s:0:"";}s:11:"contributor";a:1:{s:5:"admin";s:4:"mani";}}}

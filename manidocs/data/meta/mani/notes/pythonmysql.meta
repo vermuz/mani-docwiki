@@ -1,0 +1,16 @@
+a:2:{s:7:"current";a:7:{s:4:"date";a:2:{s:7:"created";i:1371127594;s:8:"modified";i:1371127594;}s:11:"last_change";a:7:{s:4:"date";i:1371127594;s:2:"ip";s:3:"::1";s:4:"type";s:1:"C";s:2:"id";s:22:"mani:notes:pythonmysql";s:4:"user";N;s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}s:4:"user";s:0:"";s:7:"creator";s:0:"";s:8:"internal";a:2:{s:5:"cache";b:1;s:3:"toc";b:1;}s:11:"description";a:1:{s:8:"abstract";s:405:"MySQL Python
+
+Install Mysql
+
+
+$ sudo apt-get install mysql-server
+
+
+We don't know the package name for the MySQLdb module. We use the apt-cache command to figure it out.
+
+
+$ apt-cache search MySQLdb
+python-mysqldb - A Python interface to MySQL
+python-mysqldb-dbg - A Python interface to MySQL (debug extension)
+bibus - bibliographic database
+eikazo - graphical frontend for SANE designed for mass-scanning";}s:8:"relation";a:1:{s:10:"firstimage";s:0:"";}}s:10:"persistent";a:4:{s:4:"date";a:1:{s:7:"created";i:1371127594;}s:11:"last_change";a:7:{s:4:"date";i:1371127594;s:2:"ip";s:3:"::1";s:4:"type";s:1:"C";s:2:"id";s:22:"mani:notes:pythonmysql";s:4:"user";N;s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}s:4:"user";s:0:"";s:7:"creator";s:0:"";}}

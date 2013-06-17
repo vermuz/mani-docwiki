@@ -1,0 +1,176 @@
+
+<h1 class="sectionedit1" id="creating_drupal_7x_modules">Creating Drupal 7.x modules</h1>
+<div class="level1">
+
+<p>
+This section will include tutorials and other information that you will need to create modules for Drupal version 7.x.
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Creating Drupal 7.x modules" [1-164] -->
+<h1 class="sectionedit2" id="creating_modules_-_a_tutorialdrupal_7x">Creating modules - a tutorial: Drupal 7.x</h1>
+<div class="level1">
+
+<p>
+This tutorial describes how to create a module for Drupal 7.
+</p>
+
+<p>
+If your goal is to convert a module from Drupal 6 or earlier to Drupal 7, see Updating your modules.
+</p>
+
+<p>
+A module is a collection of functions that link into Drupal, providing additional functionality for your Drupal installation. After reading this tutorial, you will be able to create a basic block module and use it as a template for more advanced modules.
+</p>
+
+<p>
+This tutorial will not necessarily prepare you to write modules for public release. It does not cover caching, nor does it elaborate on permissions or security issues. Use this tutorial as a starting point, and extend your skills with other resources, including:
+</p>
+<ul>
+<li class="level1"><div class="li"> Examples for Developers, modules written specifically to illustrate various aspects of Drupal development with verbose comments</div>
+</li>
+<li class="level1"><div class="li"> Other modules, including contrib and core</div>
+</li>
+<li class="level1"><div class="li"> Drupal documentation</div>
+</li>
+<li class="level1"><div class="li"> Writing secure code</div>
+</li>
+<li class="level1"><div class="li"> Coding standards</div>
+</li>
+<li class="level1"><div class="li"> Creating a new full project</div>
+</li>
+</ul>
+
+<p>
+This tutorial assumes you have,
+</p>
+<ul>
+<li class="level1"><div class="li"> Basic PHP knowledge, including syntax and the concept of PHP objects</div>
+</li>
+<li class="level1"><div class="li"> Basic understanding of database tables, fields, records and SQL statements</div>
+</li>
+<li class="level1"><div class="li"> A working Drupal 7 installation</div>
+</li>
+<li class="level1"><div class="li"> Drupal administration access</div>
+</li>
+<li class="level1"><div class="li"> Webserver access</div>
+</li>
+</ul>
+
+<p>
+This tutorial does not assume you have any knowledge about the inner workings of a Drupal module.
+</p>
+
+<p>
+When you are finished developing your module, you may want to contribute it back to the community, so then follow the instructions for creating a new full project.
+</p>
+
+</div>
+<!-- EDIT2 SECTION "Creating modules - a tutorial: Drupal 7.x" [165-1726] -->
+<h1 class="sectionedit3" id="getting_started">Getting started</h1>
+<div class="level1">
+
+<p>
+Main topic described: module file name and location
+</p>
+
+<p>
+In this tutorial we&#039;ll create a module that lists links to content such as blog entries or forum discussions that were created recently (within the last week). This page in the tutorial describes how to create the initial module file and directory.
+</p>
+
+<p>
+Before you begin
+</p>
+
+<p>
+If you want PHP to help identify your mistakes on your testing site, try the settings in Showing all errors while developing.
+</p>
+
+<p>
+Name your module
+</p>
+
+<p>
+The first step in creating a module is to choose a “short name” for it. This short name will be used in all file and function names in your module, so it must start with a letter, and it must contain only lower-case letters and underscores. For this example, we&#039;ll choose “current_posts” as the short name. Important note: Be sure you follow these guidelines and do not use upper case letters in your module&#039;s short name, since it is used for both the module&#039;s file name and as a function prefix. When you implement Drupal “hooks” (see later portions of tutorial), Drupal will only recognize your hook implementation functions if they have the same function name prefix as the name of the module file.
+</p>
+
+</div>
+<!-- EDIT3 SECTION "Getting started" [1727-2926] -->
+<h2 class="sectionedit4" id="create_a_folder_and_a_module_file">Create a folder and a module file</h2>
+<div class="level2">
+
+<p>
+Given that our choice of short name is “current_posts” :
+</p>
+
+<p>
+<strong>Start the module by creating a folder in your Drupal installation at the path:</strong>
+</p>
+
+<p>
+sites/all/modules/current_posts
+</p>
+
+<p>
+<strong>Create the PHP file for the module :
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Save it as current_posts.module in the directory sites/all/modules/current_posts</div>
+</li>
+<li class="level1"><div class="li"> As of Drupal 6.x, sites/all/modules is the preferred place for non-core modules (and sites/all/themes for non-core themes), because this places all site-specific files in the sites directory. This allows you to more easily update the core files and modules without erasing your customizations. Alternatively, if you have a multi-site Drupal installation and this module is for only one specific site, you can put it in sites/your-site-folder/modules.</div>
+</li>
+</ul>
+
+<p>
+<strong>Add an opening PHP tag to the module</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> &lt;?php</div>
+</li>
+<li class="level1"><div class="li"> Module files begin with the opening PHP tag. Do not place the CVS ID tag in your module. It is no longer needed with drupal.org&#039;s conversion to Git. If the coder module gives you error messages about it, then that module has not yet been updated to drupal.org&#039;s Git conventions.</div>
+</li>
+</ul>
+
+<p>
+The module is not operational yet: it hasn&#039;t been activated. We&#039;ll activate the module later in the tutorial.
+</p>
+
+</div>
+<!-- EDIT4 SECTION "Create a folder and a module file" [2927-4179] -->
+<h1 class="sectionedit5" id="telling_drupal_about_your_module">Telling Drupal about your module</h1>
+<div class="level1">
+
+<p>
+<strong>Main topic described: .info files
+</strong>
+</p>
+
+<p>
+All modules must have a &#039;modulename.info&#039; file, which contains meta information about the module.
+</p>
+
+<p>
+The general format is:
+</p>
+<pre class="code">name = Module Name
+description = A description of what your module does.
+core = 7.x</pre>
+
+<p>
+For our module, we will replace &#039;Module Name&#039; in the example above with the name of our module, &#039;Current Posts&#039;. Without this file, the module will not show up in the module listing. Here is our specific example:
+</p>
+<pre class="code">name = Current Posts
+description = A block module that lists links to recent posts.
+core = 7.x</pre>
+
+<p>
+Add the source above to a file named current_posts.info and save it into the module&#039;s directory at sites/all/modules/current_posts.
+</p>
+
+<p>
+Note: If you copy and paste this code block, ensure that the description data does not contain a line break (turn off word-wrap on your text-editor to be sure). Otherwise, the .info file will not parse correctly.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "Telling Drupal about your module" [4180-] -->

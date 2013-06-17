@@ -1,0 +1,299 @@
+/**
+ * LCARS Template
+ *
+ * @author Paweł Knap <me@pawelknap.com>
+ */
+
+/* -------------- top row --------------- */
+div.dokuwiki div#header {
+  padding: 0;
+  margin:0 0 5px 0;
+  height:126px;
+  background:url("images/swept.png") no-repeat;
+  position:relative;
+}
+div.dokuwiki div.breadcrumbs {
+	position:relative;
+	float:left;
+	margin:10px 0 0 163px;
+	width:30%;
+	font-size: 1.4em !important;
+	background:#000000 !important;
+	color:#ff9900 !important;
+	text-transform:uppercase;
+}
+div.dokuwiki div.breadcrumbs span{
+	color:#fff;
+}
+div.dokuwiki div.breadcrumbs a, div.dokuwiki div.breadcrumbs a:visited, div.dokuwiki div.breadcrumbs a:active, div.dokuwiki div.breadcrumbs a:focus{
+	color:#ffffff !important;
+}
+div.dokuwiki div.breadcrumbs span a, div.dokuwiki div.breadcrumbs span a:visited, div.dokuwiki div.breadcrumbs span a:active, div.dokuwiki div.breadcrumbs span a:focus{
+	color:#ff9900 !important;
+}
+div.dokuwiki .pagename {
+  position:relative;
+  float: right;
+  width:90%;
+  height:33px;
+  font-size: 4.2em;
+  text-transform:uppercase;
+  color: #ff9900;
+  text-align: right;
+  background: url("images/swept2.png") right no-repeat #99ccff;
+  overflow:hidden;
+}
+
+div.dokuwiki .pagename a {
+  height:33px;
+  color: #FF9900 !important;
+  background:#000;
+  position:absolute;
+  right:42px;
+  top:-10px;
+  padding:0 5px 10px 5px;
+  text-decoration: none !important;
+}
+
+div.dokuwiki .logo {
+  position:relative;	
+  text-transform:uppercase;
+  float: right;
+  font-size:8.4em;
+  text-align: right;
+  vertical-align: middle;
+  height:93px;
+  width:50%;
+}
+
+div.dokuwiki .logo a {
+  height:93px;
+  color: #fff !important;
+  text-decoration: none !important;
+  position:absolute;
+  right:0;
+  top:-5px;
+}
+
+/* ---------------  top and bottom bar ---------------- */
+div.dokuwiki .bar {
+  background: __background_alt__;
+  clear: both;
+}
+
+div.dokuwiki #bar__top .bar-left {
+  float: left;
+  position:absolute;
+  left:212px;
+  height:33px;
+  top:-20px;
+}
+div.dokuwiki #bar__top .bar-left input{
+	font-size:1.2em;
+	padding:4px;
+	margin:0;
+	position:absolute;
+	top:-7px;
+	height:36px;
+	width:220px;
+	z-index:5;
+	border:0;
+	outline:none;
+	background:url("images/search.png") 10px 9px no-repeat #000;
+	color:#000;
+}
+div.dokuwiki #bar__top .bar-left input:active,div.dokuwiki #bar__top .bar-left input:focus{
+	background:#000;
+	color:#ff9900;
+}
+
+div.dokuwiki #bar__top .bar-left input.button{
+	padding:0;
+	margin:0;
+	left:176px;
+	width:45px;
+	top:0px;
+	height:30px;
+	background:#FF9900;
+}
+
+div.dokuwiki #bar__top .bar-left span.button{
+	padding:0;
+	margin:0;
+	left:176px;
+	width:45px;
+	top:0px;
+	height:30px;
+	background:#FF9900;
+	position:absolute;
+	z-index:6;
+	text-transform:uppercase;
+	font-size: 3.0em;
+	color:#000;
+	cursor:pointer;
+}
+div.dokuwiki #bar__top .bar-left span.button cufon{
+	position:absolute !important;
+	left:12px;
+	top:1px;
+}
+div.dokuwiki #bar__top .bar-right {
+  position:relative;
+  width:90%;
+  height:33px;
+  background:url("images/swept4.png") no-repeat right #cc6666;
+  float: right;
+  text-align: right;
+}
+div.dokuwiki #bar__top .bar-right .nav_buttons{
+	position:absolute;
+	border-left:8px solid #000000;
+	height:33px;
+	right:0;
+	top:0;
+	z-index:6;
+	padding:0 42px 0 0;
+}
+div.dokuwiki #bar__top .bar-right .nav_buttons input{
+	position:relative;
+	float:right;
+	display:block;
+	height:33px;
+	border:0;
+	border-right:8px solid #000000;
+	border-radius:0 !important;
+	-webkit-border-radius: 0 !important;
+	-moz-border-radius: 0 !important;
+	padding:0 8px;
+	margin:0;
+	background:#FF9900;
+	text-transform: uppercase;
+	color:#000;
+	font-weight: bold;
+}
+div.dokuwiki #bar__top .bar-right .nav_buttons input:hover{
+	background:#fff;
+	border-radius:0 !important;
+	-webkit-border-radius: 0 !important;
+	-moz-border-radius: 0 !important;
+}
+div.dokuwiki #bar__top{
+	position:relative;
+	margin:10px 0 0 0 ;
+	background:url("images/swept3.png") no-repeat;
+	height:85px;
+}
+div.dokuwiki #bar__bottom {
+  margin-bottom: 3px;
+}
+div.dokuwiki div.page{
+	margin:0 !important;
+}
+div.sidebar{
+	float:left;
+	width:169px;
+}
+div.content{
+	padding:0 0 0 163px;
+	background:url("images/sidebar.png") repeat-y left;
+}
+div#footer{
+  padding: 0;
+  margin:0 0 5px 0;
+  height:85px;
+  background:url("images/swept5.png") no-repeat;
+  position:relative;
+}
+div#license{
+  padding: 45px 0 0 0;
+  margin:10px 0 0 0;
+  height:50px;
+  background:url("images/swept6.png") no-repeat;
+  position:relative;
+}
+div#bar_license{
+	height:33px;
+	width:90%;
+	position:absolute;
+	top:0;
+	right:0;
+	z-index:5;
+	background:url("images/swept7.png") right center no-repeat #99CCFF;
+}
+#bar__bottom{
+	height:33px;
+	position:relative;
+	float:right;
+	background:url("images/swept4.png") no-repeat right #CC6666;
+	width:90%;
+}
+div.dokuwiki #bar__bottom .bar-right{
+	position:absolute;
+	border-left:8px solid #000000;
+	height:33px;
+	right:42px;
+	top:0;
+	z-index:6;	
+	background: #FF9900;
+}
+div.dokuwiki #bar__bottom .bar-left{
+	position:absolute;
+	border-left:8px solid #000000;
+	height:33px;
+	left:100px;
+	top:0;
+	z-index:6;
+	padding:0 42px 0 0;
+}
+div.dokuwiki #bar__bottom .bar-right input, div.dokuwiki #bar__bottom .bar-left input{
+	position:relative;
+	float:right;
+	display:block;
+	height:33px;
+	border:0;
+	border-right:8px solid #000000;
+	border-radius:0 !important;
+	-webkit-border-radius: 0 !important;
+	-moz-border-radius: 0 !important;
+	padding:0 8px;
+	margin:0;
+	background:#ff9900;
+	text-transform: uppercase;
+	color:#000;
+	font-weight: bold;
+}
+
+div.dokuwiki #bar__bottom .bar-right input:hover, div.dokuwiki #bar__bottom .bar-left input:hover{
+	background:#fff;
+}
+
+
+/* ------------- File Metadata ----------------------- */
+
+div.dokuwiki div.meta {
+  position:relative;
+  width:100%;
+  height:52px;
+  float:left;
+  clear: both;
+  color: __text_alt__;
+  font-size: 70%;
+}
+
+div.dokuwiki div.meta div.user {
+  float: left;
+}
+
+div.dokuwiki div.meta div.doc {
+  text-align: right;
+}
+#dw__login p{
+	display:block !important;
+	position:relative;
+	float:left;
+	clear:left;
+}
+#dw__login p a{
+	margin:-8px 0 0 10px;
+	float:right;
+}

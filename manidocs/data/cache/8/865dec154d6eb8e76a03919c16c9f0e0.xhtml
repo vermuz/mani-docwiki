@@ -1,0 +1,50 @@
+
+<p>
+<strong><abbr title="Graphical User Interface">GUI</abbr> Development</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> <abbr title="Graphical User Interface">GUI</abbr> Toolkits</div>
+</li>
+<li class="level1"><div class="li"> Using Tkinter</div>
+</li>
+</ul>
+
+<p>
+Build and deploy cross-platform desktop apps in Python <br/>
+
+Framework/Toolkit (Collection of classes) <br/>
+
+Widget window gadget frame, button, textbox, label
+</p>
+
+<p>
+<strong>Popular <abbr title="Graphical User Interface">GUI</abbr> Toolkits
+</strong>
+</p>
+<pre class="code">wxPython: port of wxWidgets - BitTorrent, Dropbox
+PyQt: port of Qt toolkit - KDE, Google Earth, Opera, VLC (Qt)
+PyGTK: port of GTK Library - GNOME, GIMP</pre>
+
+<p>
+<strong>Tkinter
+</strong>
+</p>
+
+<p>
+Python binding to TCL/Tk
+</p>
+<pre class="code">from tkinter import * #All names in current namespace
+
+root = Tk() # Parent Window base form
+root.title(&#039;Button App&#039;)
+Label(text=&#039;I am a button&#039;).pack(pady=15)
+
+def quitapp():
+    root.destroy()
+
+Button(text=&#039;Quit&#039;, command = quitapp).pack(side=BOTTOM)
+root.mainloop() # will start the routine</pre>
+
+<p>
+<a href="http://www.tkdocs.com/tutorial/index.html" class="urlextern" title="http://www.tkdocs.com/tutorial/index.html"  rel="nofollow">http://www.tkdocs.com/tutorial/index.html</a>
+</p>

@@ -1,0 +1,91 @@
+**Development Workflow**
+
+<code>
+                                                    |---|
+                                                    |DEV|  ==> gitdev (clone repo - check if synched and dev)
+                                           (push)   |---|     (push)
+                                      ====================================     
+                                     ||                                  ||
+                                   <GIT>                          <SERVER-NAME> 
+</code>                                                   
+
+**SERVER**     
+<code>
+  - SERVER-apache-conf (Access issues)
+  - SERVER-Drupal-7-conf (SITE-FOLDER<named as URL>/SETTINGS.PHP)
+  - SERVER-Drupal-7-makefiles (SITE FILE<named as SITE URL>)     
+</code>
+
+**GITDEV**
+
+**SERVER-Drupal-7-makefiles
+**
+
+<code>
+git clone SSH-ADDRESS-REPO
+git status
+git add SITE-NAME.makefile
+git diff 
+git reset HEAD //to unstage
+git diff 
+git add SITE-NAME.makefile
+git status
+git commit -m "SITE-URL : MESSAGE"
+git push origin master
+
+FIND .git
+ ===> config
+git push origin master:master
+</code>
+
+**PUSH TO LIVE
+**
+
+<code>
+Add Live
+
+git remote add live ssh:USER@HOSTNAME/REPO/SERVER-Drupal-7-makefiles
+
+git push live master:master
+</code>
+
+
+**SERVER-Drupal-7-conf
+**
+
+<code>
+.htaccess
+SITE-FOLDER NAME (URL)/ Settings.php
+git add .htaccess
+git add Settings.php
+git commit -m "SITE-URL : Initial Site Add"
+
+FIND .git
+  ====> config
+git push origin master:master
+</code>
+
+**PUSH TO LIVE
+**
+
+<code>
+Add Live
+git remote add live ssh:USER@HOSTNAME/REPO/SERVER-Drupal-7-conf
+git push live master:master
+</code>
+
+**SERVER-apache-conf
+**
+
+<code>
+cd vhosts.d
+edit SITE-URL.conf
+git diff
+git add SITE-URL.conf
+git commit -m "SITE-URL : MESSAGE"
+git push origin master:master
+</code>                             
+                             
+                             
+                                                    
+                                               

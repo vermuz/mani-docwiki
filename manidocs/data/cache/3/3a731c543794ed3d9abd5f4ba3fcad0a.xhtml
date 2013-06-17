@@ -1,0 +1,201 @@
+
+<p>
+<strong>Accessing the <abbr title="Local Area Network">LAN</abbr> and the Internet</strong>
+</p>
+
+<p>
+<strong>Standard Library Modules
+</strong>
+<abbr title="Operating System">OS</abbr> Library - Access local and remote file systems<br/>
+
+Socket     - TCP/IP socket - deep control of protocols<br/>
+
+Email      - SMTP,POP,IMAP<br/>
+
+FTPlib     - <abbr title="File Transfer Protocol">FTP</abbr> Client <br/>
+
+URLlib     - <abbr title="Uniform Resource Locator">URL</abbr> (version 2 is good) (touchy feely interface)<br/>
+
+HTTPlib    - lower abstraction than URLlib<br/>
+
+SMPTlib<br/>
+
+<strong>
+Technologies</strong>
+IronPython : Microsoft.net (.Net front) (LATEST)<br/>
+
+Jython     : JAVA (Tight integration with JVM)<br/>
+
+Pywin32    : Network COM (COM interface)<br/>
+
+</p>
+
+<p>
+<strong>Sites</strong>
+Pypi : Package Index<br/>
+
+Stack Overflow:  <br/>
+
+ActiveState Code:<br/>
+
+</p>
+
+<p>
+SHARED RESOURCES: WINDOWS concept
+in Linux SAMBA, NFS are your likely routes
+</p>
+
+<p>
+<em class="u">Access Shared folder
+</em>
+</p>
+<pre class="code">import os
+d = os.listdir(&#039;REMOTE-HOST/SHARED-FOLDER&#039;)
+type(d) -&gt; LIST
+d -&gt; Show Resources in SHARED-FOLDER</pre>
+
+<p>
+<em class="u">Create new file
+</em>
+</p>
+<pre class="code">f = open(&#039;REMOTE-HOST/SHARED-FOLDER/FILENAME&#039;, &#039;w&#039;)
+f.write(&#039;&#039;)
+f.close()</pre>
+
+<p>
+<strong>BATCH COPY SCRIPT</strong>
+</p>
+<pre class="code">import os
+import shutil
+path = os.path.join(&quot;LOCAL-PATH&quot;,&quot;FOLDER&quot;)
+destination = os.path.join(&quot;REMOTE-HOST&quot;, &quot;SHARED-FOLDER&quot;)
+for r,d,f in os.walk(path):
+      for files in f:
+         if files.endswith(&quot;.txt&quot;):
+            try:
+               shutil.copy(os.path.join(r,files))
+             except IOError,e:
+               print e  </pre>
+
+<p>
+<strong>PSEUDOCODE</strong>
+</p>
+<pre class="code">import os, bulk copy module
+create correct source path
+create correct destination path
+loop:
+    os.walk(source path):
+          copy txt files to destination</pre>
+
+<p>
+<strong>ACCESS WEB PAGES</strong>
+</p>
+
+<p>
+urllib.urlopen() → R/O access <br/>
+
+httplib → client interface (post) <br/>
+
+Twisted → Event driven networking framework <br/>
+
+</p>
+
+<p>
+<strong><abbr title="Uniform Resource Identifier">URI</abbr>, <abbr title="Uniform Resource Locator">URL</abbr>, URN
+</strong>
+</p>
+
+<p>
+<abbr title="Uniform Resource Identifier">URI</abbr> can be classified as URLs (locators) or URNs (names) <br/>
+
+URN functions like a person`s name. <br/>
+
+<abbr title="Uniform Resource Locator">URL</abbr> functions like a person`s street address. <br/>
+
+</p>
+
+<p>
+<a href="/manidocs/lib/exe/detail.php?id=mani%3Anotes%3Aaccessingnetwork&amp;media=mani:notes:uri_euler_diagram_no_lone_uris.png" class="media" title="mani:notes:uri_euler_diagram_no_lone_uris.png"><img src="/manidocs/lib/exe/fetch.php?media=mani:notes:uri_euler_diagram_no_lone_uris.png" class="media" alt="" /></a>
+</p>
+<pre class="code">&gt;&gt;&gt; wp = urllib.urlopen(&#039;http://news.bbc.co.uk/2/hi/business/7915443.stm&#039;)
+&gt;&gt;&gt; for line in wp:
+	sys.stdout.write(line)
+&gt;&gt;&gt; print wp.info()
+Server: Apache
+Vary: X-CDN
+Cache-Control: max-age=0
+Content-Type: text/html
+Date: Thu, 21 Feb 2013 19:22:47 GMT
+Expires: Thu, 21 Feb 2013 19:22:47 GMT</pre>
+
+<p>
+<strong>REDIRECT <abbr title="Uniform Resource Locator">URL</abbr></strong>
+</p>
+<pre class="code">&gt;&gt;&gt; redirect = urllib.urlopen(&#039;http://microsoft.org&#039;)
+&gt;&gt;&gt; redirect.geturl()
+&#039;http://www.microsoft.com/en-us/default.aspx&#039;</pre>
+
+<p>
+<strong>RETRIEVE PAGE (minus Images)
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; urllib.urlretrieve(&#039;http://www.python.org&#039;, &#039;/home/mani/files/py.html&#039;)
+(&#039;/home/mani/files/py.html&#039;, &lt;httplib.HTTPMessage instance at 0xb57143cc&gt;)</pre>
+<pre class="code">import httplib
+*** CREATE A LIST
+*** PASS IN COMMA SEPARATED LIST OF PAGES YOU WANT TO HIT
+files = [&#039;/index.html&#039;,&#039;/doc/index.html&#039;]
+//PASS in URL AND CONNECTION
+h = httplib.HTTPConnection(&#039;www.python.org&#039;,80)
+//OPEN
+h.connect()
+RUN ITERATOR
+for f in files:
+       h.request(&#039;GET&#039;, f)
+       r = h.getresponse()
+       if r.status == httplib.OK:
+       GRAB ENTIRE CONTENT
+          data = r.read()
+          print &#039;:::: %s ::::&#039; % f
+          print data
+          
+h.close()</pre>
+
+<p>
+<strong><abbr title="File Transfer Protocol">FTP</abbr> Client</strong>
+</p>
+
+<p>
+Chilkat module
+</p>
+<pre class="code">&gt;&gt;&gt; ftp = FTP(&#039;ftp.redhat.com&#039;)
+&gt;&gt;&gt; type(ftp)
+&lt;type &#039;instance&#039;&gt;
+** Provide login username and password credentials
+ftp.login(&#039;user1\\anon&#039;, &#039;pswrd20&#039;)
+&gt;&gt;&gt; ftp.login()
+&#039;230 Login successful.&#039;
+&gt;&gt;&gt; d = &#039;redhat/linux&#039;
+&gt;&gt;&gt; ftp.cwd(d)
+&#039;250 Directory successfully changed.&#039;
+&gt;&gt;&gt; print ftp.dir()
+-rw-r--r--    1 ftp      ftp           131 Dec 20  2005 README
+drwxr-xr-x    8 ftp      ftp          4096 Dec 06 04:16 beta
+drwxr-xr-x    6 ftp      ftp          4096 Jun 14  2007 eal
+drwxrwsr-x   14 ftp      ftp          4096 Jul 25  2011 enterprise
+drwxr-xr-x    2 ftp      ftp          4096 Feb 12  2006 preview
+drwxr-xr-x    2 ftp      ftp          4096 Dec 03  2008 rawhide
+drwxrwsr-x    4 ftp      ftp          4096 Sep 26  2008 updates
+None</pre>
+
+<p>
+<a href="http://effbot.org/librarybook/ftplib.htm" class="urlextern" title="http://effbot.org/librarybook/ftplib.htm"  rel="nofollow">http://effbot.org/librarybook/ftplib.htm</a>
+</p>
+
+<p>
+<strong>Python Lambda Functions</strong>
+</p>
+
+<p>
+<a href="http://www.secnetix.de/olli/Python/lambda_functions.hawk" class="urlextern" title="http://www.secnetix.de/olli/Python/lambda_functions.hawk"  rel="nofollow">http://www.secnetix.de/olli/Python/lambda_functions.hawk</a>
+</p>

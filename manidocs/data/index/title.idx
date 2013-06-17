@@ -1,0 +1,105 @@
+Mani`s Notebook
+Welcome to your new DokuWiki
+
+
+PHP
+Vagrant
+
+
+Replication Session
+Python DB Synching
+GIT
+
+
+
+SSH
+
+Mani`s Python Notebook
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Drupal Module Development
+
+
+
+Drupal Examples
+Lullabot Code
+Form API
+Wife Demands
+Action Example
+Ajax Example
+Batch Example
+Block Example
+Cache Example
+Contextual Links Example
+Cron Example
+DBting Example
+Email Example
+Entity Example
+Field Example
+Field Permission Example
+File Example
+Filter Example
+Form Example
+Image Example
+JS Example
+Menu Example
+Node Access Example
+Node Example
+Node API Example
+Page Example
+Pager Example
+Queue Example
+RDF Example
+Render Example
+SimpleTest Example
+Table Drag Example
+Table Sort Example
+Theming Example
+Token Example
+Trigger Example
+Vertical Tabs Example
+XMLRPC Example
+Drupal Menu System
+Using URL arguments in page callback functions
+Adding contextual menu links and using menu autoloaders
+Using the Drupal Render API
+Attachments and caching with the Render API
+Altering the page array
+Integrating with the theme system
+Creating, submitting and validating a simple form
+Organizing collections of form elements
+Creating dynamic forms with the states system
+Altering forms with hook_form_alter()
+Creating a configuration settings form for your module
+Querying the database with db_select()
+Adding a table to the database
+Querying the database with query methods
+Altering the database
+The Drupal overview
+Creating Drupal 7.x modules
+PHP
+Common uses of PHP
+
+Escaping to PHP

@@ -1,0 +1,27 @@
+====== Mani`s Notebook ======
+
+====== Drupal ======
+  * [[drupaldev|Drupal Development Notes]]
+  * [[drushnotes|Drush Notes]]
+  * [[mani-php|PHP]]
+  * [[mani-vagrant|Mani Vagrant Setup]]
+  * [[drupal-module-dev|Drupal Module Development]]
+
+====== SQL ======
+  * [[sqlcommands|SQL Commands]]
+  * [[mysql|MySQL]]
+  * [[mysqlmultiinstance|MySQL Multi Instances]]
+
+====== Python ======
+  * [[python|Python Notes]]
+  * [[synchscript|DB Synch Script]]
+
+====== GIT ======
+  * [[git|GIT]]
+  * [[githubnote|Github Notes]]
+  * [[gitdev|Git Development Local Environment Notes]]
+  * [[gitinstall|Git Installation]]
+
+====== Linux ======
+  * [[mani-ssh|SSH]]
+  * [[drupalinux|Drupal on Linux Notes]]

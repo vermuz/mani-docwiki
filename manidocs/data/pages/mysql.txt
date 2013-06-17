@@ -1,0 +1,25 @@
+We will use sql commands to interact with the database on the server. Here is a quick list of sql commands.
+
+http://www.pantz.org/software/mysql/mysqlcommands.html
+
+**Lullabot tutorial on SQL commands for Drupal users
+**
+
+http://www.lullabot.com/videos/command-line-basics-mysql
+
+
+In order to interact with the database on ETC server, we need Putty installion on the machine,
+in case it is not installed already. It can downloaded from http://www.chiark.greenend.org.uk/~sgtatham/putty/
+
+
+**Typical Putty session** 
+
+{{:run.png|}}
+
+{{:putty1.png|}}
+
+{{:putty_2.png|}}
+
+{{:putty3.png|}}
+
+

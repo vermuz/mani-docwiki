@@ -1,0 +1,803 @@
+
+<h1 class="sectionedit1" id="python_db_synching">Python DB Synching</h1>
+<div class="level1">
+<pre class="code">#!/usr/bin/python
+&quot;&quot;&quot;Synchs with Master with Slave
+&quot;&quot;&quot;
+# Imports
+import os
+import subprocess
+import MySQLdb
+import tempfile
+
+__author__ = &quot;Mani&quot;
+__license__ = &quot;GPL&quot;
+__version__ = &quot;1.0.0&quot;
+__maintainer__ = &quot;Mani&quot;
+__email__ = &quot;mani.ali@unb.ca&quot;
+__status__ = &quot;Development&quot;
+
+
+# Get Master Host Info
+masterHost = raw_input(&quot;Enter Master Host: &quot;)
+masterPort = raw_input(&quot;Enter Master Port: &quot;)
+masterUser = raw_input(&quot;Enter Master User: &quot;)
+masterPassword = raw_input(&quot;Enter Master Password&quot;)
+
+# Get Slave Host Info
+slaveHost = raw_input(&quot;Enter Slave Host: &quot;)
+slavePort = raw_input(&quot;Enter Slave Port: &quot;)
+slaveUser = raw_input(&quot;Enter Slave User: &quot;)
+slavePassword = raw_input(&quot;Enter Slave Password&quot;)
+
+# master_CONN = &quot;-u${masterUser} -p${masterPassword}&quot;
+dbMasterCon = MySQLdb.connect(host=masterHost,user=masterUser, passwd=masterPassword, port=masterPort)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+# cur.execute(&quot;SHOW MASTER STATUS&quot;)
+
+# From here we need File and Position
+# ROWS are File, Position
+# Print Column 1
+masterFile = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print 1}&#039;
+# Print Column 2
+masterPOS  = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print 2}&#039; 
+
+# CREATE TMP File
+
+# tempdir = tempfile.gettempdir()
+# f = tempfile.NamedTemporaryFile(dir = tempdir)
+# target_dir = /usr/tmp/;
+# time_backup = time.strftime(&#039;%Y-%m-%d-%H-%M-%S&#039;)
+# backupfile = target_dir + time_backup +&quot;.sql&quot;
+f  = open(&#039;backupfile.sql&#039;, &#039;w&#039;)
+f.write(&#039;STOP SLAVE; \n&#039;)
+f.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039;masterHost&#039;, \n&#039;)
+f.write(&#039;MASTER_PORT = masterPort, \n&#039;)
+f.write(&#039;MASTER_USER = masterUser, \n&#039;)
+f.write(&#039;MASTER_PASSWORD=masterPassword, \n&#039;)
+# Info from MASTER SHOW STATUS
+f.write(&#039;MASTER_LOG_FILE= masterFile, \n&#039;)
+f.write(&#039;MASTER_LOG_POS=  masterPOS, \n&#039;)
+#***********************************************************
+f.write(os.system(&quot;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&quot;))
+#***********************************************************
+f.write(&#039;START SLAVE; \n&#039;)
+f.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+
+# SCP File to slave tmp dir
+os.system(&quot;scp backupfile.sql SLAVE_USER@SERVER:PATH&quot;)
+
+dbSlaveCon = MySQLdb.connect(host=slaveHost,user=slaveUser, passwd=slavePassword, port=slavePort)
+cur = dbSlaveCon.cursor()
+for line in open(&#039;/usr/tmp/backupfile.sql&#039;)
+	cur.execute(line)
+
+
+
+
+</pre>
+
+<p>
+VERSION 2
+</p>
+<pre class="code">#!/usr/bin/python
+&quot;&quot;&quot;Synchs with Master with Slave
+&quot;&quot;&quot;
+# Imports
+import os
+import subprocess
+import MySQLdb
+import tempfile
+import logging
+
+__author__ = &quot;Mani&quot;
+__license__ = &quot;GPL&quot;
+__version__ = &quot;1.0.0&quot;
+__maintainer__ = &quot;Mani&quot;
+__email__ = &quot;mani.ali@unb.ca&quot;
+__status__ = &quot;Development&quot;
+
+
+# Get Master Host Info
+masterHost = raw_input(&quot;Enter Master Host: &quot;)
+masterPort = raw_input(&quot;Enter Master Port: &quot;)
+masterUser = raw_input(&quot;Enter Master User: &quot;)
+masterPassword = raw_input(&quot;Enter Master Password&quot;)
+
+# Get Slave Host Info
+slaveHost = raw_input(&quot;Enter Slave Host: &quot;)
+slavePort = raw_input(&quot;Enter Slave Port: &quot;)
+slaveUser = raw_input(&quot;Enter Slave User: &quot;)
+slavePassword = raw_input(&quot;Enter Slave Password&quot;)
+
+# Start Logging
+# &quot;basicConfig()&quot; method to login the info to the file.
+logging.basicConfig(
+					level=	logging.DEBUG,
+					format=&#039;%(asctime)s - %(levelname)s - %(message)s&#039;,
+                    filename=&#039;/home/mani/vre_synch.txt&#039;
+                   )
+
+# master_CONN = &quot;-u${masterUser} -p${masterPassword}&quot;
+dbMasterCon = MySQLdb.connect(host=masterHost,user=masterUser, passwd=masterPassword, port=masterPort)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+# cur.execute(&quot;SHOW MASTER STATUS&quot;)
+
+# From here we need File and Position
+# ROWS are File, Position
+# Print Column 1
+masterFile = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print 1}&#039;
+# Print Column 2
+masterPOS  = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print 2}&#039; 
+# You don`t want to run same command twice
+
+
+# AWK Multiple Outputs
+# awk -F, &#039;{print $1, $2}&#039;
+# Multiple Assignments
+# masterFile, masterPOS = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print $1, $2}&#039;
+
+# CREATE TMP File
+
+# tempdir = tempfile.gettempdir()
+# f = tempfile.NamedTemporaryFile(dir = tempdir)
+# target_dir = /usr/tmp/;
+# time_backup = time.strftime(&#039;%Y-%m-%d-%H-%M-%S&#039;)
+# backupfile = target_dir + time_backup +&quot;.sql&quot;
+f  = open(&#039;backupfile.sql&#039;, &#039;w&#039;)
+f.write(&#039;STOP SLAVE; \n&#039;)
+#***********************************************************
+# SQL DUMP
+# f.write(os.system(&quot;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&quot;))
+# Subprocess will replace os.system
+f.write(subprocess.call(&#039;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&#039;,shell = True))
+# For Test Purposes
+#ret = subprocess.call(&#039;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&#039;,shell = True)
+	#if ret == 0
+		#print &quot;success&quot;
+	#else
+		#print &quot;failure&quot;
+# Logging Info 
+logging.info(&quot;SQLDump complete&quot;)
+#***********************************************************
+f.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039;masterHost&#039;, \n&#039;)
+f.write(&#039;MASTER_PORT = masterPort, \n&#039;)
+f.write(&#039;MASTER_USER = masterUser, \n&#039;)
+f.write(&#039;MASTER_PASSWORD=masterPassword, \n&#039;)
+# Info from MASTER SHOW STATUS
+f.write(&#039;MASTER_LOG_FILE= masterFile, \n&#039;)
+f.write(&#039;MASTER_LOG_POS=  masterPOS, \n&#039;)
+logging.info(&quot;Synching with Master complete&quot;)
+f.write(&#039;START SLAVE; \n&#039;)
+f.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+
+# SCP File to slave tmp dir
+# os.system(&quot;scp backupfile.sql SLAVE_USER@SERVER:PATH&quot;)
+os.system(&quot;scp backupfile.sql mani@localhost:/home/mani&quot;)
+# Need Db Connectivity in Slave?
+# We can just easily just dump the file into the Slave
+dbSlaveCon = MySQLdb.connect(host=slaveHost,user=slaveUser, passwd=slavePassword, port=slavePort)
+cur = dbSlaveCon.cursor()
+for line in open(&#039;/usr/tmp/backupfile.sql&#039;)
+	cur.execute(line)
+
+
+
+
+</pre>
+
+<p>
+Version 3
+</p>
+<pre class="code">#!/usr/bin/python
+&quot;&quot;&quot;Synchs with Master with Slave
+&quot;&quot;&quot;
+# Imports
+import os
+import subprocess
+import MySQLdb
+import tempfile
+import logging
+
+__author__ = &quot;Mani&quot;
+__license__ = &quot;GPL&quot;
+__version__ = &quot;1.0.0&quot;
+__maintainer__ = &quot;Mani&quot;
+__email__ = &quot;mani.ali@unb.ca&quot;
+__status__ = &quot;Development&quot;
+
+
+# Get Master Host Info
+masterHost = raw_input(&quot;Enter Master Host: &quot;)
+masterPort = raw_input(&quot;Enter Master Port: &quot;)
+masterUser = raw_input(&quot;Enter Master User: &quot;)
+masterPassword = raw_input(&quot;Enter Master Password&quot;)
+
+# Get Slave Host Info
+slaveHost = raw_input(&quot;Enter Slave Host: &quot;)
+slavePort = raw_input(&quot;Enter Slave Port: &quot;)
+slaveUser = raw_input(&quot;Enter Slave User: &quot;)
+slavePassword = raw_input(&quot;Enter Slave Password&quot;)
+
+# Start Logging
+# &quot;basicConfig()&quot; method to login the info to the file.
+logging.basicConfig(
+					level=	logging.DEBUG,
+					format=&#039;%(asctime)s - %(levelname)s - %(message)s&#039;,
+                    filename=&#039;/home/mani/vre_synch.txt&#039;
+                   )
+
+# master_CONN = &quot;-u${masterUser} -p${masterPassword}&quot;
+dbMasterCon = MySQLdb.connect(host=masterHost,user=masterUser, passwd=masterPassword, port=masterPort)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+# cur.execute(&quot;SHOW MASTER STATUS&quot;)
+# From here we need File and Position
+# ROWS are File, Position
+# Print Column 1
+#masterFile = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print 1}&#039;
+# Print Column 2
+#masterPOS  = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print 2}&#039; 
+# You don`t want to run same command twice
+
+# masterFile = cur.execute(&#039;SHOW MASTER STATUS&#039;)
+#/////////////////////////////////////////////////////
+cur.execute(&quot;SHOW MASTER STATUS&quot;)
+# Retrieve next row of a query result
+values = cur.fetchone()
+masterFile, masterPOS = values.split(&quot; | &quot;)[0:2] 
+#/////////////////////////////////////////////////////
+
+# AWK Multiple Outputs
+# awk -F, &#039;{print $1, $2}&#039;
+# Multiple Assignments
+# masterFile, masterPOS = cur.execute(&quot;SHOW MASTER STATUS&quot;)| awk&#039;{print $1, $2}&#039;
+
+# CREATE TMP File
+
+# tempdir = tempfile.gettempdir()
+# f = tempfile.NamedTemporaryFile(dir = tempdir)
+# target_dir = /usr/tmp/;
+# time_backup = time.strftime(&#039;%Y-%m-%d-%H-%M-%S&#039;)
+# backupfile = target_dir + time_backup +&quot;.sql&quot;
+f  = open(&#039;backupfile.sql&#039;, &#039;w&#039;)
+f.write(&#039;STOP SLAVE; \n&#039;)
+#***********************************************************
+# SQL DUMP
+# f.write(os.system(&quot;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&quot;))
+# Subprocess will replace os.system
+f.write(subprocess.call(&#039;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&#039;,shell = True))
+# For Test Purposes
+#ret = subprocess.call(&#039;mysqldump -u masterUser -p masterPassword --all-database --add-drop-table --add-drop-database&#039;,shell = True)
+	#if ret == 0
+		#print &quot;success&quot;
+	#else
+		#print &quot;failure&quot;
+# Logging Info 
+logging.info(&quot;SQLDump complete&quot;)
+#***********************************************************
+f.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039;masterHost&#039;, \n&#039;)
+f.write(&#039;MASTER_PORT = masterPort, \n&#039;)
+f.write(&#039;MASTER_USER = masterUser, \n&#039;)
+f.write(&#039;MASTER_PASSWORD=masterPassword, \n&#039;)
+# Info from MASTER SHOW STATUS
+f.write(&#039;MASTER_LOG_FILE= masterFile, \n&#039;)
+f.write(&#039;MASTER_LOG_POS=  masterPOS, \n&#039;)
+logging.info(&quot;Synching with Master complete&quot;)
+f.write(&#039;START SLAVE; \n&#039;)
+f.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+
+# SCP File to slave tmp dir
+# os.system(&quot;scp backupfile.sql SLAVE_USER@SERVER:PATH&quot;)
+os.system(&quot;scp backupfile.sql mani@localhost:/home/mani&quot;)
+# Need Db Connectivity in Slave?
+# We can just easily just dump the file into the Slave
+dbSlaveCon = MySQLdb.connect(host=slaveHost,user=slaveUser, passwd=slavePassword, port=slavePort)
+cur = dbSlaveCon.cursor()
+for line in open(&#039;/usr/tmp/backupfile.sql&#039;)
+	cur.execute(line)
+
+
+
+
+</pre>
+
+<p>
+Third Script
+</p>
+<pre class="code">#!/usr/bin/python
+import os
+import subprocess
+import subprocess as sub
+import MySQLdb
+import tempfile
+import logging
+import shutil
+import datetime
+import tarfile
+
+#OPERATIONS
+MYSQL_DUMP = &quot;mysqldump&quot;
+
+# MASTER DATA
+masterHost   = &#039;127.0.0.1&#039;
+masterUser   = &#039;root&#039;
+masterPasswd = &#039;india611&#039;
+masterPort   = 3306
+
+# SLAVE DATA
+slaveHost    = &#039;127.0.0.1&#039;
+slavePort    = 3307
+slaveUser    = &#039;root&#039;
+slavePasswd  = &#039;india611&#039;
+
+logging.basicConfig(
+                    level=    logging.DEBUG,
+                    format=&#039;%(asctime)s - %(levelname)s - %(message)s&#039;,
+                    filename=&#039;/home/mani/vre_synch1.txt&#039;
+                   )
+#dbMasterCon = MySQLdb.connect(host=&#039;127.0.0.1&#039;, user=&#039;root&#039;, passwd=&#039;india611&#039;, port=3306)
+dbMasterCon = MySQLdb.connect(host= masterHost, user = masterUser, passwd = masterPasswd, port = masterPort)
+logging.info(&quot;DB Connected&quot;)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+showMaster = &#039;mysql -h 127.0.0.1 -P 3306 -u root -p --skip-column-names -e \&#039;SHOW MASTER STATUS;\&#039;&#039;
+p = os.popen(showMaster,&#039;r&#039;, 1)
+str1 = p.read()
+str2 = str1.split()
+masterFile = str2[0]
+masterPOS  = str2[1]
+f = tempfile.mktemp()
+tempfile = open(f, &#039;w&#039;)
+tempfile.write(&#039;STOP SLAVE; \n&#039;)
+#takeaDUMP = &#039;mysqldump -h 127.0.0.1 -P 3306 --all-database --add-drop-table --add-drop-database -u root -p&#039;
+takeaDUMP = &#039;mysqldump -h &#039;+ str(masterHost)+ &#039; -P &#039;+ str(masterPort) + &#039; --all-database --add-drop-table --add-drop-database &#039; + &#039;-u &#039; + str(masterUser) + &#039; -p&#039;
+#print takeaDUMP
+p1 = os.popen(takeaDUMP,&#039;r&#039;,1)
+strDUMP = p1.read()
+tempfile.write(strDUMP + &#039;\n&#039;)
+tempfile.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039; + str(masterHost) + &#039;\n&#039;)
+tempfile.write(&#039;MASTER_PORT = &#039;+ str(masterPort) + &#039;\n&#039;)
+tempfile.write(&#039;MASTER_USER = &#039;+ str(masterUser) + &#039;\n&#039;)
+tempfile.write(&#039;MASTER_PASSWORD = &#039;+ str(masterPasswd) + &#039;\n&#039;)
+tempfile.write(&#039;MASTER_LOG_FILE = &#039;+ masterFile + &#039;\n&#039; )
+tempfile.write(&#039;MASTER_LOG_POS = &#039;+ masterPOS + &#039;\n&#039; )
+tempfile.write(&#039;START SLAVE; \n&#039;)
+tempfile.close()
+#tar.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+#print f
+# SCP File to Slave 
+#os.system(&quot;scp f mani@localhost:/home/mani&quot;)
+filepath = f
+hostname = &quot;mani@localhost&quot;
+remote_path = &quot;/home/mani&quot;
+subprocess.call([&#039;scp&#039;, filepath, &#039;:&#039;.join([hostname,remote_path])])
+
+# SLAVE System
+#subprocess.call([&#039;ssh&#039;, &#039;-i&#039;, remote_user +&#039;@&#039;+remote_host,&#039;mysql -u root -p &#039;])
+#dbSlaveCon = MySQLdb.connect(host=slaveHost, user=slaveUser, passwd=slavePasswd, port=slavePort)
+#cur = dbSlaveCon.cursor()
+    #for line in open(&#039;&#039;)
+     #   cur.execute(line)
+#logging.info(&quot;Replication complete&quot;)
+remote_user = &#039;mani&#039;
+remote_host = &#039;localhost&#039;
+remote_pass = &#039;india611&#039;
+slavePort = &#039;3307&#039;
+#print &#039; &lt; /home/mani/&#039; + os.path.basename(f)  
+
+#subprocess.call([
+                #&#039;ssh&#039;+
+                # remote_user + &#039;@&#039; + remote_host,
+                # &#039;/usr/bin/mysql -h &#039; + remote_host + &#039;-P &#039; + slavePort + &#039;-u root -p&#039;+
+                # &#039; &lt; /home/mani/&#039; + os.path.basename(f)  
+               #])
+#tt = &#039;ssh &#039;+ remote_user + &#039;@&#039; + remote_host +&#039;mysql -h &#039; + remote_host + &#039; -P &#039; + slavePort + &#039; -u root -p&#039;+remote_pass+ &#039;&lt; /home/mani/&#039; + os.path.basename(f)             
+#print tt;
+#print os.path.basename(f)
+#tt = &#039;ssh &#039;+ remote_user + &#039;@&#039; + remote_host,&#039; mysql -h &#039; + remote_host + &#039; -P &#039; + slavePort + &#039; -u root -p&#039;+remote_pass+ &#039; &lt; /home/mani/&#039; + os.path.basename(f)  
+#print tt  
+
+tt = &#039;\&#039;mysql -h &#039; + &#039;127.0.0.1&#039; + &#039; -P &#039; + slavePort + &#039; -u root -p&#039;+remote_pass+ &#039; &lt; /home/mani/&#039; + os.path.basename(f) +&#039;\&#039;&#039;  
+print tt
+
+subprocess.call([
+                &#039;ssh &#039;+
+                 remote_user + &#039;@&#039; + remote_host, 
+                 tt  
+               ])
+</pre>
+
+<p>
+4th Script
+</p>
+<pre class="code">#!/usr/bin/python
+#!/usr/bin/env python
+# IMPORTS
+import os
+import subprocess
+# import subprocess as sub
+import MySQLdb
+import tempfile
+import logging
+# import shutil
+#import datetime
+# SSH2 prototcol
+import paramiko
+
+# METADATA
+__author__ = &quot;Chaudhry Usman Ali&quot;
+__license__ = &quot;GPL&quot;
+__version__ = &quot;1.0.0&quot;
+__maintainer__ = &quot;Chaudhry Usman Ali&quot;
+__email__ = &quot;mani.ali@unb.ca&quot;
+__status__ = &quot;Development&quot;
+
+#OPERATIONS
+MYSQL_DUMP = &quot;mysqldump&quot;
+
+# MASTER DATA
+masterHost   = &#039;127.0.0.1&#039;
+masterUser   = &#039;root&#039;
+masterPasswd = &#039;india611&#039;
+masterPort   = 3306
+
+# SLAVE DATA
+slaveHost    = &#039;127.0.0.1&#039;
+slavePort    = 3307
+slaveUser    = &#039;root&#039;
+slavePasswd  = &#039;india611&#039;
+
+# MYSQL ACCESS
+#mysql_root_auth_creds={}
+#mysql_root_auth_creds[&#039;local&#039;]=raw_input(&#039;Enter the local MySQL Root Password:&#039;)
+
+# REMOTE USER
+#remote_user_auth_creds={}
+#remote_host=raw_input(&#039;Enter the remote hostname:&#039;)
+#mysql_root_auth_creds[&#039;remote&#039;]=raw_input(&#039;Enter the remote MySQL Root Password:&#039;)
+#remote_user_auth_creds[&#039;user&#039;]=raw_input(&#039;Enter the remote SSH user to use:&#039;)
+#remote_user_auth_creds[&#039;key&#039;]=&#039;/home/jsanford/.ssh/passwordLessLoginKey&#039;
+#remote_user_auth_creds[&#039;key&#039;]=&#039;/home/mani/.ssh/passwordLessLoginKey&#039;
+# LOGGING
+logging.basicConfig(
+                    level= logging.DEBUG,
+                    format=&#039;%(asctime)s - %(levelname)s - %(message)s&#039;,
+                    filename=&#039;/home/mani/vre_synch1.txt&#039;
+                   )
+
+# Establish Master DB Connectivity
+dbMasterCon = MySQLdb.connect(host= masterHost, user = masterUser, passwd = masterPasswd, port = masterPort)
+logging.info(&quot;DB Connected&quot;)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+
+# SHOW MASTER STATUS - Grab masterFile and masterPOS for use in file to be sent to the Slave
+showMaster = &#039;mysql -h 127.0.0.1 -P 3306 -u root -p --skip-column-names -e \&#039;SHOW MASTER STATUS;\&#039;&#039;
+p = os.popen(showMaster,&#039;r&#039;, 1)
+str1 = p.read()
+str2 = str1.split()
+masterFile = str2[0]
+masterPOS  = str2[1]
+
+# Create Temporary file
+f = tempfile.mktemp()
+tempfile = open(f, &#039;w&#039;)
+tempfile.write(&#039;STOP SLAVE; \n&#039;)
+
+# SQL Dump
+takeaDUMP = &#039;mysqldump -h &#039;+ str(masterHost)+ &#039; -P &#039;+ str(masterPort) + &#039; --all-database --add-drop-table --add-drop-database &#039; + &#039;-u &#039; + str(masterUser) + &#039; -p&#039;
+
+# Push DUMP into the file
+p1 = os.popen(takeaDUMP,&#039;r&#039;,1)
+strDUMP = p1.read()
+tempfile.write(strDUMP + &#039;\n&#039;)
+
+# Push Instructions for the slave
+tempfile.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039; +&#039;\&#039;&#039;+ str(masterHost)+ &#039;\&#039;,&#039;+ &#039;\n&#039;)
+tempfile.write(&#039;MASTER_PORT = &#039;+ str(masterPort) +&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_USER = &#039;+ &#039;\&#039;&#039;+str(masterUser) +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_PASSWORD = &#039;+&#039;\&#039;&#039;+ str(masterPasswd) +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_LOG_FILE = &#039;+ &#039;\&#039;&#039;+masterFile +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039; )
+tempfile.write(&#039;MASTER_LOG_POS = &#039;+ masterPOS +&#039;;&#039;+ &#039;\n&#039; )
+tempfile.write(&#039;START SLAVE; \n&#039;)
+
+# Close file
+tempfile.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+
+filepath = f
+#hostname = &quot;mani@localhost&quot;
+hostname = &#039;127.0.0.1&#039;
+port = 22
+username = &#039;mani&#039;
+password = &#039;india611&#039;
+remote_path = &quot;/home/mani/Downloads/&quot;
+subprocess.call([&#039;scp&#039;, filepath, &#039;:&#039;.join([hostname,remote_path])])
+
+s = paramiko.SSHClient()
+#s.load_system_host_keys()
+# FORCE THE NO KEY USE POLICY
+#s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+s.connect(hostname, port, username, password)
+#command = &#039;\&#039;mysql -h 127.0.0.1 -P 3307 -u root -pindia611\&#039;&#039;+ &#039;&lt; /home/mani/Downloads/&#039;+os.path.basename(f)
+command = &#039;mysql -h 127.0.0.1 -P 3307 -u root -pindia611 &#039;+ &#039;&lt; /home/mani/Downloads/&#039;+os.path.basename(f)
+
+print command
+#stdin, stdout, stderr = s.exec_command(&#039;command&#039;)
+sh = s.get_transport().open_session()
+sh.exec_command(command)
+print &quot;exit status: %s&quot; % sh.recv_exit_status()
+#print stdout.readLines()
+
+s.close()
+# REMOTE CONNECTION CREDENTIALS
+#remote_user = &#039;mani&#039;
+#remote_host = &#039;localhost&#039;
+#remote_pass = &#039;india611&#039;
+#slavePort = &#039;3307&#039;
+#print os.path.basename(f)
+
+# SLAVE CONNECTIONx
+#tt = &#039;\&#039;mysql -h &#039; + &#039;127.0.0.1&#039; + &#039; -P &#039; + slavePort + &#039; -u root -p&#039;+remote_pass+ &#039; &lt; /home/mani/&#039; + os.path.basename(f) +&#039;\&#039;&#039;  
+#chh =  &#039;ssh &#039;+ remote_user + &#039;@&#039; + remote_host,tt   
+#print chh
+#cbb = &#039;ssh -L mani@127.0.0.1 &#039;+&#039;\&#039;mysql -h 127.0.0.1 -P 3307 -u root -pindia611\&#039;&#039; &#039; &lt; /home/mani/Downloads/&#039;+ os.path.basename(f)
+#print cbb
+#subprocess.call([
+#                &#039;ssh &#039;+
+#                 remote_user + &#039;@&#039; + remote_host, 
+#                tt  
+ #               cbb 
+ #              ])
+
+#*******************************************************************************************
+#tt = &#039;\&#039;mysql -h &#039; + &#039; -P &#039; + slavePort + &#039; -u root -p&#039;+remote_pass+ &#039; &lt; /home/mani/&#039; + os.path.basename(f) +&#039;\&#039;&#039;
+#just = &#039;ssh -L &#039;+ &#039;3306:127.0.0.1:3307 &#039;+ remote_user + &#039;@&#039; + remote_host,tt
+#print just
+#subprocess.call([
+#                &#039;ssh -L &#039;+ &#039;3306:127.0.0.1:3307 &#039;+ 
+#                 remote_user + &#039;@&#039; + remote_host,
+#                 tt
+#               ])
+</pre>
+
+<p>
+5th Script
+</p>
+<pre class="code">#!/usr/bin/python
+
+# IMPORTS
+import os
+import subprocess
+import MySQLdb
+import tempfile
+import logging
+
+# METADATA
+__author__ = &quot;Chaudhry Usman Ali&quot;
+__license__ = &quot;GPL&quot;
+__version__ = &quot;1.0.0&quot;
+__maintainer__ = &quot;Chaudhry Usman Ali&quot;
+__email__ = &quot;mani.ali@unb.ca&quot;
+__status__ = &quot;Development&quot;
+
+#OPERATIONS
+MYSQL_DUMP = &quot;mysqldump&quot;
+
+# MASTER DATA
+masterHost   = &#039;127.0.0.1&#039;
+masterUser   = &#039;root&#039;
+masterPasswd = &#039;india611&#039;
+masterPort   = 3306
+
+# SLAVE DATA
+slaveHost    = &#039;127.0.0.1&#039;
+slavePort    = 3307
+slaveUser    = &#039;root&#039;
+slavePasswd  = &#039;india611&#039;
+
+# LOGGING
+logging.basicConfig(
+                    level= logging.DEBUG,
+                    format=&#039;%(asctime)s - %(levelname)s - %(message)s&#039;,
+                    filename=&#039;/home/mani/vre_synch1.txt&#039;
+                   )
+
+# Establish Master DB Connectivity
+dbMasterCon = MySQLdb.connect(host= masterHost, user = masterUser, passwd = masterPasswd, port = masterPort)
+logging.info(&quot;DB Connected&quot;)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+
+# SHOW MASTER STATUS - Grab masterFile and masterPOS for use in file to be sent to the Slave
+showMaster = &#039;mysql -h 127.0.0.1 -P 3306 -u root -p --skip-column-names -e \&#039;SHOW MASTER STATUS;\&#039;&#039;
+p = os.popen(showMaster,&#039;r&#039;, 1)
+str1 = p.read()
+str2 = str1.split()
+masterFile = str2[0]
+masterPOS  = str2[1]
+
+# Create Temporary file
+f = tempfile.mktemp()
+tempfile = open(f, &#039;w&#039;)
+tempfile.write(&#039;STOP SLAVE; \n&#039;)
+
+# SQL Dump
+takeaDUMP = &#039;mysqldump -h &#039;+ str(masterHost)+ &#039; -P &#039;+ str(masterPort) + &#039; --all-database --add-drop-table --add-drop-database &#039; + &#039;-u &#039; + str(masterUser) + &#039; -p&#039;
+
+# Push DUMP into the file
+p1 = os.popen(takeaDUMP,&#039;r&#039;,1)
+strDUMP = p1.read()
+tempfile.write(strDUMP + &#039;\n&#039;)
+
+# Push Instructions for the slave
+tempfile.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039; +&#039;\&#039;&#039;+ str(masterHost)+ &#039;\&#039;,&#039;+ &#039;\n&#039;)
+tempfile.write(&#039;MASTER_PORT = &#039;+ str(masterPort) +&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_USER = &#039;+ &#039;\&#039;&#039;+str(masterUser) +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_PASSWORD = &#039;+&#039;\&#039;&#039;+ str(masterPasswd) +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_LOG_FILE = &#039;+ &#039;\&#039;&#039;+masterFile +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039; )
+tempfile.write(&#039;MASTER_LOG_POS = &#039;+ masterPOS +&#039;;&#039;+ &#039;\n&#039; )
+tempfile.write(&#039;START SLAVE; \n&#039;)
+
+# Close file
+tempfile.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+
+filepath = f
+#hostname = &quot;mani@localhost&quot;
+hostname = &#039;127.0.0.1&#039;
+port = 22
+username = &#039;mani&#039;
+password = &#039;india611&#039;
+remote_path = &quot;/home/mani/Downloads/&quot;
+subprocess.call([&#039;scp&#039;, filepath, &#039;:&#039;.join([hostname,remote_path])])
+
+command = &#039;mysql -h 127.0.0.1 -P 3307 -u root -pindia611 &#039;+ &#039;&lt; /home/mani/Downloads/&#039;+os.path.basename(f)
+
+# Remote Connection 
+remote_user = &#039;mani&#039;
+remote_host = &#039;127.0.0.1&#039;
+
+rett = subprocess.call([
+                 &#039;ssh&#039;,
+                 #&#039;-i&#039;,
+                 remote_user+&#039;@&#039;+remote_host,
+                 command
+               ])
+
+print rett
+</pre>
+
+<p>
+With Key
+</p>
+<pre class="code">#!/usr/bin/python
+
+# IMPORTS
+import os
+import subprocess
+import MySQLdb
+import tempfile
+import logging
+
+# METADATA
+__author__ = &quot;Chaudhry Usman Ali&quot;
+__license__ = &quot;GPL&quot;
+__version__ = &quot;1.0.0&quot;
+__maintainer__ = &quot;Chaudhry Usman Ali&quot;
+__email__ = &quot;mani.ali@unb.ca&quot;
+__status__ = &quot;Development&quot;
+
+remote_user_auth_creds={}
+remote_user_auth_creds[&#039;key&#039;]=&#039;/home/mani/.ssh/rocknroll&#039;
+
+
+# OPERATIONS
+MYSQL_DUMP = &quot;mysqldump&quot;
+
+# CREDENTIALS
+#mysql_root_auth_creds = {}
+#remote_user_auth_creds = {}
+
+
+
+# MASTER DATA
+masterHost   = &#039;127.0.0.1&#039;
+masterUser   = &#039;root&#039;
+masterPasswd = &#039;india611&#039;
+masterPort   = 3306
+
+# SLAVE DATA
+slaveHost    = &#039;127.0.0.1&#039;
+slavePort    = 3307
+slaveUser    = &#039;root&#039;
+slavePasswd  = &#039;india611&#039;
+
+# LOGGING
+logging.basicConfig(
+                    level= logging.DEBUG,
+                    format=&#039;%(asctime)s - %(levelname)s - %(message)s&#039;,
+                    filename=&#039;/home/mani/vre_synch1.txt&#039;
+                   )
+
+# Establish Master DB Connectivity
+dbMasterCon = MySQLdb.connect(host= masterHost, user = masterUser, passwd = masterPasswd, port = masterPort)
+logging.info(&quot;DB Connected&quot;)
+cur = dbMasterCon.cursor()
+cur.execute(&quot;RESET MASTER&quot;)
+cur.execute(&quot;FLUSH TABLES WITH READ LOCK&quot;)
+
+# SHOW MASTER STATUS - Grab masterFile and masterPOS for use in file to be sent to the Slave
+showMaster = &#039;mysql -h 127.0.0.1 -P 3306 -u root -p --skip-column-names -e \&#039;SHOW MASTER STATUS;\&#039;&#039;
+p = os.popen(showMaster,&#039;r&#039;, 1)
+str1 = p.read()
+str2 = str1.split()
+masterFile = str2[0]
+masterPOS  = str2[1]
+
+# Create Temporary file
+f = tempfile.mktemp()
+tempfile = open(f, &#039;w&#039;)
+tempfile.write(&#039;STOP SLAVE; \n&#039;)
+
+# SQL Dump
+takeaDUMP = &#039;mysqldump -h &#039;+ str(masterHost)+ &#039; -P &#039;+ str(masterPort) + &#039; --all-database --add-drop-table --add-drop-database &#039; + &#039;-u &#039; + str(masterUser) + &#039; -p&#039;
+
+# Push DUMP into the file
+p1 = os.popen(takeaDUMP,&#039;r&#039;,1)
+strDUMP = p1.read()
+tempfile.write(strDUMP + &#039;\n&#039;)
+
+# Push Instructions for the slave
+tempfile.write(&#039;CHANGE MASTER TO MASTER_HOST = &#039; +&#039;\&#039;&#039;+ str(masterHost)+ &#039;\&#039;,&#039;+ &#039;\n&#039;)
+tempfile.write(&#039;MASTER_PORT = &#039;+ str(masterPort) +&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_USER = &#039;+ &#039;\&#039;&#039;+str(masterUser) +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_PASSWORD = &#039;+&#039;\&#039;&#039;+ str(masterPasswd) +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039;)
+tempfile.write(&#039;MASTER_LOG_FILE = &#039;+ &#039;\&#039;&#039;+masterFile +&#039;\&#039;&#039;+&#039;,&#039;+&#039;\n&#039; )
+tempfile.write(&#039;MASTER_LOG_POS = &#039;+ masterPOS +&#039;;&#039;+ &#039;\n&#039; )
+tempfile.write(&#039;START SLAVE; \n&#039;)
+
+# Close file
+tempfile.close()
+cur.execute(&quot;UNLOCK TABLES&quot;)
+
+filepath = f
+#hostname = &quot;mani@localhost&quot;
+hostname = &#039;127.0.0.1&#039;
+port = 22
+username = &#039;mani&#039;
+password = &#039;india611&#039;
+remote_path = &quot;/home/mani/Downloads/&quot;
+subprocess.call([&#039;scp&#039;, filepath, &#039;:&#039;.join([hostname,remote_path])])
+
+command = &#039;mysql -h 127.0.0.1 -P 3307 -u root -pindia611 &#039;+ &#039;&lt; /home/mani/Downloads/&#039;+os.path.basename(f)
+
+# Remote Connection 
+remote_user = &#039;mani&#039;
+remote_host = &#039;127.0.0.1&#039;
+
+rett = subprocess.call([
+                 &#039;ssh&#039;,
+                 &#039;-i&#039;,remote_user_auth_creds[&#039;key&#039;],
+                 remote_user+&#039;@&#039;+remote_host,
+                 command
+               ])
+
+print rett
+</pre>
+
+</div>

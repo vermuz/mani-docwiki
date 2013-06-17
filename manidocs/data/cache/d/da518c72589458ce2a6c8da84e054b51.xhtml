@@ -1,0 +1,127 @@
+
+<h1 class="sectionedit1" id="integrating_with_the_theme_system">Integrating with the theme system</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Integrating with the theme system" [1-49] -->
+<h2 class="sectionedit2" id="spy_glassinfo">spy_glass.info</h2>
+<div class="level2">
+<pre class="code">name = Spy Glass
+description = Serious spy business
+core = 7.x</pre>
+
+</div>
+<!-- EDIT2 SECTION "spy_glass.info" [50-154] -->
+<h2 class="sectionedit3" id="spy_glassmodule">spy_glass.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/**
+ * Implements hook_menu().
+ */
+function spy_glass_menu() {
+  $items = array();
+  $items[&#039;node/%node/spy_glass&#039;] = array(
+    &#039;title&#039; =&gt; &#039;Spy Glass&#039;,
+    &#039;description&#039; =&gt; &#039;Take a closer look&#039;,
+    &#039;page callback&#039; =&gt; &#039;spy_glass_page&#039;,
+    &#039;page arguments&#039; =&gt; array(1),
+    &#039;access callback&#039; =&gt; &#039;node_access&#039;,
+    &#039;access arguments&#039; =&gt; array(&#039;view&#039;, 1),
+    &#039;type&#039; =&gt; MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function spy_glass_theme() {
+  return array(
+    &#039;spy_glass_item&#039; =&gt; array(
+      &#039;arguments&#039; =&gt; array(&#039;title&#039; =&gt; NULL, &#039;data&#039; =&gt; NULL),
+      &#039;template&#039; =&gt; &#039;spy-glass-item&#039;,
+    ),
+    /** for theme function
+    &#039;spy_glass_item&#039; =&gt; array(
+      &#039;variables&#039; =&gt; array(&#039;item&#039; =&gt; NULL),
+    ),
+    */
+  );
+}
+
+function spy_glass_page($node) {
+  $information = _spy_glass_serious_spying_business($node);
+  
+  $content = array();
+  foreach ($information as $item) {
+    $content[] = array(
+      &#039;#type&#039; =&gt; &#039;markup&#039;,
+      &#039;#markup&#039; =&gt; theme(&#039;spy_glass_item&#039;, $item),
+    );
+  }
+  return $content;
+}
+
+function spy_glass_preprocess_spy_glass_item(&amp;$variables) {
+  $variables[&#039;title&#039;] = check_plain($variables[&#039;title&#039;]);
+  $variables[&#039;data&#039;] = check_plain($variables[&#039;data&#039;]);
+  $variables[&#039;module_name&#039;] = t(&#039;Spy Glass&#039;);
+}
+
+/*
+function theme_spy_glass_item($variables) {
+  $output = &#039;&lt;p&gt;&#039;;
+  $output .= &#039;&lt;strong&gt;&#039; . check_plain($variables[&#039;title&#039;]) . &#039;&lt;/strong&gt;&lt;br/&gt;&#039;;
+  $output .= check_plain($variables[&#039;data&#039;]);
+  $output .= &#039;&lt;/p&gt;&#039;;
+  return $output;
+}
+*/
+
+/**
+ * Collecting some super secret information about this node.
+ */
+function _spy_glass_serious_spying_business($node) {
+  $information = array();
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Title Character Count&#039;),
+    &#039;data&#039; =&gt; t(&#039;There are @num characters in the $node-&gt;title.&#039;, array(&#039;@num&#039; =&gt; strlen($node-&gt;title))),
+  );
+  $seconds = $node-&gt;changed - $node-&gt;created;
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Timestamp Differences&#039;),
+    &#039;data&#039; =&gt; t(&#039;The $node-&gt;changed timestamp is @seconds different from the $node-&gt;created timestamp.&#039;, array(&#039;@seconds&#039; =&gt; $seconds)),
+  );
+  if ($node-&gt;translate == 0) {
+    $information[] = array(
+      &#039;title&#039; =&gt; t(&#039;Translated?&#039;),
+      &#039;data&#039; =&gt; t(&#039;This node is NOT translated into pirate speak, hope you know English.&#039;),
+    );
+  }
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Hash&#039;),
+    &#039;data&#039; =&gt; md5($node-&gt;title),
+  );
+  // Example of potential user input data that needs to be sanitized.
+  // Instead of hard-coding this, it could be getting loaded from the db
+  // where a user has entered the info.
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Nefarious data&#039;),
+    &#039;data&#039; =&gt; &#039;&lt;a href=&quot;#&quot; onclick=&quot;alert(\&#039;Pwned!\&#039;); return false;&quot;&gt;click me&lt;/a&gt;&#039;,
+  );
+  return $information;
+}</pre>
+
+</div>
+<!-- EDIT3 SECTION "spy_glass.module" [155-2938] -->
+<h2 class="sectionedit4" id="spy-glass-itemtplphp">spy-glass-item.tpl.php</h2>
+<div class="level2">
+<pre class="code">&lt;p&gt;
+  &lt;strong&gt;&lt;?php print $title; ?&gt;&lt;/strong&gt;&lt;br/&gt;
+  &lt;?php print $data; ?&gt;
+  &lt;em&gt;&lt;?php print $module_name; ?&gt;&lt;/em&gt;
+&lt;/p&gt;</pre>
+
+</div>
+<!-- EDIT4 SECTION "spy-glass-item.tpl.php" [2939-] -->

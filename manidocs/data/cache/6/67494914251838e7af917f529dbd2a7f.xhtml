@@ -1,0 +1,998 @@
+
+<h1 class="sectionedit1" id="drupal_module_development">Drupal Module Development</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Drupal Module Development" [1-41] -->
+<h1 class="sectionedit2" id="drupal_request_processing">Drupal Request Processing</h1>
+<div class="level1">
+
+<p>
+request a SERVER
+htaccess rewrites rules, for incoming request to something like index.php
+</p>
+<pre class="code">                                               -    bootstrap.inc        
+                                               -    menu.inc
+           Index.php --------------------------&gt;    random.inc
+           - loads core functionality          -    mysql
+           - figure out what site to load      -    user cookies
+           ||||||||||||||||
+           TALK TO MODULES
+</pre>
+
+</div>
+<!-- EDIT2 SECTION "Drupal Request Processing" [42-567] -->
+<h1 class="sectionedit3" id="devel">Devel</h1>
+<div class="level1">
+
+<p>
+Enable devel module and blocks. In the execute php block type,
+</p>
+<pre class="code">global $user;
+print_r($user);</pre>
+<pre class="code">print_r means print recursively.
+Drupal7 equivalent is debug($user).
+Drupal set message (dsm) - dsm($user) - uses kromo library.
+Assign variables         - dsm($user,&#039;variable1&#039;)
+Assign variable          - dsm($user, &#039;My String&#039;)
+Kromo print recursive    - kpr($user) - same as print recursive (print_r)</pre>
+
+</div>
+<!-- EDIT3 SECTION "Devel" [568-1018] -->
+<h1 class="sectionedit4" id="site_structure">Site Structure</h1>
+<div class="level1">
+<pre class="code">                                              Site
+                                        ------ |----------
+                                       |                 |
+                                      all             default
+                                  ---  | ----
+                                  |         |
+                             - modules -   themes
+                            |           |
+                           contrib    custom
+                                        |
+                                     -demo-
+                                   |       |
+                               demo.info   demo.module       </pre>
+
+</div>
+<!-- EDIT4 SECTION "Site Structure" [1019-1717] -->
+<h1 class="sectionedit5" id="hook_api">Hook API</h1>
+<div class="level1">
+
+<p>
+Drupal modules interact by responding to events. Modules should not touch core, rather they should manipulate triggered events.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "Hook API" [1718-1870] -->
+<h2 class="sectionedit6" id="hook_permission">Hook Permission</h2>
+<div class="level2">
+
+<p>
+Define user permissions.
+</p>
+
+<p>
+This hook can supply permissions that the module defines, so that they can be selected on the user permissions page and used to grant or restrict access to actions the module performs.
+</p>
+<pre class="code">function MODULE-NAME_permission(--parameters--)
+{
+
+}</pre>
+
+</div>
+<!-- EDIT6 SECTION "Hook Permission" [1871-2180] -->
+<h2 class="sectionedit7" id="hook_form_alter">Hook Form Alter</h2>
+<div class="level2">
+
+<p>
+hook_form_alter deals with alterations before a form is rendered.  
+</p>
+
+</div>
+<!-- EDIT7 SECTION "Hook Form Alter" [2181-2281] -->
+<h2 class="sectionedit8" id="hook_node_view">Hook Node View</h2>
+<div class="level2">
+
+<p>
+Act on a node that is being assembled before rendering. node_view is run when node is being viewed.
+Check for associated information.
+</p>
+<pre class="code">krumo($node);</pre>
+
+</div>
+<!-- EDIT8 SECTION "Hook Node View" [2282-2475] -->
+<h2 class="sectionedit9" id="module_invoke_all">Module Invoke All</h2>
+<div class="level2">
+
+<p>
+When modules with APIs (views) want data to be amended while it is still being processed. So module_invoke_all asks, before my containing function should be considered done, is there any other module that wants to participate with this data?
+</p>
+<pre class="code">
+                                                           ---  Module 1
+                                    module_invoke_all      ---  Module 2
+                                                           ---  Module 3</pre>
+
+</div>
+<!-- EDIT9 SECTION "Module Invoke All" [2476-2985] -->
+<h2 class="sectionedit10" id="return_array">Return Array</h2>
+<div class="level2">
+<pre class="code">return array(
+              &#039;key&#039; =&gt; t(&#039;value&#039;),
+            );</pre>
+
+<p>
+Return array can contain arrays with in it containing key values.
+In the above code t means translatable.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "Return Array" [2986-3198] -->
+<h2 class="sectionedit11" id="add_content">Add Content</h2>
+<div class="level2">
+
+<p>
+Fields are renderable arrays. We can add content. So, when we make a field, we have to make it an array and define its properties.
+</p>
+<pre class="code">$node -&gt; content[&#039;demo_field&#039;] = array(
+                &#039;#type&#039;   =&gt; &#039;markup&#039;,
+                &#039;#markup&#039; =&gt; &#039;&lt;p&gt;.t(&#039;this is done&#039;).&lt;/p&gt;&#039;,
+                &#039;#weight&#039; =&gt; -10,
+                );
+krumo($node);</pre>
+<ul>
+<li class="level1"><div class="li"> markup means text</div>
+</li>
+<li class="level1"><div class="li"> weight shows order to show in form</div>
+</li>
+<li class="level1"><div class="li"> krumo shows values that we assigned.</div>
+</li>
+<li class="level1"><div class="li"> This field shows up at the top and displays this is done.</div>
+</li>
+</ul>
+
+<p>
+Let us now add a list to our site,
+</p>
+<pre class="code">$node -&gt; content[&#039;demo-list&#039;] = array(
+                &#039;#items&#039;  =&gt; array(&#039;green&#039;,&#039;red&#039;,&#039;blue&#039;),
+                &#039;#theme&#039;  =&gt; &#039;item_list&#039;,
+                &#039;#weight&#039; =&gt; -9,
+                );</pre>
+<ul>
+<li class="level1"><div class="li"> This comes after -10</div>
+</li>
+<li class="level1"><div class="li"> displays the list in a list like </div>
+</li>
+<li class="level1"><div class="li"> theme is style</div>
+</li>
+</ul>
+<pre class="code">         - green
+         - red
+         - blue</pre>
+
+</div>
+<!-- EDIT11 SECTION "Add Content" [3199-4130] -->
+<h1 class="sectionedit12" id="drupal_menu_system">Drupal Menu System</h1>
+<div class="level1">
+
+<p>
+Integrating into Drupal menu system via hook_menu. 
+</p>
+<ul>
+<li class="level1"><div class="li"> We can add a new navigation item. </div>
+</li>
+<li class="level1"><div class="li"> Drupal uses $items (Associative Array). </div>
+</li>
+<li class="level1"><div class="li"> When Drupal finds the requested page and after checking user permissions</div>
+</li>
+<li class="level1"><div class="li"> Drupal uses page callback to call the relevant function to produce output.</div>
+</li>
+</ul>
+<pre class="code">function mymodule_menu() {
+        $item[&#039;about&#039;] =&gt; array(
+               &#039;title&#039;         =&gt; &#039;About Us&#039;,
+               &#039;description&#039;   =&gt; &#039;A Description&#039;,
+               &#039;page callback&#039; =&gt; &#039;mymodule_about&#039;,
+              access callback&#039; =&gt; array(&#039;access content&#039;),
+              );
+        return $item;
+}</pre>
+
+<p>
+So, lets build a menu item to show in the Navigation bar,
+</p>
+<pre class="code">function mymodule_menu()
+{
+   $items = array();
+   $items[&#039;magic&#039;] = array(
+               &#039;title&#039; =&gt; &#039;little magic&#039;,
+       &#039;page callback&#039; =&gt; &#039;menu_magic_basic&#039;,
+     &#039;access callback&#039; =&gt; &#039;user_access&#039;,
+   
+   );
+   
+}
+
+function menu_magic_basic()
+{
+  $content = array();
+  $content[&#039;raw_markup&#039;] = array(
+        &#039;#type&#039;   =&gt; &#039;markup&#039;,
+        &#039;#markup&#039; =&gt; &#039;&lt;p&gt;True Magic&lt;/p&gt;&#039;,
+  );
+  return $content;
+}</pre>
+
+<p>
+Note:
+</p>
+<ul>
+<li class="level1"><div class="li"> You don`t need a translate t() for meny</div>
+</li>
+<li class="level1"><div class="li"> <abbr title="Uniform Resource Locator">URL</abbr> –&gt; $items[&#039;magic&#039;] – <a href="http://www.example.com/magic" class="urlextern" title="http://www.example.com/magic"  rel="nofollow">www.example.com/magic</a></div>
+</li>
+<li class="level1"><div class="li"> access callback can return true or false</div>
+</li>
+<li class="level1"><div class="li"> Drupal decides if user viewing has permission to view page</div>
+</li>
+<li class="level1"><div class="li"> page callback is the function to call when someone navigates to <a href="http://www.example.com/magic" class="urlextern" title="http://www.example.com/magic"  rel="nofollow">www.example.com/magic</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT12 SECTION "Drupal Menu System" [4131-5566] -->
+<h2 class="sectionedit13" id="page_callback">Page Callback</h2>
+<div class="level2">
+
+<p>
+It maps <abbr title="Uniform Resource Locator">URL</abbr> to the PHP function, which is defined in the module. 
+</p>
+<pre class="code">function mymodule_menu()
+{
+    $items[&#039;about&#039;] = array(
+         &#039;title&#039;            =&gt; &#039;About us&#039;,
+         &#039;description&#039;      =&gt; &#039;description&#039;,
+         &#039;page callback&#039;    =&gt;  module_about,
+         &#039;access arguments&#039; =&gt;  array(&#039;access content&#039;), 
+    );
+  return $items;
+}
+
+//****************************************************************************
+access callback  - Check if user is allowed to be here.
+access arguments - List of args that we want to pass to the callback function
+which means, 
+            user_access(&#039;access content&#039;) is access content checked under 
+            this logged in user.
+Note: Drupal will call user_access automatically so it is optional
+//****************************************************************************
+
+
+function module_about()
+{
+}</pre>
+
+<p>
+We use callback to call a function to build contents of a page when you click an item in the menu. 
+</p>
+<ul>
+<li class="level1"><div class="li"> If there is no content - 404 is served.</div>
+</li>
+<li class="level1"><div class="li"> If there is content    - Drupal wraps it in DRUPAL Theme.</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT13 SECTION "Page Callback" [5567-6671] -->
+<h2 class="sectionedit14" id="using_url_arguments_in_page_callback_functions">Using URL Arguments in Page Callback Functions</h2>
+<div class="level2">
+
+<p>
+If we want to give the user the ability to pass something in the query string to change the output from the callback, for example - 
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="http://localhost/mani-drupal/magic/anything" class="urlextern" title="http://localhost/mani-drupal/magic/anything"  rel="nofollow">http://localhost/mani-drupal/magic/anything</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://localhost/mani-drupal/magic/joe" class="urlextern" title="http://localhost/mani-drupal/magic/joe"  rel="nofollow">http://localhost/mani-drupal/magic/joe</a>. </div>
+</li>
+</ul>
+
+<p>
+These values decide the response of the system.
+</p>
+
+<p>
+<em>We can also change the ability of our menu link to show up as a tab rather than a link in the navigation.</em>
+</p>
+<pre class="code">function menu_magic_menu() {
+       $items = array();
+       
+       $items[&#039;magic&#039;] = array(
+      &#039;title&#039;            =&gt; &#039;A little magic&#039;,
+      &#039;page callback&#039;    =&gt; &#039;menu_magic_basic&#039;,
+      &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+      );
+      //*******************************************************************
+      // So now lets give the URL a wildcard character and let them
+      // enter anything they want here. This value can be passed
+      // to our callback function to display an appropriate response.
+      
+      // Whatever is in page arguments gets passed to the page callback function
+      // so when the user types magic/joe , argument joe is at position 1 and hence
+      // page arguments - array(1)
+      // The trick is to remember that PHP starts counting from zero.
+      
+      // If page arguments is passed an array(1,2) then it will receive
+      // two arguments i.e. magic and whatever is passed in %
+      
+      // Another argument in this setup is the **file** argument through which,
+      // we can specify that the page callback function can be found in the
+      // following file. menu_magic_extra.inc is loaded when it is needed.
+      //*******************************************************************
+      $items[&#039;magic/%&#039;] = array(
+      &#039;title&#039;           =&gt; &#039;Even more magical&#039;,
+      &#039;page callback&#039;   =&gt; &#039;menu_magic_extra&#039;,
+      &#039;page arguments&#039;  =&gt;  array(1),
+      &#039;access arguments&#039;=&gt; array(&#039;access content&#039;),
+      &#039;file&#039;            =&gt; menu_magic_extra.inc
+      );
+     return $items;
+}</pre>
+
+<p>
+Now if I am thinking what the user will enter in the address bar, i.e. magic/joe or magic/123. Drupal provides a special character called the wildcard ”%”.
+</p>
+
+<p>
+In the separate file menu_magic_extra.inc let us implement the page callback function,
+</p>
+<pre class="code">function menu_magic_extra($wildcard) {
+          // We want to use the passed content and display it
+          // We want to use a render-able array
+          $content = array(
+            &#039;#type&#039;  = &#039;markup&#039;,          
+            &#039;#markup&#039;= &#039;&lt;p&gt;&#039;.t(&#039;The wildcard contains the value &quot;%wildcard&quot;.&#039;,array(&#039;%wildcard&#039;=$wildcard)).&#039;&lt;p&gt;&#039;,
+          );
+          return $content;
+}</pre>
+
+<p>
+Instead of just adding items to the navigation, we want to be able to add items to the tabs.
+</p>
+<pre class="code">        $items[&#039;user/%/magic&#039;] = array(
+        &#039;title&#039;            =&gt; &#039;Magic&#039;,
+        &#039;description&#039;      =&gt; &#039;Magical magic for users&#039;,
+        &#039;page callback&#039;    =&gt; &#039;menu_magic_user_tab&#039;,
+        &#039;page arguments&#039;   =&gt; array(1),
+        &#039;access callback&#039;  =&gt; &#039;user_access&#039;,
+        &#039;access arguments&#039; =&gt; array(&#039;administer users&#039;),
+        &#039;file&#039;             =&gt; &#039;menu_magic.user.inc&#039;,
+        &#039;type&#039;             =&gt; MENU_LOCAL_TASK,
+        );
+        //return $items; </pre>
+
+<p>
+Notes,
+</p>
+<pre class="code">/user/%  =&gt; user_id
+page arguments will receive whatever the value is passed in /user/% wildcard.
+type property decides, what type of menu item this is.</pre>
+
+<p>
+Let us also implement the callback function,
+</p>
+<pre class="code">     function menu_magic_user_tab($wildcard)
+     {
+       if (is_numeric($wildcard) &amp;&amp; ($account = user_load($wildcard)))
+       {
+          return array(
+               &#039;#type&#039;   =&gt; &#039;markup&#039;,
+               &#039;#markup&#039; =&gt; t(&quot;%username is totally awesome.&quot;, array(&#039;%username&#039; =&gt; $account-&gt;name)),
+          );
+       }
+       else{
+          return drupal_not_found();
+       }
+     }</pre>
+<pre class="code">First check if wildcard is a numeric value . Use Drupal`s user_load function which takes one argument a user_id and then 
+load a user object from the database,
+
+Once, the user id is loaded then make it available to $account. So, if we are able to find the userid from the database, then
+Show message that username is awesome, replace username with user account name from database.
+
+drupal_not_found will display a 404 page for us.</pre>
+
+</div>
+<!-- EDIT14 SECTION "Using URL Arguments in Page Callback Functions" [6672-10976] -->
+<h2 class="sectionedit15" id="contextual_menu_links_and_menu_autoloaders">Contextual Menu Links and Menu Autoloaders</h2>
+<div class="level2">
+
+<p>
+When we scroll our a page in drupal, we see a machine wheel sign on hover. That is contextual link widget.
+<a href="https://drupal.org/files/contextuallinks.jpg" class="urlextern" title="https://drupal.org/files/contextuallinks.jpg"  rel="nofollow">https://drupal.org/files/contextuallinks.jpg</a>
+</p>
+
+<p>
+We shall now add links to the contextual links widget. Contextual links are visible both in nodes and blocks.
+</p>
+
+<p>
+Now we will add a contextual link that will sit pretty for all nodes on our site.
+</p>
+
+<p>
+<strong>Autoloaders</strong>
+</p>
+
+<p>
+A mechanism that allows us to use wildcards and a bit of shorthand in order to perform some tasks like,
+Loading the node object from the database, without having to rewrite the same code every single time.
+</p>
+
+<p>
+In the menu_magic code, lets create a new menuitem,
+</p>
+<pre class="code">//********************************************************************
+// When we want to define something as a contextual link, we must define 
+it as a LOCAL_TASK -&gt; this will show in the tabs
+
+Now, to convert this new tab into a contextual link, we use context
+property - with context we decide where we want that tab to show up.
+
+We will be to see both the tab and the contextual link in the end
+defining it in the context
+
+Following statement is inclusive OR which means, turn on both of these
+features,
+&#039;context&#039;         =&gt;  MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE
+//********************************************************************
+
+$items[&#039;node/%/magic&#039;] = array(
+	  &#039;title&#039;           =&gt;  &#039;Magic&#039;,
+	  &#039;description&#039;     =&gt;  &#039;Do amazing&#039;,
+	  &#039;page callback&#039;   =&gt;  &#039;menu_magic_node_content&#039;,
+	  &#039;page arguments&#039;  =&gt;  array(1),
+	  &#039;access arguments&#039;=&gt;  array(&#039;access content&#039;),
+	  &#039;file&#039;            =&gt;  &#039;menu_magic_context.inc&#039;
+	  &#039;type&#039;            =&gt;  MENU_LOCAL_TASK,
+	  &#039;context&#039;         =&gt;  MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+	  );
+
+return $items;</pre>
+
+<p>
+We will not also implement the callback function,
+</p>
+<pre class="code">//Notes*******************************************************
+We will use incoming node id to load the contents of the node.
+The node id is part of the page arguments which we grab from the
+incoming address node/%/magic
+
+We will also turn the content upside down.
+
+
+   function menu_magic_node_context($nid)
+   {
+   	  Check if node is numeric and can be loaded from the database
+   	  if(is_numeric($nid) &amp;&amp; $node = node_load($nid))
+   	  {
+         //**************************************************
+         Use the magicify function to invert body of the node
+         The value of the body element of a node is body[&#039;und&#039;][0][&#039;value&#039;]
+         We can get this value from the devel module.
+
+         $text = _menu_magicify($node-&gt;body[&#039;und&#039;][0][&#039;value&#039;]);
+
+         // Build an array to return the text
+         // Returning a renderable array
+         $output = array(
+               &#039;#type&#039;   =&gt; &#039;markup&#039;,
+               &#039;#markup&#039; =&gt; $text,
+         );
+         return $output;
+
+   	  }
+   	  else
+   	  {
+         return drupal_not_found();
+   	  }
+
+   }
+
+   function _menu_magicify($text)
+   {
+     $subsitutions = array(
+        &#039;&#039; =&gt; &#039;&#039;,
+     )
+
+   }</pre>
+
+<p>
+Refresh cache and check the output.
+</p>
+
+<p>
+<em class="u">
+<strong>Autoloaders</strong></em>
+</p>
+
+<p>
+When we deliver output based on node id, receiving it in our function to display it. Drupal developers
+wanted to automate this functionality. 
+</p>
+
+<p>
+So, now the code becomes,
+</p>
+<pre class="code">$items[&#039;node/%node/magic&#039;] = array(
+	  &#039;title&#039;           =&gt;  &#039;Magic&#039;,
+	  &#039;description&#039;     =&gt;  &#039;Do amazing&#039;,
+	  &#039;page callback&#039;   =&gt;  &#039;menu_magic_node_content&#039;,
+	  &#039;page arguments&#039;  =&gt;  array(1),
+	  &#039;access arguments&#039;=&gt;  array(&#039;access content&#039;),
+	  &#039;file&#039;            =&gt;  &#039;menu_magic_context.inc&#039;
+	  &#039;type&#039;            =&gt;  MENU_LOCAL_TASK,
+	  &#039;context&#039;         =&gt;  MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+	  );
+
+return $items;
+
+In which case,
+function menu_magic_node_context($node)
+{
+  $output = array(
+       &#039;#type&#039;   =&gt; &#039;markup&#039;,
+       &#039;#markup&#039; =&gt; $text,
+       );
+  return $output;
+}
+
+//Notes
+So, now the node/%node/ still includes the wildcard to be able to receive any input i.e
+node/1 but this time it automatically does the part of node_load($nid) and checking 
+if it exists and pushing it into the callback function. We can do the same for user_load.
+
+Drupal has a global $user object, which represents the currently-logged-in user. So to 
+avoid confusion and to avoid clobbering the global $user object, it is a good idea to 
+assign the result of this function to a different local variable, generally $account.
+</pre>
+
+</div>
+<!-- EDIT15 SECTION "Contextual Menu Links and Menu Autoloaders" [10977-15337] -->
+<h1 class="sectionedit16" id="drupal_render_api">Drupal Render API</h1>
+<div class="level1">
+
+<p>
+Drupal renderable arrays - DRUPAL RENDER <abbr title="Application Programming Interface">API</abbr>
+</p>
+
+<p>
+We can use Render <abbr title="Application Programming Interface">API</abbr> to cache output from our modules.
+</p>
+
+<p>
+Documentation - <a href="https://drupal.org/node/930760" class="urlextern" title="https://drupal.org/node/930760"  rel="nofollow">https://drupal.org/node/930760</a>
+</p>
+<pre class="code">In a Drupal array, if a key has no # then it is creating an element.
+If the key has a # then it is a propery,
+
+$content[&#039;raw_markup&#039;] -&gt; element
+&#039;#type&#039; -&gt; property
+
+Properties are used by the Drupal render system to turn something
+into HTML output.
+
+We can find markup information in forms API
+https://api.drupal.org/api/drupal/developer%21topics%21forms_api_reference.html/7</pre>
+
+<p>
+So, lets us add some additional content to a page which is being returned as a 
+result of a callback
+</p>
+<pre class="code">    function menu_magic_basic()
+    {
+      $content = array();
+      $content[&#039;raw_markup&#039;] = array(
+          &#039;#type&#039;   =&gt; &#039;markup&#039;,
+          &#039;#markup&#039; =&gt; &#039;Truly magical&#039;,
+          &#039;#prefix&#039; =&gt; &#039;&lt;p&gt;&#039;,
+          &#039;#suffix&#039; =&gt; &#039;&lt;/p&gt;&#039;,
+      );
+
+      Create an array to declare properties
+      for our theme
+      $variables = array(
+          &#039;path&#039;  =&gt; &#039;http://placekitten.com/440/400&#039;,
+          &#039;alt&#039;   =&gt; t(&#039;Magic text&#039;),
+          &#039;title&#039; =&gt; t(&#039;This is the title&#039;),
+      );
+
+
+      Now lets insert images
+      Create a new element
+
+      $content[&#039;themed_data&#039;] = array(
+          &#039;#type&#039;   =&gt; &#039;markup&#039;,
+          &#039;#markup&#039; =&gt; theme(&#039;image&#039;, $variables),
+
+      );
+
+      List of things
+      Drupal will call function theme_item_list to render
+      renderable_element
+      items is a list
+      
+      $content[&#039;renderable_element&#039;] = array(
+           &#039;#theme&#039; =&gt; &#039;item_list&#039;,
+           &#039;#title&#039; =&gt; t(&#039;How do we know its magic&#039;),
+           &#039;#items&#039; =&gt; array(
+                t(&quot;Is it made of wood?&quot;),
+                t(&quot;Does it sink in water?&quot;),
+                t(&quot;Does it weigh the same as a duck?&quot;),
+           ), 
+     );
+      return $content;
+    }
+
+
+//NOTES
+
+Following code same as, &#039;#markup&#039; =&gt; &#039;&lt;p&gt;Truly magical&lt;/p&gt;&#039;
+          &#039;#markup&#039; =&gt; &#039;Truly magical&#039;,
+          &#039;#prefix&#039; =&gt; &#039;&lt;p&gt;&#039;,
+          &#039;#suffix&#039; =&gt; &#039;&lt;/p&gt;&#039;,
+
+Drupal Theme Image Function,
+https://api.drupal.org/api/drupal/includes!theme.inc/function/theme_image/7
+
+if you do,
+&#039;#markup&#039; =&gt; theme_image($variables)
+You are bypassing Drupal`s theme funcitionality
+
+&#039;#markup&#039; =&gt; theme(&#039;image&#039;, $variables),
+In this case we are saying theme image function with an argument variables.
+</pre>
+
+</div>
+<!-- EDIT16 SECTION "Drupal Render API" [15338-17696] -->
+<h2 class="sectionedit17" id="attachments_and_caching_with_the_render_api">Attachments and caching with the Render API</h2>
+<div class="level2">
+
+<p>
+We can also add borders to images that we added in the previous task. We can add colored borders around our
+image using <abbr title="Cascading Style Sheets">CSS</abbr>. We can load that <abbr title="Cascading Style Sheets">CSS</abbr> file in Drupal`s hook init to load it with rules. 
+</p>
+
+<p>
+We also have the capability to define the <abbr title="Cascading Style Sheets">CSS</abbr> ONLY if it is needed. We renderable arrays, we can load
+a <abbr title="Cascading Style Sheets">CSS</abbr> file related to an element only when it is displayed.
+</p>
+<pre class="code">
+MODULE FILE
+
+    $content[&#039;themed_data&#039;] = array(
+         &#039;#type&#039;   =&gt; &#039;markup&#039;,
+         &#039;#markup&#039; =&gt; theme(&#039;image&#039;, $variables),
+         &#039;#prefix&#039; =&gt; &#039;&lt;div class=&quot;menu-magic-image&quot;&gt;&#039;,
+         &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+         &#039;#attached&#039; =&gt; array(
+             &#039;css&#039;  =&gt; array(
+                 drupal_get_path(&#039;module&#039;,&#039;menu_magic&#039;). &#039;/menu_magic.css&#039;,
+             ),
+         ),
+
+    );
+
+CSS File
+.menu-magic-image img{
+	4px border
+}
+
+NOTES
+#attached -&gt; Allows us to attach CSS and JS to this particular element
+https://api.drupal.org/api/drupal/developer%21topics%21forms_api_reference.html/7#attached
+https://api.drupal.org/api/drupal/includes%21common.inc/function/drupal_process_attached/7
+
+drupal_get_path(path-to-the-thing, thing-name)
+drupal_get_path(&#039;module&#039;,&#039;menu_magic&#039;). &#039;/menu_magic.css&#039;
+This gives me direct access to the / root directory of menu_magic module
+where we can find menu_magic.css</pre>
+
+<p>
+<strong>Caching</strong>
+</p>
+
+<p>
+In real world a module can be loading data from multiple sources, i.e. third party
+APIs or databases and we do not want this information to load everytime. We want
+our module to be able to use the work it has already done and build on top of it
+without wasting precious CPU cycles and of course TIME.
+</p>
+
+<p>
+So, what do we do? We use the ability to cache. Lets use the same renderable code
+</p>
+<pre class="code">       $content[&#039;renderable_element&#039;] = array(
+             &#039;#theme&#039; =&gt; &#039;item_list&#039;,
+             &#039;#title&#039; =&gt; t(&#039;How do we know&#039;),
+             &#039;#items&#039; =&gt; array(
+                 t(&quot;Is it&quot;),
+                 t(&quot;Really&quot;),
+                 t(&#039; The current time is %time.&#039;, array(&#039;%time&#039; =&gt; date(&#039;r&#039;))),
+                 ),
+             &#039;#cache&#039; =&gt; array(
+                &#039;keys&#039; =&gt; array(&#039;menu_magic&#039;, &#039;renderable_element&#039;),
+                &#039;bin&#039;  =&gt; &#039;cache&#039;,
+                &#039;expire&#039; =&gt; time() + 30,
+                &#039;granularity&#039; =&gt; DRUPAL_CACHE_PER_PAGE,
+             ),
+       ); 
+
+NOTE
+HOOK BLOCK INFO:
+https://api.drupal.org/api/drupal/modules!block!block.api.php/function/hook_block_info/7
+
+We will replace time with current date and time
+Once Drupal encounters cache, it checks the database, oh I have rendered it before.
+Cache contains a key for &#039;keys&#039; =&gt; array(&#039;menu_magic&#039;, &#039;renderable_element&#039;), 
+as menu_magic:renderable_element
+Our renderable_element will only stay in cache for 30 seconds
+&#039;expire&#039; =&gt; time() + 30,</pre>
+
+</div>
+<!-- EDIT17 SECTION "Attachments and caching with the Render API" [17697-20483] -->
+<h2 class="sectionedit18" id="altering_the_page_array">Altering the Page Array</h2>
+<div class="level2">
+
+<p>
+We might think that the content generation with hashes may be bit complicated and why don`t we just return <abbr title="HyperText Markup Language">HTML</abbr> the simple way.
+</p>
+
+<p>
+We want to delay the <abbr title="HyperText Markup Language">HTML</abbr> generation for as long as possible. This gives theme and modules time to change how items are rendered.
+PHP does way better dealing with an Associative array rather than a string.
+</p>
+
+<p>
+To get a better idea of the page variables insert following code,
+</p>
+<pre class="code">function menu_mangle_page_alter(&amp;$page)
+{
+	if(arg(0) == &#039;magic&#039;) {
+	    $dsm($page);
+	    $page[&#039;content&#039;][&#039;system_main&#039;][&#039;renderable_element&#039;][&#039;#type&#039;] = &#039;ol&#039;;
+	}
+}
+
+NOTES
+if(arg[0]) so first one after node/magic
+ul - unordered list
+ol - ordered list</pre>
+
+</div>
+<!-- EDIT18 SECTION "Altering the Page Array" [20484-21191] -->
+<h2 class="sectionedit19" id="integrating_with_the_theme_system">Integrating with the theme system</h2>
+<div class="level2">
+
+<p>
+As module developers it is important for us to return our content that can be overriden by the theme. We want it to eventually be turned into <abbr title="HyperText Markup Language">HTML</abbr>. We want it to do in a way that the themer can come along and change it. The web designer may not agree with my design sense and want to change the way things look. We want them to be able to change the way our output looks without changing anything in our code.
+</p>
+
+<p>
+We will write theme function. We will write in a way that it displays content produced by our code but can be overriden by the web designer through the theme.
+</p>
+
+<p>
+We will create another tab to show content but Drupal doesn`t know how to theme our data, so we will create a theme function to theme our output.
+</p>
+<pre class="code">   Create TAB
+
+   function spy_glass_menu() {
+      $items = array();
+      $items[&#039;node/%node/spy_glass&#039;] = array(
+        &#039;title&#039; =&gt; &#039;Spy Glass&#039;,
+        &#039;description&#039; =&gt; &#039;Take a closer look&#039;,
+        &#039;page callback&#039; =&gt; &#039;spy_glass_page&#039;,
+        &#039;page arguments&#039; =&gt; array(1),
+        &#039;access callback&#039; =&gt; &#039;node_access&#039;,
+        &#039;access arguments&#039; =&gt; array(&#039;view&#039;, 1),
+        &#039;type&#039; =&gt; MENU_LOCAL_TASK,
+    );
+     return $items;
+    }
+********************************************************************************************
+WE WANT THE WEB DESIGNER TO BE ABLE TO CHANGE THE WAY OUR 
+OUTPUT LOOKS - USE HOOK_THEME
+/**
+ * Implements hook_theme().
+ */
+ --&gt; REGISTERS WITH DRUPAL THAT WE HAVE SOME THEME IMPLEMENTATION
+
+function spy_glass_theme() {
+  return array(
+    --&gt; THINGS IN THIS NEED TO BE MADE THEMEABLE
+    INSTEAD OF USING A THEME FUNCTION USE A TEMPLATE FILE
+   
+    USE OF A THEME FILE
+   
+    &#039;spy_glass_item&#039; =&gt; array(
+      &#039;arguments&#039; =&gt; array(&#039;title&#039; =&gt; NULL, &#039;data&#039; =&gt; NULL),
+      &#039;template&#039; =&gt; &#039;spy-glass-item&#039;,
+    ),
+    
+    THEME FUNCTION WAY
+    /** for theme function
+    --&gt; SPY_GLASS_ITEM IS THE HOOK NAME
+    --&gt; DEFAULT VALUE OF ITEM IS NULL
+    &#039;spy_glass_item&#039; =&gt; array(
+      &#039;variables&#039; =&gt; array(&#039;item&#039; =&gt; NULL),
+    ),
+    */
+  );
+}
+********************************************************************************************
+--&gt;CALLBACK FUNCTION
+function spy_glass_page($node) {
+  $information = _spy_glass_serious_spying_business($node);
+  
+  --&gt; WE CAN INSPECT using dsm($information);
+
+  $content = array();
+  EACH OF THESE ITEMS WILL BE AN ARRAY OF KEYS
+  TYPE AND MARKUP
+  foreach ($information as $item) {
+  CREATE A NEW ELEMENT ON OUR RENDERABLE ARRAY
+    $content[] = array(
+      &#039;#type&#039; =&gt; &#039;markup&#039;,
+********************************************************************************************
+      ----------------THEME_SPY_GLASS_ITEM($ITEM)
+      -----------theme(Name-of-the-thing-to-theme)
+      I DONT WANT TO USE THEME FUNCTION PROVIDED
+      BY THE MODULE, USE MINE INSTEAD
+      &#039;#markup&#039; =&gt; theme(&#039;spy_glass_item&#039;, $item),
+    );
+  }
+    return $content;
+}
+********************************************************************************************
+GET VALUES FROM SPY_GLASS_THEME AND PASS TO THE THEME TPL.PHP
+SECURITY - CHECK_PLAIN ON VARIABLES PASSED TO THE TEMPLATE FILE
+FOR APPLYING CHANGES
+
+function spy_glass_preprocess_spy_glass_item(&amp;$variables) {
+    $variables[&#039;title&#039;] = check_plain($variables[&#039;title&#039;]);
+    $variables[&#039;data&#039;] = check_plain($variables[&#039;data&#039;]);
+    $variables[&#039;module_name&#039;] = t(&#039;Spy Glass&#039;);
+}
+********************************************************************************************
+WHAT WE DO IN THE THEME FUNCTION CAN BE DONE ON A DIFFERENT LEVEL
+
+/*
+THEME FUNCTION PUTS TOGETHER HTML
+FUNCTION PRODUCES HTML FOR EACH ITEM
+function theme_spy_glass_item($variables) {
+    $output = &#039;&lt;p&gt;&#039;;
+    SECURITY - ALWAYS VALIDATE DATA IF YOU GET IT FROM SOMEWHERE
+    $output .= &#039;&lt;strong&gt;&#039; . check_plain($variables[&#039;title&#039;]) . &#039;&lt;/strong&gt;&lt;br/&gt;&#039;;
+    $output .= check_plain($variables[&#039;data&#039;]);
+    $output .= &#039;&lt;/p&gt;&#039;;
+    return $output;
+  }
+*/
+
+  --&gt;THIS FUNCTION TAKES A NODE OBJECT AND PERFORMS TASKS ON IT
+  function _spy_glass_serious_spying_business($node) {
+  $information = array();
+  
+  --&gt;THE ARRAY COLLECTS ALL DATA UNDER TWO COLUMNS TITLE AND DATA
+  --&gt;ARRAY 0
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Title Character Count&#039;),
+    &#039;data&#039; =&gt; t(&#039;There are @num characters in the $node-&gt;title.&#039;, 
+     array(&#039;@num&#039; =&gt; strlen($node-&gt;title))),
+  );
+  --&gt;ARRAY 1
+  $seconds = $node-&gt;changed - $node-&gt;created;
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Timestamp Differences&#039;),
+    &#039;data&#039; =&gt; t(&#039;The $node-&gt;changed timestamp is @seconds different from the 
+     $node-&gt;created timestamp.&#039;, 
+     array(&#039;@seconds&#039; =&gt; $seconds)),
+  );
+  
+  if ($node-&gt;translate == 0) {
+  --&gt;ARRAY 2
+  $information[] = array(
+      &#039;title&#039; =&gt; t(&#039;Translated?&#039;),
+      &#039;data&#039; =&gt; t(&#039;This node is NOT translated into pirate speak, hope you know English.&#039;),
+    );
+  }
+  --&gt;ARRAY 3
+  $information[] = array(
+    &#039;title&#039; =&gt; t(&#039;Hash&#039;),
+    &#039;data&#039; =&gt; md5($node-&gt;title),
+  );
+  // Example of potential user input data that needs to be sanitized.
+  // Instead of hard-coding this, it could be getting loaded from the db
+  // where a user has entered the info.
+  ARRAY 4
+  $information[] = array(
+      &#039;title&#039; =&gt; t(&#039;Nefarious data&#039;),
+      INSERTING JAVASCRIPT
+      &#039;data&#039; =&gt; &#039;&lt;a href=&quot;#&quot; onclick=&quot;alert(\&#039;Pwned!\&#039;); return false;&quot;&gt;click me&lt;/a&gt;&#039;,
+  );
+  return $information;
+}</pre>
+
+</div>
+<!-- EDIT19 SECTION "Integrating with the theme system" [21192-26513] -->
+<h1 class="sectionedit20" id="form_api">Form API</h1>
+<div class="level1">
+
+<p>
+We use Drupal Form <abbr title="Application Programming Interface">API</abbr> to collect info and user input data.
+</p>
+
+<p>
+DRUPAL form <abbr title="Application Programming Interface">API</abbr> is an extension of the renderable array. As the form <abbr title="Application Programming Interface">API</abbr> code shows,
+it is more or less like the renderable array setup.
+</p>
+<pre class="code">   function mani_form()
+   {
+       $form[&#039;color&#039;] = array(
+         &#039;#type&#039;  =&gt; &#039;select&#039;,
+         &#039;#title&#039; =&gt; t(&#039;Favorite color&#039;),
+         &#039;#options&#039; =&gt; drupal_map_assoc(array(
+           t(&#039;red&#039;),t(&#039;blue&#039;),t(&#039;periwinkle&#039;)
+         )),
+       );
+        $form[&#039;submit&#039;] = array(
+          &#039;#type&#039;  =&gt; &#039;submit&#039;,
+          &#039;#value&#039; =&gt;  t(&#039;Submit&#039;),
+        );
+        return $form;
+   }</pre>
+
+</div>
+<!-- EDIT20 SECTION "Form API" [26514-27140] -->
+<h2 class="sectionedit21" id="form_api_worklow">Form API Worklow</h2>
+<div class="level2">
+<pre class="code">User comes to a page cake
+Drupal says oh boy, let me display this page using the meny system
+call back function in our module takes care of the URL uses drupal_get_form
+to return Form API array
+https://api.drupal.org/api/drupal/includes!form.inc/function/drupal_get_form/7
+drupal_get_form takes the id of the form that you would like to return
+drupal_get_form is the gateway into the form API
+The module then starts looking for this form
+module looks for function
+Form API takes array treating it like a renderable array
+and outputs HTML.
+When form is displayed
+User fills and submits
+When user submits a form
+We go back to same URL
+Drupal uses menu system to map URL to function used
+in callback
+Form API is receiving $POST data.
+Drupal quickly calls validation function
+function_validate()
+Check for errors
+Drupal calls form submit handler
+function_submit()
+form_state array knows the state of the form
+can set redirect using form_state[&#039;redirect&#039;]</pre>
+
+</div>
+<!-- EDIT21 SECTION "Form API Worklow" [27141-28136] -->
+<h2 class="sectionedit22" id="creating_submitting_and_validating_a_form">Creating, Submitting and Validating a Form</h2>
+<div class="level2">
+
+<p>
+<a href="/manidocs/manidocs/lib/exe/detail.php?id=drupal-module-dev&amp;media=sdsd.png" class="media" title="sdsd.png"><img src="/manidocs/manidocs/lib/exe/fetch.php?media=sdsd.png" class="mediacenter" alt="" /></a>
+</p>
+
+</div>
+<!-- EDIT22 SECTION "Creating, Submitting and Validating a Form" [28137-] -->

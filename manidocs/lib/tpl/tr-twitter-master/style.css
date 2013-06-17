@@ -1,0 +1,389 @@
+body {
+  background: -webkit-gradient(linear, 0% 0%, 0% 21%, from(#639cb7), to(#C0DEED), color-stop(.5,#C0DEED));
+  background: -moz-linear-gradient(5% 0.5% 270deg, #639CB7, #C0DEED, #C0DEED 20%);
+  color: #333333;
+  font-family: Arial,Tahoma,Verdana;
+  font-size: 13.5px;
+}
+
+
+/*
+ # Layout
+*/
+
+#header {
+  border-top: 5px solid #CE4F00;
+  background-color:#000000;
+  padding:5px 0;
+}
+
+#location {
+  margin: 10px auto;
+}
+
+#location a {
+}
+
+#banner {
+  background: #000000; 
+  text-align: center;
+  padding:10px;
+}
+
+#content {
+  background-color:#DBEDF5;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  width:900px;
+
+}
+
+#leftcol{
+  width:237px;
+  float:right;
+  position:relative; 
+  padding:20px;
+  background-color:#DBEDF5;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+}
+ 
+#maincol{
+  position: relative; 
+  width:620px;
+  float:left; 
+  min-height:1700px;
+  background-color:#FFFFFF;
+  border-right:medium solid #C9CACC;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+}
+
+#footer {
+  height: 100px; 
+  overflow: hidden; 
+  width: 100%; 
+  position: relative;
+}
+
+#copyright {
+  color:#333333;
+  padding:5px;
+  margin:10px 0;
+}
+
+#copyright a {
+  text-decoration: none;
+  color: #333333;
+}
+
+.inner {
+  width: 940px;
+  margin: auto;
+}
+
+.bar_left {
+  float: left;
+  vertical-align: middle;
+}
+
+.bar_right {
+  float: right;
+  vertical-align: middle;
+}
+
+/* End Layout */
+
+
+/*
+ # DokuWiki overrides
+*/
+
+div.dokuwiki div.page {
+  margin: 20px;
+  text-align: justify;
+}
+
+div.dokuwiki div.page p {
+  line-height:20px;
+}
+
+
+div.dokuwiki ul {
+  margin: 0 0 0 1.5em;
+}
+div.dokuwiki table.ul ul {
+  margin: 0 0 0 1.5em;
+}
+
+html > body div.dokuwiki input.button, html > body div.dokuwiki button.button {
+  background: #FAFAFA;
+  -moz-border-radius:3px;
+  -webkit-border-radius:3px;
+  border-radius:3px;
+  color:#444444;
+}
+
+/* general headline setup */
+div.dokuwiki h1 { margin-bottom:5px; }
+
+div.dokuwiki h2,
+div.dokuwiki h3,
+div.dokuwiki h4,
+div.dokuwiki h5 {
+    color: __text__;
+    background-color: inherit;
+    font-size: 110%;
+    font-weight: normal;
+    margin: 0 0 0.5em 0;
+    padding: 0.5em 0 0 0;
+    border-bottom: 1px solid #ccf;
+    clear: left;
+}
+
+/* special headlines */
+div.dokuwiki h1 {margin-left: 0px; font-weight: bold; font-size: 19px; padding-top: 0px;}
+div.dokuwiki h2 {margin-left: 15px;font-weight: bold;}
+div.dokuwiki h3 {margin-left: 30px; font-weight: bold;}
+div.dokuwiki h4 {margin-left: 45px; font-weight: bold;}
+div.dokuwiki h5 {margin-left: 60px; font-weight: bold;}
+
+/* indent different sections */
+div.dokuwiki div.level1 { margin-left: 3px; }
+div.dokuwiki div.level2 { margin-left: 18px; }
+div.dokuwiki div.level3 { margin-left: 33px; }
+div.dokuwiki div.level4 { margin-left: 48px; }
+div.dokuwiki div.level5 { margin-left: 63px; }
+
+
+
+div.dokuwiki img.media {
+  border: 1px dashed #8CACBB;
+  margin: 3px;
+  padding: 5px;
+}
+
+div.dokuwiki code {
+    color: #0066CC;
+    font-size: 12px;
+}
+
+div.dokuwiki pre {
+    border: 1px dashed #8CACBB;
+    color: #000000;
+    font-family: monospace;
+    font-size: 12px;
+    overflow: auto;
+    padding: 0.5em;
+}
+
+
+div.dokuwiki a.wikilink1 {
+    color: #993333 !important;
+}
+
+
+div.dokuwiki a:link, div.dokuwiki a:visited {
+  color:#333333;
+}
+
+/* End DokuWiki overrides */
+
+#title {
+    color: #444444;
+    font-family: Arial,Tahoma,Verdana;
+    font-weight: bold;
+    margin: 0;
+    padding: 0 0 20px 0;
+    font-size:28px;
+    border-bottom:none;
+    text-decoration: none;
+}
+
+#sitename a {
+  color: #AEB7BC;
+  font-variant: small-caps;
+  letter-spacing: 2pt;
+  text-decoration: none !important;
+  font-size:32px;
+  font-weight: bolder;
+}
+
+
+
+.separator {
+  margin: 10px 0;
+  border-bottom: 1px solid #EAEDEF;
+}
+
+
+
+
+
+/*
+ # Widget
+*/
+
+#widget {
+  margin: 0 0 20px 0; 
+  font-size: 90%
+  color:#666666;
+}
+
+#widget h6 {
+  margin: 0 0px 5px 0px; 
+  font-weight: normal; 
+  font-size: 13px; 
+  padding: 3px;
+  color: #006688;
+  border-bottom: 2px solid #BBCCDD;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+
+
+#widget li {
+  list-style-type: none;
+  list-style-image: none;
+  margin-left: 5px;
+  text-decoration: none;
+  font-size:11px;
+  color:#666666;
+  border-bottom: 1px solid #C0E0E0;
+  line-height: 1.5em;
+}
+
+#widget a {
+  text-decoration: none;
+  color:#666666;
+}
+#widget a:hover {
+  text-decoration: underline;
+}
+
+/* End Widget */
+#box_top {
+  /* background-color: #FDFEFF; */
+  padding: 6px 0;
+  margin-bottom:10px; ;
+  overflow: hidden;
+  border-bottom:2px solid #F3F3F3;
+  border-top:2px solid #F3F3F3;
+}
+
+#box {
+  /* background-color: #FDFEFF; */
+  border: 1px solid #F2F3F4;
+  margin: 15px 0;
+  overflow: hidden;
+  padding: 7px;
+}
+
+#box h6 {
+  margin: 0px 0px 5px 0px;
+  font-weight: bold;
+  font-size: 16px;
+  padding-top: 0px;
+  color: #444;
+  clear: left;
+
+}
+
+#box h3 {
+  margin: 0px 0px 5px 0px;
+  font-weight: bold;
+  font-size: 14px;
+  padding-top: 0px;
+  color: #444;
+  clear: left;
+  }
+
+#box li {
+  list-style-type: square;
+  list-style-image: none;
+  margin-left: 15px;
+  text-decoration: none;
+}
+
+#box a {
+  text-decoration: none;
+  color: #009900;
+}
+
+#footer {
+  margin-top:10px;
+  margin-bottom:10px;
+  font-size:10px;
+  color:#555;
+}
+
+#footer a {
+  text-decoration: none;
+  color: #0084b5;
+}
+
+
+/*
+ # Menu
+*/
+#menu {
+  background: #FFF;
+  padding:5px;
+  margin-bottom:20px; 
+  font-size: 90%
+  color:#ccc;
+}
+
+#menu li {
+  list-style-type: none;
+  list-style-image: none;
+  text-decoration: none;
+  font-size:13px;
+  padding:2px;
+  text-align:center;
+  color:#5d6c72;
+  background-color:#c5cfd4;
+  font-weight: bold;
+}
+
+#menu a {
+  text-decoration: none;
+  color: #335577;
+}
+#menu a:hover {
+  text-decoration: underline;
+}
+
+/*End Menu */
+
+
+#toolbar_article {
+}
+
+#toolbar_article h6 {
+  margin: 0 0px 5px 0px;
+  font-weight: normal;
+  font-size: 13px;
+  padding: 3px;
+  color: #881111;
+  border-bottom: 3px solid #5D6C72;
+  border-top: 3px solid #5D6C72;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+
+
+#toolbar_article li {
+  list-style-type: none;
+  list-style-image: none;
+  margin-left: 5px;
+  text-decoration: none;
+  font-size:11px;
+  color:#333333;
+  line-height: 1.5em;
+}
+
+

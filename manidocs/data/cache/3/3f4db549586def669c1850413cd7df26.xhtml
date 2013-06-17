@@ -1,0 +1,603 @@
+
+<h1 class="sectionedit1" id="node_api_example">Node API Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Node API Example" [1-32] -->
+<h2 class="sectionedit2" id="nodeapi_exampleinfo">nodeapi_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = NodeAPI example
+   2 description = Demonstrates using the hook_node_* APIs (formerly hook_nodeapi) to alter a node from a different module.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = nodeapi_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "nodeapi_example.info" [33-315] -->
+<h2 class="sectionedit3" id="nodeapi_exampleinstall">nodeapi_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Install, update and uninstall functions for the nodeapi_example module.
+   6  */
+   7 
+   8 /**
+   9  * Implements hook_schema().
+  10  *
+  11  * @ingroup nodeapi_example
+  12  */
+  13 function nodeapi_example_schema() {
+  14   $schema[&#039;nodeapi_example&#039;] = array(
+  15     &#039;description&#039; =&gt; &#039;Stores information of extended content.&#039;,
+  16     &#039;fields&#039; =&gt; array(
+  17       &#039;nid&#039;    =&gt; array(
+  18         &#039;description&#039; =&gt; &#039;Node ID that the rating is applied to.&#039;,
+  19         &#039;type&#039; =&gt; &#039;int&#039;,
+  20         &#039;unsigned&#039; =&gt; TRUE,
+  21         &#039;not null&#039; =&gt; TRUE,
+  22         &#039;default&#039; =&gt; 0
+  23       ),
+  24       &#039;vid&#039;    =&gt; array(
+  25         &#039;description&#039; =&gt; &#039;Revision ID, as we are tracking rating with node revisions&#039;,
+  26         &#039;type&#039; =&gt; &#039;int&#039;,
+  27         &#039;unsigned&#039; =&gt; TRUE,
+  28         &#039;not null&#039; =&gt; TRUE,
+  29         &#039;default&#039; =&gt; 0
+  30       ),
+  31       &#039;rating&#039; =&gt; array(
+  32         &#039;description&#039; =&gt; &#039;The rating of the node.&#039;,
+  33         &#039;type&#039; =&gt; &#039;int&#039;,
+  34         &#039;unsigned&#039; =&gt; TRUE,
+  35         &#039;not null&#039; =&gt; TRUE,
+  36         &#039;default&#039; =&gt; 0
+  37       ),
+  38     ),
+  39     &#039;primary key&#039; =&gt; array(&#039;vid&#039;),
+  40     &#039;indexes&#039; =&gt; array(
+  41       &#039;nid&#039;   =&gt; array(&#039;nid&#039;),
+  42     ),
+  43   );
+  44 
+  45   return $schema;
+  46 }
+  47 
+  48 /**
+  49  * Implements hook_uninstall().
+  50  *
+  51  * We need to clean up our variables data when uninstalling our module.
+  52  *
+  53  * Our implementation of nodeapi_example_form_alter() automatically
+  54  * creates a nodeapi_example_node_type_&lt;contentType&gt; variable for each node type
+  55  * the user wants to rate.
+  56  *
+  57  * To delete our variables we call variable_del for our variables&#039;
+  58  * namespace, &#039;nodeapi_example_node_type_&#039;. Note that an average module would
+  59  * have known variables that it had created, and it could just delete those
+  60  * explicitly. For example, see render_example_uninstall(). It&#039;s important
+  61  * not to delete variables that might be owned by other modules, so normally
+  62  * we would just explicitly delete a set of known variables.
+  63  *
+  64  * hook_uninstall() will only be called when uninstalling a module, not when
+  65  * disabling a module. This allows our data to stay in the database if the user
+  66  * only disables our module without uninstalling it.
+  67  *
+  68  * @ingroup nodeapi_example
+  69  */
+  70 function nodeapi_example_uninstall() {
+  71   // Simple DB query to get the names of our variables.
+  72   $results = db_select(&#039;variable&#039;, &#039;v&#039;)
+  73     -&gt;fields(&#039;v&#039;, array(&#039;name&#039;))
+  74     -&gt;condition(&#039;name&#039;, &#039;nodeapi_example_node_type_%&#039;, &#039;LIKE&#039;)
+  75     -&gt;execute();
+  76   // Loop through and delete each of our variables.
+  77   foreach ($results as $result) {
+  78     variable_del($result-&gt;name);
+  79   }
+  80 }</pre>
+
+</div>
+<!-- EDIT3 SECTION "nodeapi_example.install" [316-3194] -->
+<h2 class="sectionedit4" id="nodeapi_examplemodule">nodeapi_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  *
+   6  * Module implementation for nodeapi_example module.
+   7  */
+   8 
+   9 /**
+  10  * @defgroup nodeapi_example Example: NodeAPI
+  11  * @ingroup examples
+  12  * @{
+  13  * Example using NodeAPI.
+  14  *
+  15  * This is an example demonstrating how a module can be used to extend existing
+  16  * node types.
+  17  *
+  18  * hook_nodeapi() has been replaced in Drupal 7 with a set of different hooks
+  19  * providing the same or improved functionality. See the NodeAPI hooks list
+  20  * at api.drupal.org (linked below).
+  21  *
+  22  * We will add the ability for each node to have a &quot;rating,&quot; which will be a
+  23  * number from one to five. The rating will be tracked using the revision
+  24  * system also, so every node revision may have different rating values.
+  25  *
+  26  * @see node_api_hooks
+  27  */
+  28 
+  29 /**
+  30  * Implements hook_form_alter().
+  31  *
+  32  * By implementing this hook, we&#039;re able to modify any form. We&#039;ll only make
+  33  * changes to two types: a node&#039;s content type configuration and edit forms.
+  34  *
+  35  * We need to have a way for administrators to indicate which content types
+  36  * should have our rating field added. This is done by inserting radios in
+  37  * the node&#039;s content type configuration page.
+  38  *
+  39  * Changes made by this hook will be shown when editing the settings of any
+  40  * content type.
+  41  *
+  42  * Optionally, hook_form_FORM_ID_alter() could be used with the function name
+  43  * nodeapi_example_form_node_type_form_alter
+  44  */
+  45 function nodeapi_example_form_alter(&amp;$form, $form_state, $form_id) {
+  46   // First, check for the node type configuration form.
+  47   if ($form_id == &#039;node_type_form&#039;) {
+  48     // Alter the node type&#039;s configuration form to add our setting. We don&#039;t
+  49     // need to worry about saving this value back to the variable, the form
+  50     // we&#039;re altering will do it for us.
+  51     $form[&#039;rating&#039;] = array(
+  52       &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  53       &#039;#title&#039; =&gt; t(&#039;Rating settings&#039;),
+  54       &#039;#collapsible&#039; =&gt; TRUE,
+  55       &#039;#collapsed&#039; =&gt; TRUE,
+  56       &#039;#group&#039; =&gt; &#039;additional_settings&#039;,
+  57       &#039;#weight&#039; =&gt; -1,
+  58     );
+  59 
+  60     $form[&#039;rating&#039;][&#039;nodeapi_example_node_type&#039;] = array(
+  61       &#039;#type&#039; =&gt; &#039;radios&#039;,
+  62       &#039;#title&#039; =&gt; t(&#039;NodeAPI Example Rating&#039;),
+  63       &#039;#default_value&#039; =&gt; variable_get(&#039;nodeapi_example_node_type_&#039; . $form[&#039;#node_type&#039;]-&gt;type, FALSE),
+  64       &#039;#options&#039; =&gt; array(
+  65         FALSE =&gt; t(&#039;Disabled&#039;),
+  66         TRUE =&gt; t(&#039;Enabled&#039;)
+  67       ),
+  68       &#039;#description&#039; =&gt; t(&#039;Should this node have a rating attached to it?&#039;),
+  69     );
+  70   }
+  71   // Here we check to see if the type and node field are set. If so, it could
+  72   // be a node edit form.
+  73   elseif (isset($form[&#039;type&#039;]) &amp;&amp; isset($form[&#039;#node&#039;]) &amp;&amp; $form[&#039;type&#039;][&#039;#value&#039;] . &#039;_node_form&#039; == $form_id) {
+  74     // If the rating is enabled for this node type, we insert our control
+  75     // into the form.
+  76     $node = $form[&#039;#node&#039;];
+  77     if (variable_get(&#039;nodeapi_example_node_type_&#039; . $form[&#039;type&#039;][&#039;#value&#039;], FALSE)) {
+  78       $form[&#039;nodeapi_example_rating&#039;] = array(
+  79         &#039;#type&#039; =&gt; &#039;select&#039;,
+  80         &#039;#title&#039; =&gt; t(&#039;Rating&#039;),
+  81         &#039;#default_value&#039; =&gt; isset($node-&gt;nodeapi_example_rating) ? $node-&gt;nodeapi_example_rating : &#039;&#039;,
+  82         &#039;#options&#039; =&gt; array(0 =&gt; t(&#039;Unrated&#039;), 1, 2, 3, 4, 5),
+  83         &#039;#required&#039; =&gt; TRUE,
+  84         &#039;#weight&#039; =&gt; 0,
+  85       );
+  86     }
+  87   }
+  88 }
+  89 
+  90 /**
+  91  * Implements hook_node_validate().
+  92  *
+  93  * Check that the rating attribute is set in the form submission, since the
+  94  * field is required. If not, send error message.
+  95  */
+  96 function nodeapi_example_node_validate($node, $form) {
+  97   if (variable_get(&#039;nodeapi_example_node_type_&#039; . $node-&gt;type, FALSE)) {
+  98     if (isset($node-&gt;nodeapi_example_rating) &amp;&amp; !$node-&gt;nodeapi_example_rating) {
+  99       form_set_error(&#039;nodeapi_example_rating&#039;, t(&#039;You must rate this content.&#039;));
+ 100     }
+ 101   }
+ 102 }
+ 103 
+ 104 /**
+ 105  * Implements hook_node_load().
+ 106  *
+ 107  * Loads the rating information if available for any of the nodes in the
+ 108  * argument list.
+ 109  */
+ 110 function nodeapi_example_node_load($nodes, $types) {
+ 111   // We can use $types to figure out if we need to process any of these nodes.
+ 112   $our_types = array();
+ 113   foreach ($types as $type) {
+ 114     if (variable_get(&#039;nodeapi_example_node_type_&#039; . $type, FALSE)) {
+ 115       $our_types[] = $type;
+ 116     }
+ 117   }
+ 118 
+ 119   // Now $our_types contains all the types from $types that we want
+ 120   // to deal with. If it&#039;s empty, we can safely return.
+ 121   if (!count($our_types)) {
+ 122     return;
+ 123   }
+ 124 
+ 125   // Now we need to make a list of revisions based on $our_types
+ 126   foreach ($nodes as $node) {
+ 127     // We are using the revision id instead of node id.
+ 128     if (variable_get(&#039;nodeapi_example_node_type_&#039; . $node-&gt;type, FALSE)) {
+ 129       $vids[] = $node-&gt;vid;
+ 130     }
+ 131   }
+ 132   // Check if we should load rating for any of the nodes.
+ 133   if (!isset($vids) || !count($vids)) {
+ 134     return;
+ 135   }
+ 136 
+ 137   // When we read, we don&#039;t care about the node-&gt;nid; we look for the right
+ 138   // revision ID (node-&gt;vid).
+ 139   $result = db_select(&#039;nodeapi_example&#039;, &#039;e&#039;)
+ 140   -&gt;fields(&#039;e&#039;, array(&#039;nid&#039;, &#039;vid&#039;, &#039;rating&#039;))
+ 141   -&gt;where(&#039;e.vid IN (:vids)&#039;, array(&#039;:vids&#039; =&gt; $vids))
+ 142   -&gt;execute();
+ 143 
+ 144   foreach ($result as $record) {
+ 145     $nodes[$record-&gt;nid]-&gt;nodeapi_example_rating = $record-&gt;rating;
+ 146   }
+ 147 }
+ 148 
+ 149 /**
+ 150  * Implements hook_node_insert().
+ 151  *
+ 152  * As a new node is being inserted into the database, we need to do our own
+ 153  * database inserts.
+ 154  */
+ 155 function nodeapi_example_node_insert($node) {
+ 156   if (variable_get(&#039;nodeapi_example_node_type_&#039; . $node-&gt;type, FALSE)) {
+ 157     // Notice that we are ignoring any revision information using $node-&gt;nid
+ 158     db_insert(&#039;nodeapi_example&#039;)
+ 159     -&gt;fields(array(
+ 160         &#039;nid&#039; =&gt; $node-&gt;nid,
+ 161         &#039;vid&#039; =&gt; $node-&gt;vid,
+ 162         &#039;rating&#039; =&gt; $node-&gt;nodeapi_example_rating,
+ 163     ))
+ 164     -&gt;execute();
+ 165   }
+ 166 }
+ 167 
+ 168 /**
+ 169  * Implements hook_node_delete().
+ 170  *
+ 171  * When a node is deleted, we need to remove all related records from our table,
+ 172  * including all revisions. For the delete operations we use node-&gt;nid.
+ 173  */
+ 174 function nodeapi_example_node_delete($node) {
+ 175   // Notice that we&#039;re deleting even if the content type has no rating enabled.
+ 176   db_delete(&#039;nodeapi_example&#039;)
+ 177     -&gt;condition(&#039;nid&#039;, $node-&gt;nid)
+ 178     -&gt;execute();
+ 179 }
+ 180 
+ 181 /**
+ 182  * Implements hook_node_update().
+ 183  *
+ 184  * As an existing node is being updated in the database, we need to do our own
+ 185  * database updates.
+ 186  *
+ 187  * This hook is called when an existing node has been changed. We can&#039;t simply
+ 188  * update, since the node may not have a rating saved, thus no
+ 189  * database field. So we first check the database for a rating. If there is one,
+ 190  * we update it. Otherwise, we call nodeapi_example_node_insert() to create one.
+ 191  */
+ 192 function nodeapi_example_node_update($node) {
+ 193   if (variable_get(&#039;nodeapi_example_node_type_&#039; . $node-&gt;type, FALSE)) {
+ 194     // Check first if this node has a saved rating.
+ 195     $rating = db_select(&#039;nodeapi_example&#039;, &#039;e&#039;)
+ 196       -&gt;fields(&#039;e&#039;, array(
+ 197         &#039;rating&#039;,
+ 198       ))
+ 199       -&gt;where(&#039;e.vid = (:vid)&#039;, array(&#039;:vid&#039; =&gt; $node-&gt;vid))
+ 200       -&gt;execute()-&gt;fetchField();
+ 201 
+ 202     if ($rating) {
+ 203       // Node has been rated before.
+ 204       db_update(&#039;nodeapi_example&#039;)
+ 205         -&gt;fields(array(&#039;rating&#039; =&gt; $node-&gt;nodeapi_example_rating))
+ 206         -&gt;condition(&#039;vid&#039;, $node-&gt;vid)
+ 207         -&gt;execute();
+ 208     }
+ 209     else {
+ 210       // Node was not previously rated, so insert a new rating in database.
+ 211       nodeapi_example_node_insert($node);
+ 212     }
+ 213   }
+ 214 }
+ 215 
+ 216 /**
+ 217  * Implements hook_node_view().
+ 218  *
+ 219  * This is a typical implementation that simply runs the node text through
+ 220  * the output filters.
+ 221  *
+ 222  * Finally, we need to take care of displaying our rating when the node is
+ 223  * viewed. This operation is called after the node has already been prepared
+ 224  * into HTML and filtered as necessary, so we know we are dealing with an
+ 225  * HTML teaser and body. We will inject our additional information at the front
+ 226  * of the node copy.
+ 227  *
+ 228  * Using node API &#039;hook_node_view&#039; is more appropriate than using a filter here,
+ 229  * because filters transform user-supplied content, whereas we are extending it
+ 230  * with additional information.
+ 231  */
+ 232 function nodeapi_example_node_view($node, $build_mode = &#039;full&#039;) {
+ 233   if (variable_get(&#039;nodeapi_example_node_type_&#039; . $node-&gt;type, FALSE)) {
+ 234     // Make sure to set a rating, also for nodes saved previously and not yet rated.
+ 235     $rating = isset($node-&gt;nodeapi_example_rating) ? $node-&gt;nodeapi_example_rating : 0;
+ 236     $node-&gt;content[&#039;nodeapi_example&#039;] = array(
+ 237       &#039;#markup&#039; =&gt; theme(&#039;nodeapi_example_rating&#039;, array(&#039;rating&#039; =&gt; $rating)),
+ 238         &#039;#weight&#039; =&gt; -1,
+ 239     );
+ 240   }
+ 241 }
+ 242 
+ 243 /**
+ 244  * Implements hook_theme().
+ 245  *
+ 246  * This lets us tell Drupal about our theme functions and their arguments.
+ 247  */
+ 248 function nodeapi_example_theme() {
+ 249   return array(
+ 250     &#039;nodeapi_example_rating&#039; =&gt; array(
+ 251       &#039;variables&#039; =&gt; array(&#039;rating&#039; =&gt; NULL),
+ 252   ),
+ 253   );
+ 254 }
+ 255 
+ 256 /**
+ 257  * A custom theme function.
+ 258  *
+ 259  * By using this function to format our rating, themes can override this
+ 260  * presentation if they wish; for example, they could provide a star graphic
+ 261  * for the rating. We also wrap the default presentation in a CSS class that
+ 262  * is prefixed by the module name. This way, style sheets can modify the output
+ 263  * without requiring theme code.
+ 264  */
+ 265 function theme_nodeapi_example_rating($variables) {
+ 266   $options = array(
+ 267     0 =&gt; t(&#039;Unrated&#039;),
+ 268     1 =&gt; t(&#039;Poor&#039;),
+ 269     2 =&gt; t(&#039;Needs improvement&#039;),
+ 270     3 =&gt; t(&#039;Acceptable&#039;),
+ 271     4 =&gt; t(&#039;Good&#039;),
+ 272     5 =&gt; t(&#039;Excellent&#039;),
+ 273   );
+ 274   $output = &#039;&lt;div class=&quot;nodeapi_example_rating&quot;&gt;&#039;;
+ 275   $output .= t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; $options[(int) $variables[&#039;rating&#039;]]));
+ 276   $output .= &#039;&lt;/div&gt;&#039;;
+ 277   return $output;
+ 278 }
+ 279 
+ 280 /**
+ 281  * @} End of &quot;defgroup nodeapi_example&quot;.
+ 282  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "nodeapi_example.module" [3195-14002] -->
+<h2 class="sectionedit5" id="nodeapi_exampletest">nodeapi_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Test case for Testing the node API example module.
+   6  *
+   7  * This file contains the test cases to check if module is performing as
+   8  * expected.
+   9  */
+  10 class NodeApiExampleTestCase extends DrupalWebTestCase {
+  11   /**
+  12    * User object to perform site browsing
+  13    * @var object
+  14    */
+  15   protected $web_user;
+  16 
+  17   /**
+  18    * Content type to attach the rating system
+  19    * @var string
+  20    */
+  21   protected $type;
+  22 
+  23   public static function getInfo() {
+  24     return array(
+  25       &#039;name&#039; =&gt; &#039;Node API example functionality&#039;,
+  26       &#039;description&#039; =&gt; &#039;Demonstrate Node API hooks that allow altering a node. These are the former hook_nodeapi.&#039;,
+  27       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  28     );
+  29   }
+  30 
+  31   /**
+  32    * Enables modules and create user with specific permissions.
+  33    */
+  34   function setUp() {
+  35     parent::setUp(&#039;nodeapi_example&#039;);
+  36 
+  37     // Create admin user. This module has no access control, so we can use a
+  38     // trusted user. Revision access and revert permissions are required too.
+  39     $this-&gt;web_user = $this-&gt;drupalCreateUser(array(
+  40       &#039;administer nodes&#039;, // Required to set revision checkbox
+  41       &#039;administer content types&#039;,
+  42       &#039;bypass node access&#039;,
+  43       &#039;view revisions&#039;,
+  44       &#039;revert revisions&#039;
+  45     ));
+  46     // Login the admin user.
+  47     $this-&gt;drupalLogin($this-&gt;web_user);
+  48   }
+  49 
+  50   /**
+  51    * Log user in, creates an example node, and uses the rating system.
+  52    */
+  53   function testNodeExampleBasic() {
+  54 
+  55     // Login the user.
+  56     $this-&gt;drupalLogin($this-&gt;web_user);
+  57 
+  58     // Create custom content type
+  59     $content_type = $this-&gt;drupalCreateContentType();
+  60     $type = $content_type-&gt;type;
+  61 
+  62     // Go to edit the settings of this content type
+  63     $this-&gt;drupalGet(&#039;admin/structure/types/manage/&#039; . $type);
+  64     $this-&gt;assertResponse(200);
+  65 
+  66     // Check if the new Rating options appear in the settings page
+  67     $this-&gt;assertText(t(&#039;NodeAPI Example Rating&#039;), &#039;Rating options found in content type.&#039;);
+  68     $this-&gt;assertFieldByName(&#039;nodeapi_example_node_type&#039;, 1, &#039;Rating is Disabled by default.&#039;);
+  69 
+  70     // Disable the rating for this content type: 0 for Disabled, 1 for Enabled.
+  71     $content_settings = array(
+  72       &#039;nodeapi_example_node_type&#039; =&gt; 0,
+  73     );
+  74     $this-&gt;drupalPost(&#039;admin/structure/types/manage/&#039; . $type, $content_settings, t(&#039;Save content type&#039;));
+  75     $this-&gt;assertResponse(200);
+  76     $this-&gt;assertRaw(&#039; has been updated.&#039;, &#039;Settings modified successfully for content type.&#039;);
+  77 
+  78     // Create an example node
+  79     $langcode = LANGUAGE_NONE;
+  80     $edit = array(
+  81       &quot;title&quot; =&gt; $this-&gt;randomName(),
+  82     );
+  83     $this-&gt;drupalPost(&#039;node/add/&#039; . $type, $edit, t(&#039;Save&#039;));
+  84     $this-&gt;assertResponse(200);
+  85 
+  86     // Check that the rating is not shown, as we have not yet enabled it
+  87     $this-&gt;assertNoRaw(&#039;Rating: &lt;em&gt;&#039;, &#039;Extended rating information is not shown.&#039;);
+  88 
+  89     // Save current current url (we are viewing the new node)
+  90     $node_url = $this-&gt;getUrl();
+  91 
+  92     // Enable the rating for this content type: 0 for Disabled, 1 for Enabled.
+  93     $content_settings = array(
+  94       &#039;nodeapi_example_node_type&#039; =&gt; TRUE,
+  95     );
+  96     $this-&gt;drupalPost(&#039;admin/structure/types/manage/&#039; . $type, $content_settings, t(&#039;Save content type&#039;));
+  97     $this-&gt;assertResponse(200);
+  98     $this-&gt;assertRaw(&#039; has been updated.&#039;, &#039;Settings modified successfully for content type.&#039;);
+  99 
+ 100     // Check previously create node. It should be not rated
+ 101     $this-&gt;drupalGet($node_url);
+ 102     $this-&gt;assertResponse(200);
+ 103     $this-&gt;assertRaw(t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; t(&#039;Unrated&#039;))), &#039;Content is not rated.&#039;);
+ 104 
+ 105     // Rate the content, 4 is for &quot;Good&quot;
+ 106     $rate = array(
+ 107       &#039;nodeapi_example_rating&#039; =&gt; 4,
+ 108     );
+ 109     $this-&gt;drupalPost($node_url . &#039;/edit&#039;, $rate, t(&#039;Save&#039;));
+ 110     $this-&gt;assertResponse(200);
+ 111 
+ 112     // Check that content has been rated
+ 113     $this-&gt;assertRaw(t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; t(&#039;Good&#039;))), &#039;Content is successfully rated.&#039;);
+ 114 
+ 115   }
+ 116 
+ 117   /**
+ 118    * Logs user in, creates an example node, and tests rating functionality with
+ 119    * a node using revisions.
+ 120    */
+ 121   function testNodeExampleRevision() {
+ 122 
+ 123     // Login the user.
+ 124     $this-&gt;drupalLogin($this-&gt;web_user);
+ 125 
+ 126     // Create custom content type
+ 127     $content_type = $this-&gt;drupalCreateContentType();
+ 128     $type = $content_type-&gt;type;
+ 129 
+ 130     // Go to edit the settings of this content type
+ 131     $this-&gt;drupalGet(&#039;admin/structure/types/manage/&#039; . $type);
+ 132     $this-&gt;assertResponse(200);
+ 133 
+ 134     // Check if the new Rating options appear in the settings page
+ 135     $this-&gt;assertText(t(&#039;NodeAPI Example Rating&#039;), &#039;Rating options found in content type.&#039;);
+ 136     $this-&gt;assertFieldByName(&#039;nodeapi_example_node_type&#039;, 1, &#039;Rating is Disabled by default.&#039;);
+ 137 
+ 138     // Disable the rating for this content type: 0 for Disabled, 1 for Enabled.
+ 139     $content_settings = array(
+ 140       &#039;nodeapi_example_node_type&#039; =&gt; 0,
+ 141     );
+ 142     $this-&gt;drupalPost(&#039;admin/structure/types/manage/&#039; . $type, $content_settings, t(&#039;Save content type&#039;));
+ 143     $this-&gt;assertResponse(200);
+ 144     $this-&gt;assertRaw(&#039; has been updated.&#039;, &#039;Settings modified successfully for content type.&#039;);
+ 145 
+ 146     // Create an example node
+ 147     $langcode = LANGUAGE_NONE;
+ 148     $edit = array(
+ 149       &quot;title&quot; =&gt; $this-&gt;randomName(),
+ 150     );
+ 151     $this-&gt;drupalPost(&#039;node/add/&#039; . $type, $edit, t(&#039;Save&#039;));
+ 152     $this-&gt;assertResponse(200);
+ 153 
+ 154     // Check that the rating is not shown, as we have not yet enabled it
+ 155     $this-&gt;assertNoRaw(&#039;Rating: &lt;em&gt;&#039;, &#039;Extended rating information is not shown.&#039;);
+ 156 
+ 157     // Save current current url (we are viewing the new node)
+ 158     $node_url = $this-&gt;getUrl();
+ 159 
+ 160     // Enable the rating for this content type: 0 for Disabled, 1 for Enabled.
+ 161     $content_settings = array(
+ 162       &#039;nodeapi_example_node_type&#039; =&gt; TRUE,
+ 163     );
+ 164     $this-&gt;drupalPost(&#039;admin/structure/types/manage/&#039; . $type, $content_settings, t(&#039;Save content type&#039;));
+ 165     $this-&gt;assertResponse(200);
+ 166     $this-&gt;assertRaw(&#039; has been updated.&#039;, &#039;Settings modified successfully for content type.&#039;);
+ 167 
+ 168     // Check previously create node. It should be not rated
+ 169     $this-&gt;drupalGet($node_url);
+ 170     $this-&gt;assertResponse(200);
+ 171     $this-&gt;assertRaw(t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; t(&#039;Unrated&#039;))), &#039;Content is not rated.&#039;);
+ 172 
+ 173     // Rate the content, 4 is for &quot;Good&quot;
+ 174     $rate = array(
+ 175       &#039;nodeapi_example_rating&#039; =&gt; 4,
+ 176     );
+ 177     $this-&gt;drupalPost($node_url . &#039;/edit&#039;, $rate, t(&#039;Save&#039;));
+ 178     $this-&gt;assertResponse(200);
+ 179 
+ 180     // Check that content has been rated
+ 181     $this-&gt;assertRaw(t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; t(&#039;Good&#039;))), &#039;Content is successfully rated.&#039;);
+ 182 
+ 183     // Rate the content to poor using a new revision, 1 is for &quot;Poor&quot;
+ 184     $rate = array(
+ 185       &#039;nodeapi_example_rating&#039; =&gt; 1,
+ 186       &#039;revision&#039;               =&gt; 1,
+ 187     );
+ 188     $this-&gt;drupalPost($node_url . &#039;/edit&#039;, $rate, t(&#039;Save&#039;));
+ 189     $this-&gt;assertResponse(200);
+ 190 
+ 191     // Check that content has been rated
+ 192     $this-&gt;assertRaw(t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; t(&#039;Poor&#039;))), &#039;Content is successfully rated.&#039;);
+ 193 
+ 194     //Now switch back to previous revision of the node.
+ 195     $this-&gt;drupalGet($node_url . &#039;/revisions&#039;);
+ 196     // There is only a revision, so it must work just clicking the first link..
+ 197     $this-&gt;clickLink(&#039;revert&#039;);
+ 198     $revert_form = $this-&gt;getUrl();
+ 199     $this-&gt;drupalPost($revert_form, array(), t(&#039;Revert&#039;));
+ 200 
+ 201     // Go back to the node page.
+ 202     $this-&gt;drupalGet($node_url);
+ 203     $this-&gt;assertResponse(200);
+ 204 
+ 205     // Check that content has been rated
+ 206     $this-&gt;assertRaw(t(&#039;Rating: %rating&#039;, array(&#039;%rating&#039; =&gt; t(&#039;Good&#039;))), &#039;Content rating matches reverted revision.&#039;);
+ 207 
+ 208   }
+ 209 
+ 210 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "nodeapi_example.test" [14003-] -->

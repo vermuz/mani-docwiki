@@ -1,0 +1,23 @@
+div.dokuwiki h1 {
+	margin-top:10px;
+	padding-left:0;
+	margin-left:0;
+}
+div.dokuwiki h1 span{
+	margin-top:-5px;
+	margin-left:45px;
+	padding:1px 5px;
+	background:#000000;
+	text-transform:uppercase;
+}
+div.lcars_detail{
+
+}
+div.dokuwiki dl.img_tags dd{
+	background:#e6b85c;
+	color:#000 !important;
+}	
+div.dokuwiki dl.img_tags dt{
+	background:#ffe7b7;
+	color:#000 !important;
+}	

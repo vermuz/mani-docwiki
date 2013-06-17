@@ -1,0 +1,102 @@
+
+<p>
+<strong>Comprehension
+</strong>
+</p>
+<pre class="code">          Set Comprehension returns a set object
+          List Comprehension returns a list object
+          </pre>
+
+<p>
+<em class="u">Set Comprehension</em>
+</p>
+
+<p>
+&#039;shorthand for creating new sets&#039;
+</p>
+<pre class="code">&gt;&gt;&gt; s2
+{16, 10, 12, 14}
+&gt;&gt;&gt; type(s2)
+&lt;class &#039;set&#039;&gt;
+&gt;&gt;&gt; setcomp = {i * 2 for i in s2}
+&gt;&gt;&gt; setcomp
+{32, 24, 20, 28}
+&gt;&gt;&gt; type(setcomp)
+&lt;class &#039;set&#039;&gt;</pre>
+
+<p>
+<em class="u">List Comprehension
+</em>
+</p>
+
+<p>
+Nifty &#039;shorthand&#039; method for creating new lists
+</p>
+<pre class="code">&gt;&gt;&gt; alist = [1,2,4,6,8,10]
+&gt;&gt;&gt; alist = [i * 4 for i in alist]
+&gt;&gt;&gt; type(alist)
+&lt;class &#039;list&#039;&gt;
+&gt;&gt;&gt; alist
+[4, 8, 16, 24, 32, 40]</pre>
+
+<p>
+<em class="u">Create a list of lists
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; type(phrase)
+&lt;class &#039;list&#039;&gt;
+&gt;&gt;&gt; phrase
+[&#039;Lorem&#039;, &#039;ipsum&#039;, &#039;dolor&#039;, &#039;sit&#039;, &#039;amet,&#039;, &#039;consectetur&#039;, &#039;adipiscing&#039;, &#039;elit.&#039;]
+&gt;&gt;&gt; stuff = [[p.upper(),p.lower(), len(p)] for p in phrase]
+&gt;&gt;&gt; stuff
+[[&#039;LOREM&#039;, &#039;lorem&#039;, 5], [&#039;IPSUM&#039;, &#039;ipsum&#039;, 5], [&#039;DOLOR&#039;, &#039;dolor&#039;, 5], [&#039;SIT&#039;, &#039;sit&#039;, 3], [&#039;AMET,&#039;, &#039;amet,&#039;, 5], [&#039;CONSECTETUR&#039;, &#039;consectetur&#039;, 11], [&#039;ADIPISCING&#039;, &#039;adipiscing&#039;, 10], [&#039;ELIT.&#039;, &#039;elit.&#039;, 5]]</pre>
+
+<p>
+<em class="u">Comprehensions with a Dictionary
+</em>
+</p>
+
+<p>
+You can reorder key/value pairs
+</p>
+<pre class="code">&gt;&gt;&gt; dic1 ={&#039;ay&#039;:1, &#039;bee&#039;:2, &#039;cee&#039;:3}
+&gt;&gt;&gt; dic2 = {}
+&gt;&gt;&gt; dic2 = {value:key for key, value in dic1.items()}
+&gt;&gt;&gt; dic2
+{1: &#039;ay&#039;, 2: &#039;bee&#039;, 3: &#039;cee&#039;}</pre>
+
+<p>
+<em class="u">Another case for using List comprehension.
+So, we create a file lang.txt</em>
+</p>
+<pre class="code">&gt;&gt;&gt; lang = (&#039;/home/mani/pydev/lang.txt&#039;)
+&gt;&gt;&gt; lang
+&#039;/home/mani/pydev/lang.txt&#039;
+&gt;&gt;&gt; lang = open(&#039;/home/mani/pydev/lang.txt&#039;)</pre>
+
+<p>
+<em class="u">Python can`t read it
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; lang
+&lt;_io.TextIOWrapper name=&#039;/home/mani/pydev/lang.txt&#039; mode=&#039;r&#039; encoding=&#039;UTF-8&#039;&gt;</pre>
+
+<p>
+<em class="u">Open as a list
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; lang = list(open(&#039;/home/mani/pydev/lang.txt&#039;))
+&gt;&gt;&gt; lang
+[&#039;python\n&#039;, &#039;c\n&#039;, &#039;haskell\n&#039;, &#039;lisp\n&#039;, &#039;java\n&#039;, &#039;alice\n&#039;, &#039;abc\n&#039;, &#039;perl\n&#039;, &#039;ruby\n&#039;, &#039;basic\n&#039;, &#039;erlang\n&#039;, &#039;\n&#039;]
+&gt;&gt;&gt; type(lang)
+&lt;class &#039;list&#039;&gt;</pre>
+
+<p>
+<em class="u">Problem: in lang.txt, we hit enter after typing names. We need to clean that up.
+</em>
+<em class="u">Apply a comprehension.
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; lang = [n.rstrip() for n in lang]
+&gt;&gt;&gt; lang
+[&#039;python&#039;, &#039;c&#039;, &#039;haskell&#039;, &#039;lisp&#039;, &#039;java&#039;, &#039;alice&#039;, &#039;abc&#039;, &#039;perl&#039;, &#039;ruby&#039;, &#039;basic&#039;, &#039;erlang&#039;, &#039;&#039;]</pre>

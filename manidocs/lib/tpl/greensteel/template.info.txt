@@ -1,0 +1,7 @@
+base     dokuwiki
+author   Sherri Wheeler
+email    Contact at http://syntaxseed.com
+date     2013-02-28
+name     greensteel
+desc     A green background template based on the default.
+url      http://syntaxseed.com/project/dokuwikithemegreensteel/

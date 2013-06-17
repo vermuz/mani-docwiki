@@ -1,0 +1,208 @@
+
+<p>
+<strong>Tuple</strong>
+</p>
+<ol>
+<li class="level1"><div class="li"> An ordered set of data </div>
+</li>
+<li class="level1"><div class="li"> A single row in a DB table</div>
+</li>
+<li class="level1"><div class="li"> An immutable list : want to modify it? You will have to create a new one.</div>
+</li>
+<li class="level1"><div class="li"> A sequence (like strings + lists) → Python</div>
+</li>
+<li class="level1"><div class="li"> Read only : used for constant data</div>
+</li>
+<li class="level1"><div class="li"> We cannot append tuples : insert a new value in that object</div>
+</li>
+</ol>
+
+<p>
+uses:
+</p>
+<ol>
+<li class="level1"><div class="li"> Smaller data samples</div>
+</li>
+<li class="level3"><div class="li"> Protection of data from overriding</div>
+</li>
+<li class="level3"><div class="li"> Storing constants (static data)</div>
+</li>
+<li class="level3"><div class="li"> We can pack more than one data type in tuples as illustrated in the example.</div>
+</li>
+<li class="level3"><div class="li"> Faster than lists</div>
+</li>
+<li class="level3"><div class="li"> Write protect data</div>
+</li>
+<li class="level3"><div class="li"> It can be used as dictionary keys</div>
+</li>
+</ol>
+
+<p>
+<em class="u">atuple = (&#039;perl&#039;, &#039;ruby&#039;, &#039;python&#039;, 3.14, 4000)
+</em>
+<br/>
+
+<em>Note: Dictionaries are not a sequence.
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; atuple = (&quot;CBT&quot;, &quot;Nuggets&quot;, &quot;is&quot;, 1.0)
+&gt;&gt;&gt; atuple[1:3]
+(&#039;Nuggets&#039;, &#039;is&#039;)
+&gt;&gt;&gt; atuple[-4:-2]
+(&#039;CBT&#039;, &#039;Nuggets&#039;)
+########################################
+&gt;&gt;&gt; newtuple = (1, &quot;somewhat&quot;, 3.14)
+&gt;&gt;&gt; ntuple2 = newtuple[0:2]
+&gt;&gt;&gt; ntuple2
+(1, &#039;somewhat&#039;)
+########################################
+&gt;&gt;&gt; newtuple.index(&#039;somewhat&#039;)
+1
+&gt;&gt;&gt; newtuple.count(&#039;somewhat&#039;)
+1
+#########################################
+&gt;&gt;&gt; multitup = (&quot;time&quot;, 12, &quot;tim&quot;, 24.34)
+&gt;&gt;&gt; multitup.count(&quot;time&quot;)
+1</pre>
+
+<p>
+<strong>List
+</strong>
+</p>
+
+<p>
+Mutable sequence data structure
+<br/>
+
+<em class="u">alist = [“Sales, 25, “Admin”, 1.0]
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; foo = [&quot;spam&quot;, 335, &quot;eggs&quot;, 323, 234]
+&gt;&gt;&gt; type(foo)
+&lt;class &#039;list&#039;&gt;
+&gt;&gt;&gt; foo2 = foo[0:3]
+&gt;&gt;&gt; foo2
+[&#039;spam&#039;, 335, &#039;eggs&#039;]
+#########################################
+&gt;&gt;&gt; foo2.remove
+&lt;built-in method remove of list object at 0xb5f2608c&gt;
+&gt;&gt;&gt; foo2.remove(335)
+&gt;&gt;&gt; foo2
+[&#039;spam&#039;, &#039;eggs&#039;]
+#########################################
+&gt;&gt;&gt; footup = tuple(foo2)
+&gt;&gt;&gt; footup
+(&#039;spam&#039;, &#039;eggs&#039;)
+&gt;&gt;&gt; type(footup)
+&lt;class &#039;tuple&#039;&gt;
+&gt;&gt;&gt; foo2
+[&#039;spam&#039;, &#039;eggs&#039;]
+#########################################
+&gt;&gt;&gt; foo2.append(3.14)
+&gt;&gt;&gt; foo2
+[&#039;spam&#039;, &#039;eggs&#039;, 3.14]
+#########################################
+&gt;&gt;&gt; foo2.count(&#039;eggs&#039;)
+1
+#########################################
+&gt;&gt;&gt; foo2.insert(1, &#039;foo&#039;)
+&gt;&gt;&gt; foo2.insert(3, &#039;bar&#039;)
+&gt;&gt;&gt; foo2
+[&#039;spam&#039;, &#039;foo&#039;, &#039;eggs&#039;, &#039;bar&#039;, 3.14]
+#########################################
+&gt;&gt;&gt; foo.reverse()
+&gt;&gt;&gt; foo
+[234, 323, &#039;eggs&#039;, 335, &#039;spam&#039;]
+#########################################
+&gt;&gt;&gt; foo[0] = str(foo[0])
+&gt;&gt;&gt; foo[1] = str(foo[1])
+&gt;&gt;&gt; foo[3] = str(foo[3])
+&gt;&gt;&gt; type(foo)
+&lt;class &#039;list&#039;&gt;
+#########################################
+&gt;&gt;&gt; foo.sort()
+&gt;&gt;&gt; foo
+[&#039;234&#039;, &#039;323&#039;, &#039;335&#039;, &#039;eggs&#039;, &#039;spam&#039;]
+#########################################
+&gt;&gt;&gt; l1 = [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;]
+&gt;&gt;&gt; l2 = [1,2,3,4]
+&gt;&gt;&gt; l1.append(12)
+&gt;&gt;&gt; l1
+[&#039;one&#039;, &#039;two&#039;, &#039;three&#039;, &#039;four&#039;, 12]
+&gt;&gt;&gt; l1.append(l2)
+&gt;&gt;&gt; l1
+[&#039;one&#039;, &#039;two&#039;, &#039;three&#039;, &#039;four&#039;, 12, [1, 2, 3, 4]]</pre>
+
+<p>
+<strong>Dictionaries
+</strong>
+</p>
+<ol>
+<li class="level1"><div class="li"> Mutable unordered(not a sequence) set of key:value pairs</div>
+</li>
+<li class="level1"><div class="li"> Associative Array</div>
+</li>
+<li class="level1"><div class="li"> Hash tables</div>
+</li>
+<li class="level1"><div class="li"> Fast lookup (<em class="u">keys : each key run through a hash function</em>)</div>
+</li>
+<li class="level1"><div class="li"> Slicing not allowed in key:value pairs due to lack of order</div>
+</li>
+</ol>
+
+<p>
+<em class="u">adict = {&#039;one&#039;:&#039;uno&#039;, &#039;two&#039;;&#039;dos&#039;, &#039;three&#039;:&#039;tres&#039;}
+</em>
+<br/>
+
+Tuples as keys (YES) (Elements must be numbers or strings i.e. immutable) <br/>
+
+Lists as keys (NO) - <em>mutable</em> - will need rehashing everytime
+</p>
+<pre class="code">&gt;&gt;&gt; months = {1:&quot;January&quot;, 2:&quot;February&quot;, 3:&quot;March&quot;}
+&gt;&gt;&gt; type(months)
+&lt;class &#039;dict&#039;&gt;
+&gt;&gt;&gt; months[2]
+&#039;February&#039;
+&gt;&gt;&gt; months[4] = &quot;April&quot;
+&gt;&gt;&gt; months
+{1: &#039;January&#039;, 2: &#039;February&#039;, 3: &#039;March&#039;, 4: &#039;April&#039;}
+#########################################
+&gt;&gt;&gt; months.keys()
+dict_keys([1, 2, 3, 4])
+&gt;&gt;&gt; months.values()
+dict_values([&#039;January&#039;, &#039;February&#039;, &#039;March&#039;, &#039;April&#039;])
+#########################################
+&gt;&gt;&gt; months[4]= &quot;Something completely different&quot;
+&gt;&gt;&gt; months
+{1: &#039;January&#039;, 2: &#039;February&#039;, 3: &#039;March&#039;, 4: &#039;Something completely different&#039;}
+&gt;&gt;&gt; months[4] = &quot;April&quot;
+&gt;&gt;&gt; months
+{1: &#039;January&#039;, 2: &#039;February&#039;, 3: &#039;March&#039;, 4: &#039;April&#039;}
+&gt;&gt;&gt; months[3] = &quot;Spam&quot;
+&gt;&gt;&gt; months
+{1: &#039;January&#039;, 2: &#039;February&#039;, 3: &#039;Spam&#039;, 4: &#039;April&#039;}
+#########################################
+&gt;&gt;&gt; month2list = list(months)
+&gt;&gt;&gt; month2list
+[1, 2, 3, 4]
+&gt;&gt;&gt; month2list2 = list(months.values())
+&gt;&gt;&gt; month2list2
+[&#039;January&#039;, &#039;February&#039;, &#039;Spam&#039;, &#039;April&#039;]
+&gt;&gt;&gt; tuple = (&quot;some&quot;, &quot;data&quot;, &quot;here&quot;)
+&gt;&gt;&gt; months
+{1: &#039;January&#039;, 2: &#039;February&#039;, 3: &#039;Spam&#039;, 4: &#039;April&#039;}
+&gt;&gt;&gt; months[5] = tuple
+&gt;&gt;&gt; months
+{1: &#039;January&#039;, 2: &#039;February&#039;, 3: &#039;Spam&#039;, 4: &#039;April&#039;, 5: (&#039;some&#039;, &#039;data&#039;, &#039;here&#039;)}
+#########################################
+&gt;&gt;&gt; adict = {&quot;one&quot;:&quot;uno&quot;,&quot;two&quot;:&quot;dos&quot;,&quot;three&quot;:&quot;tres&quot;}
+&gt;&gt;&gt; len(adict)
+3
+&gt;&gt;&gt; adict
+{&#039;three&#039;: &#039;tres&#039;, &#039;two&#039;: &#039;dos&#039;, &#039;one&#039;: &#039;uno&#039;}
+#########################################
+&gt;&gt;&gt; adict.pop(&#039;three&#039;)
+&#039;tres&#039;
+&gt;&gt;&gt; adict
+{&#039;two&#039;: &#039;dos&#039;, &#039;one&#039;: &#039;uno&#039;}</pre>

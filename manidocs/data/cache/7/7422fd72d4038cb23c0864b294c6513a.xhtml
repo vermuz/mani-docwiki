@@ -1,0 +1,267 @@
+
+<h1 class="sectionedit1" id="js_example">JS Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "JS Example" [1-26] -->
+<h2 class="sectionedit2" id="accordiontplphp">accordion.tpl.php</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Template file for js_example module.
+   6  */
+   7 ?&gt;
+   8 &lt;div class=&quot;demo&quot;&gt;
+   9 &lt;h2&gt;&lt;?php print $title; ?&gt;&lt;/h2&gt;
+  10 &lt;div id=&quot;accordion&quot;&gt;
+  11   &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 1&lt;/a&gt;&lt;/h3&gt;
+  12   &lt;div&gt;
+  13     &lt;p&gt;
+  14     Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+  15     ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+  16     amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+  17     odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+  18     &lt;/p&gt;
+  19   &lt;/div&gt;
+  20   &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 2&lt;/a&gt;&lt;/h3&gt;
+  21   &lt;div&gt;
+  22     &lt;p&gt;
+  23     Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+  24     purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+  25     velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+  26     suscipit faucibus urna.
+  27     &lt;/p&gt;
+  28   &lt;/div&gt;
+  29   &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 3&lt;/a&gt;&lt;/h3&gt;
+  30   &lt;div&gt;
+  31     &lt;p&gt;
+  32     Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+  33     Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+  34     ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+  35     lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+  36     &lt;/p&gt;
+  37     &lt;ul&gt;
+  38       &lt;li&gt;List item one&lt;/li&gt;
+  39       &lt;li&gt;List item two&lt;/li&gt;
+  40       &lt;li&gt;List item three&lt;/li&gt;
+  41     &lt;/ul&gt;
+  42   &lt;/div&gt;
+  43   &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 4&lt;/a&gt;&lt;/h3&gt;
+  44   &lt;div&gt;
+  45     &lt;p&gt;
+  46     Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+  47     et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+  48     faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+  49     mauris vel est.
+  50     &lt;/p&gt;
+  51     &lt;p&gt;
+  52     Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
+  53     Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+  54     inceptos himenaeos.
+  55     &lt;/p&gt;
+  56   &lt;/div&gt;
+  57 &lt;/div&gt;
+  58 
+  59 &lt;/div&gt;&lt;!-- End demo --&gt;</pre>
+
+</div>
+<!-- EDIT2 SECTION "accordion.tpl.php" [27-2247] -->
+<h2 class="sectionedit3" id="js_exampleinfo">js_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = JS Example
+   2 description = An example module showing how to use some of the new JavaScript features in Drupal 7
+   3 package = Example modules
+   4 core = 7.x</pre>
+
+</div>
+<!-- EDIT3 SECTION "js_example.info" [2248-2464] -->
+<h2 class="sectionedit4" id="js_examplemodule">js_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Examples showing how to use some of the new JavaScript features in Drupal 7.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup js_example Example: JavaScript
+  10  * @ingroup examples
+  11  * @{
+  12  * Examples using Drupal 7&#039;s built-in JavaScript.
+  13  */
+  14 
+  15 /**
+  16  * Implements hook_theme().
+  17  */
+  18 function js_example_theme() {
+  19   return array(
+  20     &#039;my_accordion&#039; =&gt; array(
+  21       &#039;template&#039; =&gt; &#039;accordion&#039;,
+  22       &#039;variables&#039; =&gt; array(&#039;title&#039; =&gt; NULL),
+  23     ),
+  24   );
+  25 }
+  26 
+  27 /**
+  28  * Implements hook_menu().
+  29  */
+  30 function js_example_menu() {
+  31   $items = array();
+  32   $items[&#039;js_example/weights&#039;] = array(
+  33     &#039;title&#039; =&gt; &#039;JS Example: see weighting in action&#039;,
+  34     &#039;page callback&#039; =&gt; &#039;js_example_js_weights&#039;,
+  35     &#039;access callback&#039; =&gt; TRUE,
+  36   );
+  37   $items[&#039;js_example/accordion&#039;] = array(
+  38     &#039;title&#039; =&gt; &#039;JS Example: jQuery UI accordion&#039;,
+  39     &#039;page callback&#039; =&gt; &#039;js_example_accordion&#039;,
+  40     &#039;access callback&#039; =&gt; TRUE,
+  41   );
+  42   return $items;
+  43 }
+  44 
+  45 /**
+  46  * js_example_weights implementation.
+  47  */
+  48 function js_example_js_weights() {
+  49   // Add some css to show which line is output by which script
+  50   drupal_add_css(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/css/jsweights.css&#039;);
+  51   //
+  52   $weights = array(
+  53     &#039;red&#039; =&gt; 100,
+  54     &#039;blue&#039; =&gt; 23,
+  55     &#039;green&#039; =&gt; 3,
+  56     &#039;brown&#039; =&gt; 45,
+  57     &#039;black&#039; =&gt; 5,
+  58     &#039;purple&#039; =&gt; 60
+  59   );
+  60   drupal_add_js(array(&#039;js_weights&#039; =&gt; $weights), array(&#039;type&#039; =&gt; &#039;setting&#039;));
+  61   drupal_add_js(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/js/red.js&#039;, array(&#039;weight&#039; =&gt; $weights[&#039;red&#039;]));
+  62   drupal_add_js(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/js/blue.js&#039;, array(&#039;weight&#039; =&gt; $weights[&#039;blue&#039;]));
+  63   drupal_add_js(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/js/green.js&#039;, array(&#039;weight&#039; =&gt; $weights[&#039;green&#039;]));
+  64   drupal_add_js(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/js/brown.js&#039;, array(&#039;weight&#039; =&gt; $weights[&#039;brown&#039;]));
+  65   drupal_add_js(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/js/black.js&#039;, array(&#039;weight&#039; =&gt; $weights[&#039;black&#039;]));
+  66   drupal_add_js(drupal_get_path(&#039;module&#039;, &#039;js_example&#039;) . &#039;/js/purple.js&#039;, array(&#039;weight&#039; =&gt; $weights[&#039;purple&#039;]));
+  67   $output = &#039;&lt;div id=&quot;js-weights&quot;&gt;&lt;/div&gt;&#039;;
+  68   return $output;
+  69 }
+  70 
+  71 /**
+  72  * js_example_accordion implementation.
+  73  */
+  74 function js_example_accordion() {
+  75   $title = t(&#039;Click sections to expand or collapse:&#039;);
+  76   $build[&#039;myelement&#039;] = array(
+  77     &#039;#theme&#039; =&gt; &#039;my_accordion&#039;,
+  78     &#039;#title&#039; =&gt; $title,
+  79   );
+  80   $build[&#039;myelement&#039;][&#039;#attached&#039;][&#039;library&#039;][] = array(&#039;system&#039;, &#039;ui.accordion&#039;);
+  81   $build[&#039;myelement&#039;][&#039;#attached&#039;][&#039;js&#039;][] = array(&#039;data&#039; =&gt; &#039;(function($){$(function() { $(&quot;#accordion&quot;).accordion(); })})(jQuery);&#039;, &#039;type&#039; =&gt; &#039;inline&#039;);
+  82   $output = drupal_render($build);
+  83   return $output;
+  84 }</pre>
+
+</div>
+<!-- EDIT4 SECTION "js_example.module" [2465-5530] -->
+<h2 class="sectionedit5" id="ajaxyjs">ajaxy.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   $(&#039;div#test&#039;).html(&#039;hello katherine&#039;);
+   5 });
+   6 })(jQuery);</pre>
+
+</div>
+<!-- EDIT5 SECTION "ajaxy.js" [5531-5698] -->
+<h2 class="sectionedit6" id="blackjs">black.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.black;
+   5   var newDiv = $(&#039;&lt;div&gt;&lt;/div&gt;&#039;).css(&#039;color&#039;, &#039;black&#039;).html(&#039;I have a weight of &#039; + weight);
+   6   $(&#039;#js-weights&#039;).append(newDiv);
+   7 });
+   8 })(jQuery);</pre>
+
+</div>
+<!-- EDIT6 SECTION "black.js" [5699-6011] -->
+<h2 class="sectionedit7" id="bluejs">blue.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.blue;
+   5   var newDiv = $(&#039;&lt;div&gt;&lt;/div&gt;&#039;).css(&#039;color&#039;, &#039;blue&#039;).html(&#039;I have a weight of &#039; + weight);
+   6   $(&#039;#js-weights&#039;).append(newDiv);
+   7 });
+   8 })(jQuery);</pre>
+
+</div>
+<!-- EDIT7 SECTION "blue.js" [6012-6321] -->
+<h2 class="sectionedit8" id="brownjs">brown.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.brown;
+   5   var newDiv = $(&#039;&lt;div&gt;&lt;/div&gt;&#039;).css(&#039;color&#039;, &#039;brown&#039;).html(&#039;I have a weight of &#039; + weight);
+   6   $(&#039;#js-weights&#039;).append(newDiv);
+   7 });
+   8 })(jQuery);</pre>
+
+</div>
+<!-- EDIT8 SECTION "brown.js" [6322-6634] -->
+<h2 class="sectionedit9" id="greenjs">green.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.green;
+   5   var newDiv = $(&#039;&lt;div&gt;&lt;/div&gt;&#039;).css(&#039;color&#039;, &#039;green&#039;).html(&#039;I have a weight of &#039; + weight);
+   6   $(&#039;#js-weights&#039;).append(newDiv);
+   7 });
+   8 })(jQuery);</pre>
+
+</div>
+<!-- EDIT9 SECTION "green.js" [6635-6947] -->
+<h2 class="sectionedit10" id="purplejs">purple.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.purple;
+   5   var newDiv = $(&#039;&lt;div&gt;&lt;/div&gt;&#039;).css(&#039;color&#039;, &#039;purple&#039;).html(&#039;I have a weight of &#039; + weight);
+   6   $(&#039;#js-weights&#039;).append(newDiv);
+   7 });
+   8 })(jQuery);</pre>
+
+</div>
+<!-- EDIT10 SECTION "purple.js" [6948-7263] -->
+<h2 class="sectionedit11" id="redjs">red.js</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.red;
+   5   var newDiv = $(&#039;&lt;div&gt;&lt;/div&gt;&#039;).css(&#039;color&#039;, &#039;red&#039;).html(&#039;I have a weight of &#039; + weight);
+   6   $(&#039;#js-weights&#039;).append(newDiv);
+   7 });
+   8 })(jQuery);</pre>
+
+</div>
+<!-- EDIT11 SECTION "red.js" [7264-7570] -->
+<h2 class="sectionedit12" id="jsweightscss">jsweights.css</h2>
+<div class="level2">
+<pre class="code">   1 
+   2 div#js-weights div {
+   3   font-size: 20px;
+   4   font-weight: bold;
+   5 }</pre>
+
+</div>
+<!-- EDIT12 SECTION "jsweights.css" [7571-] -->

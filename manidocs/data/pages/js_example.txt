@@ -1,0 +1,241 @@
+====== JS Example ======
+
+===== accordion.tpl.php =====
+<code>
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Template file for js_example module.
+   6  */
+   7 ?>
+   8 <div class="demo">
+   9 <h2><?php print $title; ?></h2>
+  10 <div id="accordion">
+  11   <h3><a href="#">Section 1</a></h3>
+  12   <div>
+  13     <p>
+  14     Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+  15     ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+  16     amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+  17     odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+  18     </p>
+  19   </div>
+  20   <h3><a href="#">Section 2</a></h3>
+  21   <div>
+  22     <p>
+  23     Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+  24     purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+  25     velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+  26     suscipit faucibus urna.
+  27     </p>
+  28   </div>
+  29   <h3><a href="#">Section 3</a></h3>
+  30   <div>
+  31     <p>
+  32     Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+  33     Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+  34     ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+  35     lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+  36     </p>
+  37     <ul>
+  38       <li>List item one</li>
+  39       <li>List item two</li>
+  40       <li>List item three</li>
+  41     </ul>
+  42   </div>
+  43   <h3><a href="#">Section 4</a></h3>
+  44   <div>
+  45     <p>
+  46     Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+  47     et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+  48     faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+  49     mauris vel est.
+  50     </p>
+  51     <p>
+  52     Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
+  53     Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+  54     inceptos himenaeos.
+  55     </p>
+  56   </div>
+  57 </div>
+  58 
+  59 </div><!-- End demo -->
+</code>
+===== js_example.info =====
+<code>
+   1 name = JS Example
+   2 description = An example module showing how to use some of the new JavaScript features in Drupal 7
+   3 package = Example modules
+   4 core = 7.x
+</code>
+===== js_example.module =====
+<code>
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Examples showing how to use some of the new JavaScript features in Drupal 7.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup js_example Example: JavaScript
+  10  * @ingroup examples
+  11  * @{
+  12  * Examples using Drupal 7's built-in JavaScript.
+  13  */
+  14 
+  15 /**
+  16  * Implements hook_theme().
+  17  */
+  18 function js_example_theme() {
+  19   return array(
+  20     'my_accordion' => array(
+  21       'template' => 'accordion',
+  22       'variables' => array('title' => NULL),
+  23     ),
+  24   );
+  25 }
+  26 
+  27 /**
+  28  * Implements hook_menu().
+  29  */
+  30 function js_example_menu() {
+  31   $items = array();
+  32   $items['js_example/weights'] = array(
+  33     'title' => 'JS Example: see weighting in action',
+  34     'page callback' => 'js_example_js_weights',
+  35     'access callback' => TRUE,
+  36   );
+  37   $items['js_example/accordion'] = array(
+  38     'title' => 'JS Example: jQuery UI accordion',
+  39     'page callback' => 'js_example_accordion',
+  40     'access callback' => TRUE,
+  41   );
+  42   return $items;
+  43 }
+  44 
+  45 /**
+  46  * js_example_weights implementation.
+  47  */
+  48 function js_example_js_weights() {
+  49   // Add some css to show which line is output by which script
+  50   drupal_add_css(drupal_get_path('module', 'js_example') . '/css/jsweights.css');
+  51   //
+  52   $weights = array(
+  53     'red' => 100,
+  54     'blue' => 23,
+  55     'green' => 3,
+  56     'brown' => 45,
+  57     'black' => 5,
+  58     'purple' => 60
+  59   );
+  60   drupal_add_js(array('js_weights' => $weights), array('type' => 'setting'));
+  61   drupal_add_js(drupal_get_path('module', 'js_example') . '/js/red.js', array('weight' => $weights['red']));
+  62   drupal_add_js(drupal_get_path('module', 'js_example') . '/js/blue.js', array('weight' => $weights['blue']));
+  63   drupal_add_js(drupal_get_path('module', 'js_example') . '/js/green.js', array('weight' => $weights['green']));
+  64   drupal_add_js(drupal_get_path('module', 'js_example') . '/js/brown.js', array('weight' => $weights['brown']));
+  65   drupal_add_js(drupal_get_path('module', 'js_example') . '/js/black.js', array('weight' => $weights['black']));
+  66   drupal_add_js(drupal_get_path('module', 'js_example') . '/js/purple.js', array('weight' => $weights['purple']));
+  67   $output = '<div id="js-weights"></div>';
+  68   return $output;
+  69 }
+  70 
+  71 /**
+  72  * js_example_accordion implementation.
+  73  */
+  74 function js_example_accordion() {
+  75   $title = t('Click sections to expand or collapse:');
+  76   $build['myelement'] = array(
+  77     '#theme' => 'my_accordion',
+  78     '#title' => $title,
+  79   );
+  80   $build['myelement']['#attached']['library'][] = array('system', 'ui.accordion');
+  81   $build['myelement']['#attached']['js'][] = array('data' => '(function($){$(function() { $("#accordion").accordion(); })})(jQuery);', 'type' => 'inline');
+  82   $output = drupal_render($build);
+  83   return $output;
+  84 }
+</code>
+===== ajaxy.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   $('div#test').html('hello katherine');
+   5 });
+   6 })(jQuery);
+</code>
+===== black.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.black;
+   5   var newDiv = $('<div></div>').css('color', 'black').html('I have a weight of ' + weight);
+   6   $('#js-weights').append(newDiv);
+   7 });
+   8 })(jQuery);
+</code>
+===== blue.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.blue;
+   5   var newDiv = $('<div></div>').css('color', 'blue').html('I have a weight of ' + weight);
+   6   $('#js-weights').append(newDiv);
+   7 });
+   8 })(jQuery);
+</code>
+===== brown.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.brown;
+   5   var newDiv = $('<div></div>').css('color', 'brown').html('I have a weight of ' + weight);
+   6   $('#js-weights').append(newDiv);
+   7 });
+   8 })(jQuery);
+</code>
+===== green.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.green;
+   5   var newDiv = $('<div></div>').css('color', 'green').html('I have a weight of ' + weight);
+   6   $('#js-weights').append(newDiv);
+   7 });
+   8 })(jQuery);
+</code>
+===== purple.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.purple;
+   5   var newDiv = $('<div></div>').css('color', 'purple').html('I have a weight of ' + weight);
+   6   $('#js-weights').append(newDiv);
+   7 });
+   8 })(jQuery);
+</code>
+===== red.js =====
+<code>
+   1 
+   2 (function($){
+   3 $(document).ready(function(){
+   4   var weight = Drupal.settings.js_weights.red;
+   5   var newDiv = $('<div></div>').css('color', 'red').html('I have a weight of ' + weight);
+   6   $('#js-weights').append(newDiv);
+   7 });
+   8 })(jQuery);
+</code>
+===== jsweights.css =====
+<code>
+   1 
+   2 div#js-weights div {
+   3   font-size: 20px;
+   4   font-weight: bold;
+   5 }
+</code>

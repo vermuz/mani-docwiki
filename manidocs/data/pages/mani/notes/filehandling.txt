@@ -1,0 +1,382 @@
+**File Handing
+**
+
+  * Accessing the file system
+  * Reading Files
+  * Writing Files
+
+**OS Module
+**
+
+Python os module can be used to perform tasks such as finding the name of present working directory, changing current working directory, checking if certain files or directories exist at a location, creating new directories, deleting existing files or directories, walking through a directory and performing operations on every file in the directory that satisfies some user-defined criteria, and a lot more.
+
+getcwd()      : Where our currently logged on user is. \\
+chdir()       : Change Directory to move from one location\\
+listdir()     : LS command \\
+Path.Join()   : Build Directory Paths (Python program to be ported to multiple platforms) \\
+OS.name       : OS specific \\
+sys.platform  : Paths \\
+Shutil module : Batch copy and removal
+
+<code>
+>>> import os
+>>> dir(os)
+['EX_CANTCREAT', 'EX_CONFIG', 'EX_DATAERR', 'EX_IOERR', 'EX_NOHOST', 'EX_NOINPUT', 'EX_NOPERM', 'EX_NOUSER', 'EX_OK', 'EX_OSERR', 'EX_OSFILE', 'EX_PROTOCOL', 'EX_SOFTWARE', 'EX_TEMPFAIL', 'EX_UNAVAILABLE', 'EX_USAGE', 'F_OK', 'MutableMapping', 'NGROUPS_MAX', 'O_APPEND', 'O_ASYNC', 'O_CREAT', 'O_DIRECT', 'O_DIRECTORY', 'O_DSYNC', 'O_EXCL', 'O_LARGEFILE', 'O_NDELAY', 'O_NOATIME', 'O_NOCTTY', 'O_NOFOLLOW', 'O_NONBLOCK', 'O_RDONLY', 'O_RDWR', 'O_RSYNC', 'O_SYNC', 'O_TRUNC', 'O_WRONLY', 'P_NOWAIT', 'P_NOWAITO', 'P_WAIT', 'R_OK', 'SEEK_CUR', 'SEEK_END', 'SEEK_SET', 'ST_APPEND', 'ST_MANDLOCK', 'ST_NOATIME', 'ST_NODEV', 'ST_NODIRATIME', 'ST_NOEXEC', 'ST_NOSUID', 'ST_RDONLY', 'ST_RELATIME', 'ST_SYNCHRONOUS', 'ST_WRITE', 'TMP_MAX', 'WCONTINUED', 'WCOREDUMP', 'WEXITSTATUS', 'WIFCONTINUED', 'WIFEXITED', 'WIFSIGNALED', 'WIFSTOPPED', 'WNOHANG', 'WSTOPSIG', 'WTERMSIG', 'WUNTRACED', 'W_OK', 'X_OK', '_Environ', '__all__', '__builtins__', '__cached__', '__doc__', '__file__', '__name__', '__package__', '_copyreg', '_execvpe', '_exists', '_exit', '_get_exports_list', '_get_masked_mode', '_make_stat_result', '_make_statvfs_result', '_pickle_stat_result', '_pickle_statvfs_result', '_putenv', '_spawnvef', '_unsetenv', '_wrap_close', 'abort', 'access', 'altsep', 'chdir', 'chmod', 'chown', 'chroot', 'close', 'closerange', 'confstr', 'confstr_names', 'ctermid', 'curdir', 'defpath', 'device_encoding', 'devnull', 'dup', 'dup2', 'environ', 'environb', 'errno', 'error', 'execl', 'execle', 'execlp', 'execlpe', 'execv', 'execve', 'execvp', 'execvpe', 'extsep', 'fchdir', 'fchmod', 'fchown', 'fdatasync', 'fdopen', 'fork', 'forkpty', 'fpathconf', 'fsdecode', 'fsencode', 'fstat', 'fstatvfs', 'fsync', 'ftruncate', 'get_exec_path', 'getcwd', 'getcwdb', 'getegid', 'getenv', 'getenvb', 'geteuid', 'getgid', 'getgroups', 'getloadavg', 'getlogin', 'getpgid', 'getpgrp', 'getpid', 'getppid', 'getresgid', 'getresuid', 'getsid', 'getuid', 'initgroups', 'isatty', 'kill', 'killpg', 'lchown', 'linesep', 'link', 'listdir', 'lseek', 'lstat', 'major', 'makedev', 'makedirs', 'minor', 'mkdir', 'mkfifo', 'mknod', 'name', 'nice', 'open', 'openpty', 'pardir', 'path', 'pathconf', 'pathconf_names', 'pathsep', 'pipe', 'popen', 'putenv', 'read', 'readlink', 'remove', 'removedirs', 'rename', 'renames', 'rmdir', 'sep', 'setegid', 'seteuid', 'setgid', 'setgroups', 'setpgid', 'setpgrp', 'setregid', 'setresgid', 'setresuid', 'setreuid', 'setsid', 'setuid', 'spawnl', 'spawnle', 'spawnlp', 'spawnlpe', 'spawnv', 'spawnve', 'spawnvp', 'spawnvpe', 'stat', 'stat_float_times', 'stat_result', 'statvfs', 'statvfs_result', 'strerror', 'supports_bytes_environ', 'symlink', 'sys', 'sysconf', 'sysconf_names', 'system', 'tcgetpgrp', 'tcsetpgrp', 'times', 'ttyname', 'umask', 'uname', 'unlink', 'unsetenv', 'urandom', 'utime', 'wait', 'wait3', 'wait4', 'waitpid', 'walk', 'write']
+</code>
+
+<code>
+>>> p = os.path.join('/home/mani/','pydev')
+>>> p
+'/home/mani/pydev'
+>>> os.listdir(p)
+['m11.py', 'm8.py', '__pycache__', 'mod9.py', 
+'lang.txt', 'm9.py', 'm10.py', 'if8.py', 'my11.py', 
+'mod4.py', 'nugget3.py', 'if4.py', 'if1.py', 'mod8.py', 
+'if2.py', 'spam.txt', 'mood2.py', 'mod9a.py', 'if5.py', 'if3.py']
+>>> 
+</code>
+
+<code>
+>>> os.name
+'posix'
+>>> import sys
+>>> sys.platform
+'linux2'
+
+>>> for param in os.environ.keys():
+	print(param, os.environ[param])
+
+</code>
+
+<code>
+>>> os.getcwd()
+'/home/mani/pydev'
+</code>
+
+<code>
+>>> os.listdir(os.curdir)
+['m11.py', 'm8.py', '__pycache__', 'mod9.py', 'lang.txt', 'm9.py', 'm10.py', 'if8.py', 'my11.py', 'mod4.py', 'nugget3.py', 'if4.py', 'if1.py', 'mod8.py', 'if2.py', 'spam.txt', 'mood2.py', 'mod9a.py', 'if5.py', 'if3.py']
+</code>
+
+<code>
+>>> os.chdir('/home/mani')
+>>> os.getcwd()
+'/home/mani'
+>>> os.listdir(os.curdir)
+['.juniper_networks', '.gstreamer-0.10', 'gitdev', 'GIT', 
+'.mplayer', '.dmrc', '.drush', '.bash_logout', 'temp.txt', 
+'.goutputstream-8RD3LW', '.pam_environment', 'drush-backups'
+
+>>> os.rename('workspace', 'workspace1')
+>>> os.listdir(os.curdir)
+</code>
+
+**Make New Folders
+**
+
+<code>
+>>> os.mkdir('morefiles')
+>>> os.mkdir('deleteme')
+>>> os.listdir(os.curdir)
+//Removing a folder presupposes that it is empty
+>>> os.rmdir('deleteme')
+//Removing a file
+>>> os.remove('junk.txt')
+</code>
+
+**Opening Files
+**
+
+Iterator is best method for reading
+
+<code>
+// r -> mode options: w,a,b
+w => create file, add initial content and close
+r => Add file
+a => Append 
+b => Binary (Open up Binary files)
+Better ways exist
+U => Universal new line character (standardized
+between Windows/mac/linux)
+//***********************************************
+mf = open('/home/mani/myfile.txt', 'r')
+
+WRITE
+
+mf.write('Hello, world!\n')
+OR
+mf.writelines() - Robust data entry e.g. a list
+
+READ
+
+mf.readline() => smaller files gets first line of a file
+Individual lines
+
+//Readlines - reads file into list of strings
+//List of Strings
+
+//Read single string
+mf.read() => entire file gets packed into a single string 
+
+mf.close() ->Considered optional
+</code>
+
+<code>
+// Create file with write mode
+>>> f = open('testing.txt', 'w')
+
+// Add line 1
+>>> f.write('The first line of text.\n')
+24
+
+// Add line 2
+>>> f.write('The second line of text.\n')
+25
+
+// Close file
+>>> f.close()
+
+// Open file
+>>> f = open('testing.txt')
+
+// Read a line
+>>> f.readline()
+'The first line of text.\n'
+
+// Read a line
+>>> f.readline()
+'The second line of text.\n'
+
+// Read a line
+>>> f.readline()
+''
+
+// Cursor is at the end of the file - move it to the top
+>>> f.seek(0)
+0
+
+// Read a file as a string
+>>> f.read()
+'The first line of text.\nThe second line of text.\n'
+
+
+>>> print(f.read())
+
+// Move cursor to the top
+>>> f.seek(0)
+0
+
+// Print
+>>> print(f.read())
+The first line of text.
+The second line of text.
+
+// Close file
+>>> f.close()
+
+// Open file in Append mode
+>>> f = open('testing.txt' , 'a')
+
+// Write to it
+>>> f.write('''Now is the time for all good men..... to come to the aid of the party.''')
+70
+
+// Close file
+>>> f.close()
+
+// Open file
+>>> f = open('testing.txt')
+
+// Print
+>>> print(f.read())
+The first line of text.
+The second line of text.
+Now is the time for all good men..... to come to the aid of the party.
+>>> f.close()
+
+// Create a list of names
+>>> namelist = ['Tim', 'Susan', 'Zoey']
+
+// Open file with write mode
+>>> f = open('testing.txt', 'w')
+
+// Writelines will accept data types like list not write
+>>> f.writelines(namelist)
+
+// Open file
+>>> f = open('testing.txt')
+
+// Print file
+// Notice we didn`t append
+// rather we just wrote
+// so all previous content is gone
+>>> print(f.read())
+TimSusanZoey
+>>> type(f.read())
+<class 'str'>
+</code>
+
+**DEMO 2**
+
+<code>
+>>> f = open('lines.txt', 'w')
+>>> f.write('perl\n')
+5
+>>> f.write('python\n')
+7
+>>> f.write('ruby\n')
+5
+>>> f.write('erlang\n')
+7
+>>> f.write('Alice\n')
+6
+>>> f.write('ABC\n')
+4
+>>> f.write('C\n')
+2
+>>> f.write('BASIC\n')
+6
+>>> f.write('Java\n')
+5
+>>> f.close()
+>>> f = open('lines.txt')
+>>> print(f.read())
+perl
+python
+ruby
+erlang
+Alice
+ABC
+C
+BASIC
+Java
+
+>>> f.close()
+>>> for line in open('lines.txt').readlines():
+	print(line, end='')
+
+	
+perl
+python
+ruby
+erlang
+Alice
+ABC
+C
+BASIC
+Java
+>>> 
+</code>
+
+**How to traverse directory structures**
+
+<code>
+os.walk()
+Generate the file names in a directory tree by walking the tree either top-down or bottom-up. For each directory in the tree rooted at directory top (including top itself), it yields a 3-tuple (dirpath, dirnames, filenames).
+</code>
+Walk the contents of a one or more directories recursively
+
+<code>
+// Where are we Current Working Directory
+>>> os.getcwd()
+'/home/mani'
+
+//Change directory to where you want
+>>> os.chdir('/home/mani/files')
+
+// Get Current working directory
+>>> os.getcwd()
+'/home/mani/files'
+
+// Check how many file, folders in root of current dir
+>>> for root, dirs, files in os.walk(os.curdir) :
+	print('{0} has {1} files'.format(root, len(files)))
+
+	
+. has 0 files
+./sub has 8 files
+</code>
+
+**Glob Module**
+
+//Pattern matching \\
+wildcard processing - Asterisk char to get all files of a particular extension. \\
+Regular Expressions - Regex// \\
+
+<code>
+>>> import glob
+>>> glob.glob('/home/mani/files/sub/*.txt')
+['/home/mani/files/sub/Samurai Showdown 5.txt',
+ '/home/mani/files/sub/Samurai Showdown 1.txt',
+ '/home/mani/files/sub/Samurai Showdown 4.txt',
+ '/home/mani/files/sub/ccnet domains.txt', 
+ '/home/mani/files/sub/Samurai Showdown 5 special.txt', 
+ '/home/mani/files/sub/ccna domains.txt', 
+ '/home/mani/files/sub/Samurai Showdown 2.txt', 
+ '/home/mani/files/sub/Samurai Showdown 3.txt']
+>>> for name in glob.glob('/home/mani/files/*'):
+	print(name)
+/home/mani/files/sub
+</code>
+
+glob.glob()
+
+<code>
+>>> import glob
+>>> glob.glob('./[0-9].*')
+['./1.gif', './2.txt']
+>>> glob.glob('*.gif')
+['1.gif', 'card.gif']
+>>> glob.glob('?.gif')
+['1.gif']
+</code>
+
+The glob module finds all the pathnames matching a specified pattern according to the rules used by the Unix shell. No tilde expansion is done, but *, ?, and character ranges expressed with [] will be correctly matched. This is done by using the os.listdir() and fnmatch.fnmatch() functions in concert, and not by actually invoking a subshell. (For tilde and shell variable expansion, use os.path.expanduser() and os.path.expandvars().)
+
+**Pickle Module
+**
+
+Portable storage of structured data.
+
+Zip data like :
+XML, JSON , dictionaries, lists
+
+Issues: 
+Security \\
+Once you load it - it could open the gates of hell() \\
+
+<code>
+// List Data Structure
+a = ['globby', 2323, 'text', 23.2342]
+// import pickle
+import pickle
+// Create a file to serve as pickle repo
+// wb - Creating file in binary mode
+f = open('/home/mani/pick.txt', 'wb')
+// Take input and pack into output file
+// a is going into f
+pickle.dump(a,f)
+// close the pickle file
+f.close()
+// open function read the pickle file
+f2 = open('/home/mani/pick.txt', 'r')
+// Load
+a = pickle.load(f2)
+// Directly available
+a
+</code>
+
+**Other File Types** 
+
+Python can handle CSV (Comma separated) and TSV (Tab Separated) files etcetera but what about other files.
+
+__Images -- 
+__Python Imaging Library (PIL)
+
+__MS Office --
+__pywin32
+Python office (Excel)
+            
+__PDF__ --
+ReportLab
+SWFTools (GFX Module)

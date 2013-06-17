@@ -1,0 +1,228 @@
+**Modular Programming**
+
+**Module**
+
+A module is a file containing Python definitions and statements. The file name is the module name with the suffix .py appended. Within a module, the module’s name (as a string) is available as the value of the global variable __name__. 
+
+//Self contained namespace of names.
+//
+
+__Components of modules
+__
+
+Classes \\
+functions \\
+global variables
+
+Import modules are compiled to .pyc (bytecode) files.
+
+**Importing Modules
+**
+
+__Route 1
+__
+<code>
+import os
+os.chdir()
+</code>
+
+__Route 2
+__
+<code>
+from os import chdir
+chdir('C:/spam')
+</code>
+
+<code>
+              ------  
+              |t.py|  => Top level file
+              ------
+                ||
+          ------------------
+          |       |         |
+    module1.py    |   module2.py  => Modules
+                  |
+          Standard Library
+</code>
+
+<code>
+>>> import sys
+>>> dir(sys)
+>>> sys.platform
+'linux2'
+>>> from os import chdir
+>>> chdir('/home/mani/files')
+>>> import imp
+>>> help(imp)
+// To get a module running reload
+>>> imp.reload(sys)
+<module 'sys' (built-in)>
+Can IMPORT your own custom module as well this way
+</code>
+
+**The name Trick** (Run internally or as a library)
+
+The .py file containing our custom code can be used a module but what if you want to use it as a library. You want it cached, you don`t want it to interrupt the control flow of whatever you are doing.
+
+<code>
+#squaremath.py
+
+def sq(x)
+    return x * x
+if __name__ == '__main__':
+   # Unit testing when run from OS
+   print('Testing; Square of 2 == ', sq(2))
+
+</code>
+
+__DEMO__
+
+<code>
+#!/usr/bin/python
+if __name__ == '__main__':
+    print('This program is being run by itself')
+else:
+    print('I am being imported from another module')
+</code>
+
+IF we run it as a module output should be print('This program is being run by itself') \\
+IF we run it as a library for import output should be  print('I am being imported from another module')
+
+__Execution
+__
+
+//From OS:
+//
+<code>
+mani@mani-ubuntu:~$ cd pydev
+mani@mani-ubuntu:~/pydev$ dir
+customclass.py	if3.py	lang.txt  m9.py     mod9.py	 nugget3.py
+exception2.py	if4.py	m10.py	  mod4.py   modtest2.py  __pycache__
+if1.py		if5.py	m11.py	  mod8.py   mood2.py	 spam.txt
+if2.py		if8.py	m8.py	  mod9a.py  my11.py
+mani@mani-ubuntu:~/pydev$ python modtest2.py 
+This program is being run by itself
+mani@mani-ubuntu:~/pydev$ 
+</code>
+
+//Python Shell as an Import Library
+//
+<code>
+>>> import modtest2
+I am being imported from another module
+>>> 
+</code>
+
+**Reload Module into Memory
+**
+
+<code>
+>>> import imp
+>>> imp.reload(modtest2)
+I am being imported from another module
+<module 'modtest2' from '/home/mani/pydev/modtest2.py'>
+</code>
+
+<code>
+#!/usr/bin/python
+
+'''
+Name: modtest3.py
+Author: Mani
+Purpose: Test out module imports
+'''
+
+# We don`t want this code to run until we need it to run
+
+# Function declaration
+def square(x):
+    #returns square of given integer
+    return x * x
+
+# Name hack
+# From an OS environment it will show Testing and run the function
+if __name__ == '__main__':
+    print('Testing: square of 2 == ', square(2))
+
+***********   
+RUN in OS
+***********
+
+mani@mani-ubuntu:~/pydev$ python modtest3.py
+('Testing: square of 2 == ', 4)
+
+********************
+RUN in Python Shell
+********************
+
+>>> import modtest3
+>>> help(modtest3)
+Help on module modtest3:
+
+NAME
+    modtest3
+
+DESCRIPTION
+    Name: modtest3.py
+    Author: Mani
+    Purpose: Test out module imports
+
+FUNCTIONS
+    square(x)
+        # Function declaration
+
+FILE
+    /home/mani/pydev/modtest3.py
+
+
+>>> modtest3.square(10)
+100
+</code>
+
+**Module Search Path
+**
+
+PythonPath
+SystemPath environment variables
+
+How does Python really find our modules that we are able to import and use.
+
+<code>
+import sys
+sys.path
+** Append **
+sys.path.append('/home/mani/pydev')
+sys.path
+My code is now accessible to me during //this session//
+</code>
+
+**Module Packages
+**
+
+<code>
+parrot/ (Name of the package)
+   __init__.py (Main bootstrap file)
+   feeding/ (Sub directory)
+       __init__.py (subdir bootstrap)
+       eating.py
+       drinking.py
+   fighting.py
+   flying.py
+   sleeping.py
+   talking.py   
+</code>
+
+You give the user the parrot folder. User puts this folder in site-packages folder. 
+
+<code>
+import parrot (loads init.py)
+import parrot.talking (loads parrot/talking.py)
+from parrot import sleeping
+import parrot.feeding
+from parrot.feeding.eating import eat_cracker
+</code>
+
+**Module Package Distribution
+**
+
+distutils (built-in) which is a library that gives you setup.py that users can run. For Windows and MAC uses one can create py2exe and py2app respectively.

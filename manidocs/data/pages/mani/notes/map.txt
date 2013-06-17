@@ -1,0 +1,17 @@
+**MAP**
+
+              Arguments
+            * Name of the function
+            * Iterable collection where we want our function to hit
+            * Map in Python 3000 returns iterator not a list
+<code>
+def mult(val):
+    return val * 2
+my_list = [0, 1, 2, 10, 100, 1000]
+iter = map(mult, my_list)
+# Convert to a list
+print(list(iter))
+
+mani@mani-ubuntu:~/pydev$ python3 mod9a.py 
+[0, 2, 4, 20, 200, 2000]
+</code>

@@ -1,0 +1,125 @@
+
+<p>
+<strong>Strings</strong>
+</p>
+
+<p>
+<strong>Length of a String</strong>
+</p>
+<pre class="code">len(s)</pre>
+<pre class="code">n = &quot;nuggets&quot;
+n * 5  (nuggets 5 times)</pre>
+
+<p>
+<strong>Integer to String Type Casting</strong>
+</p>
+<pre class="code">number = 14.4
+stt = str(number)
+stt -&gt; is a string now
+type(stt)</pre>
+
+<p>
+<strong>String Slicing</strong>
+</p>
+<pre class="code">                       0   1   2   3  4  5  6  7  8  9  10
+                       ------------------------------------
+                       C   B   T      N  U  G  G  E  T  S
+                       ------------------------------------
+                      -11 -10 -9  -8 -7 -6 -5 -4 -3 -2 -1 
+
+                       O[4] = O[-6] = N
+                       O[-11:-7] =&gt; CBT
+                       Starting from 6 and less than 10
+                       O[6:10]   =&gt; GGET</pre>
+
+<p>
+<strong>Slicing Exercise </strong>
+</p>
+<pre class="code">Python 3.2.3 (default, Oct 19 2012, 20:13:42) 
+[GCC 4.6.3] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.&gt;&gt;&gt; corp = &#039;CBT Nuggets&#039;&gt;&gt;&gt; corp[6:10]
+&#039;gget&#039;&gt;&gt;&gt; corp[0:3]
+&#039;CBT&#039;&gt;&gt;&gt; corp[-10:-7]
+&#039;BT &#039;&gt;&gt;&gt; corp[4:]
+&#039;Nuggets&#039;</pre>
+
+<p>
+<strong>Object Concepts</strong>
+</p>
+<pre class="code">a = &#039;abc&#039; &lt;Variable a, abc string object assigned to variable a&#039; 
+
+&lt;String immutable so if you try to change b in abc to d - that will fail.
+
+BUT, we can try to do this:
+
+a = a + &#039;abc&#039;&gt;&gt;&gt; a --- &#039;abcabc&#039;
+
+What Python does is: it keeps track of objects and their &quot;ref&quot; counts. 
+If the ref count becomes zero, python uses garbage collection to get rid of it.</pre>
+
+<p>
+<strong>Capitalize</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; str1 = &quot;This is a sample string&quot;&gt;&gt;&gt; str1.capitalize()
+&#039;This is a sample string&#039;</pre>
+
+<p>
+<strong>Count and Find</strong>
+</p>
+<pre class="code">str2 = &quot;this is a just a sample string&quot;&gt;&gt;&gt; str2.count(&#039;is&#039;)
+2&gt;&gt;&gt; str2.count(&#039; is &#039;)
+1&gt;&gt;&gt; str2.find(&#039;amp&#039;)
+18</pre>
+
+<p>
+<strong>Operations</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; str2.upper()
+&#039;THIS IS A JUST A SAMPLE STRING&#039;&gt;&gt;&gt; str2
+&#039;this is a just a sample string&#039;&gt;&gt;&gt; str2.isupper()
+False&gt;&gt;&gt; str2.lower()
+&#039;this is a just a sample string&#039;&gt;&gt;&gt; str2.islower()
+True&gt;&gt;&gt; strcap = str2.upper()&gt;&gt;&gt; strcap
+&#039;THIS IS A JUST A SAMPLE STRING&#039;&gt;&gt;&gt; strcap.isupper()
+True&gt;&gt;&gt; str2.title()
+&#039;This Is A Just A Sample String&#039;</pre>
+
+<p>
+<strong>Strip</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; str3 = &quot;                               This is a string full of whitespace                               &quot;&gt;&gt;&gt; str3.lstrip()
+&#039;This is a string full of whitespace                               &#039;&gt;&gt;&gt; str3.rstrip()
+&#039;                               This is a string full of whitespace&#039;&gt;&gt;&gt; str3.strip()
+&#039;This is a string full of whitespace&#039;&gt;&gt;&gt; str3.replace
+&lt;built-in method replace of str object at 0xa444340&gt;&gt;&gt;&gt; str3.replace(&#039;string&#039;, &#039;test&#039;)
+&#039;                               This is a test full of whitespace                               &#039;&gt;&gt;&gt; str3
+&#039;                               This is a string full of whitespace                               &#039;&gt;&gt;&gt; str3.strip()
+&#039;This is a string full of whitespace&#039;</pre>
+
+<p>
+<strong>Split and Join</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; str4 = &#039;1,2,,4,5&#039;&gt;&gt;&gt; str4.split(&#039;,&#039;)
+[&#039;1&#039;, &#039;2&#039;, &#039;&#039;, &#039;4&#039;, &#039;5&#039;]</pre>
+<pre class="code">days = [&#039;Monday&#039;, &#039;Tuesday&#039;, &#039;Wednesday&#039;]</pre>
+<pre class="code">&gt;&gt;&gt; week2 = &#039; &#039;.join(days)&gt;&gt;&gt; week2
+&#039;Monday Tuesday Wednesday&#039;</pre>
+
+<p>
+<strong>String Formatting</strong>
+</p>
+
+<p>
+<em class="u">Python-2 style</em>
+</p>
+<pre class="code">&gt;&gt;&gt; sc = &#039;%s has studied %d CBTN products&#039;%(&#039;pat&#039;,12)&gt;&gt;&gt; sc
+&#039;pat has studied 12 CBTN products&#039;
+
+&gt;&gt;&gt; r = &#039;the rest&#039;&gt;&gt;&gt; t = &#039;the weary&#039;&gt;&gt;&gt; csc = &#039;No %s for %s&#039; % (r,t)&gt;&gt;&gt; csc
+&#039;No the rest for the weary&#039;</pre>
+
+<p>
+<em class="u">Python-3 style</em>
+</p>
+<pre class="code">&gt;&gt;&gt; sc = &#039;{0} has studied {1} CBTN products&#039;.format(&#039;pat&#039;,12)&gt;&gt;&gt; sc
+&#039;pat has studied 12 CBTN products&#039;</pre>

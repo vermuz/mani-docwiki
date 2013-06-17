@@ -1,0 +1,582 @@
+====== PHP ======
+===== PHP Configuration =====
+
+Default Settings: php.ini (we can put php.ini in the folder of webpage that applies to that folder).
+php.ini can load extensions i.e. mysql
+
+**PHP settings
+**
+
+<code>
+<?php
+phpinfo();
+?>
+</code>
+
+Other settings include max_execution_time and memory_limit. \\
+We can also set configuration options using ini_set() and ini_get() functions.
+
+<code>
+ini_set('display_errors', 'On');
+</code>
+
+**Enable Debugging**
+
+debugging and warning messages
+
+<code>
+error_reporting(E_ALL);;
+ini_set('display_errors','On');
+</code>
+
+===== Variables =====
+
+Note (Do not need to declare variables before using them)\\
+Variables can hold different types at different times,
+
+<code>
+$var = 4;
+$var = 'This text';
+</code>
+
+**Assignment**
+
+<code>
+// Strings
+$yummy = "potato";
+
+// Number Variables
+$c = 3;
+print "<p>". $c/2 . "</p>";
+</code>
+
+  * Variables used within a function are local only to that function.
+  * They cannot be accessed outside the function.
+  * If you want a variable to be available to every function, make it global.
+
+<code>
+// Global Variables
+$global_var = 4;
+function foo()
+{
+  global $global_var;
+  print $globalvar;
+}
+</code>
+
+**PHP Magic Variables
+**
+
+Super global arrays created by PHP when you view a site. \\
+All of these arrays contain useful information that you can use in making your website. \\
+
+  * $_GET
+  * $_POST
+  * $_REQUEST
+  * $_SERVER
+  * $_COOKIE
+  * $_SESSION
+
+**$_GET
+**
+
+  * contains parameters passed to your script from the browser
+  * GET parameters are visible in your URL bar, unlike POST parameter
+<code>
+    http://example.com/index.php?key1=value1&key2=value2&
+    $_GET['key1'] == 'value1"
+    $_GET['key2'] == 'value2"
+</code>
+
+**$_POST**
+
+  * works like $_GET except that parameters aren`t passed in the URL.
+  * Recommended way to pass form data - so it won`t be easily visible and changeable.
+
+**$_REQUEST
+**
+
+  * Union of $_GET, $_SET and $_COOKIE
+  * used in situations where you don`t really care where the input comes from
+
+===== Comments =====
+
+<code>
+//This is a comment.
+/* This is also a comment.
+*/
+</code>
+
+===== Expressions =====
+
+<code>
+$c = 3.141592653;
+$c + 1; //4.141592653
+2*($c + 1); //8.283185306
+// Assignments to evaluate
+$c = 5; //5
+</code>
+
+===== Operators =====
+The ones to remember,
+<code>
+.  String Concatenation
+-> Member Field/function
+</code>
+
+===== String Quoting =====
+
+Double Quote (can have values embedded in them, not interpreted literally).\\
+Single Quote (interpreted literally).
+
+<code>
+$food = "potatoes";
+$double_quoted = "I like to eat $food.";
+$single_quoted = "I like to eat $food.";
+
+print "<p>$double_quoted</p>"; // Prints I like to eat potatoes 
+print "<p>$single_quoted</p>";// Prints I like to eat $food
+</code>
+
+===== Arrays =====
+  * Arrays are collections of values.
+  * PHP arrays are sort of like Python dictionaries.
+  * Accessed via a key.
+  * Each key is associated with exactly one value.
+  * A key may be integer, string or other type.
+
+**Arrays Indexing**
+
+<code>
+$languages = array('PHP','Java','C++','Python');
+//******************************************************************
+print "<p>The first language is " . $languages[0] . "!</p>"; // PHP
+print "<p>The first language is " . $languages[1] . "!</p>"; // Java
+</code>
+
+**Add value to Array**
+
+<code>
+$languages[] = "Perl";
+</code>
+
+===== Conditional =====
+Whatever you supply as condition is converted to a boolean. \\
+False (boolean value false, number 0, zero length strings, null, zero length errors)
+
+<code>
+if($favorite_color == "blue")
+{
+   // Code
+}
+else if ($favorite_color == "red")
+{
+  // Code
+}
+else
+{
+  // Code
+}
+</code>
+
+===== Loops =====
+
+**For**
+
+<code>
+$languages = array('PHP', 'Java', 'C++', 'Python');
+
+for($c = 0; $c < count($languages); $c++)
+{
+  $lang = $languages[$c];
+  print "<p>The language at index $c is $lang.</p>";
+}
+</code>
+
+**Foreach**
+
+<code>
+//Array using non integer keys
+
+$languages = array('best' => 'PHP', 'tastiest' => 'Java', 'funkiest' => 'Scheme');
+
+// with keys
+foreach($languages as $adjective => $lang)
+{
+  print "<p>The $adjective language is $lang.</p>";
+}
+
+// without keys
+foreach($languages as $lang)
+{
+  print "<p>$lang is a programming language.</p>";
+}
+</code>
+
+**Functions**
+
+Functions can return values. \\ 
+
+<code>
+$num = count($arr); // count returns size of array $arr
+return $num
+</code>
+
+<code>
+function hereIsAFunction()
+{
+  print "This is a function.";
+  print "It doesn`t really do very much.";
+}
+</code>
+
+<code>
+function countDown($start)
+{
+  while($start >= 0)
+  {
+    print "<p>$start...</p>";
+    $start--;
+  }
+}
+
+function squareNumber($x)
+{
+  return $x * $x;
+}
+</code>
+
+**Useful functions
+**
+
+**isset($var) and some useful functions**
+
+  - Returns true if $var has been set.
+  - isset($favorite_color)
+  - isset($_GET['name']) will return true if $_GET['name'] has a value
+  - explode($delimiter, $string) breaks up $string into an array of substrings, separating using $delimiter
+  - count()
+  - print_r($array) prints an array, useful for debugging
+  - require_once($filename) includes another file
+  - ini_set($setting, value) - configuration settings
+  - header($data) - if at the beginning, outputs HTTP header data, can be used for redirects i.e. to secure HTTPS pages.
+
+===== Classes =====
+
+  * Classes are bundles of variables and functions that should be grouped together.
+  * :: Scoping resolution operator - to access super-class and call its functions.
+  * -> operator to access functions/fields of classes
+  * Fields and functions can be public and private
+
+<code>
+class user
+{
+   public $ID;
+   public $first_name;
+   public $last_name;
+   
+  // Constructor  
+  function __construct($first, $last, $id)
+  {
+    $this->ID = $id;
+    $this->first_name = $first;
+    $this->last_name = $last;
+  }
+  function getName()
+  {
+    return $this->first_name . " " . $this->last_name;
+  }
+  function toString()
+  {
+    return $this->getName() . "(" . $this->ID . ")";
+  }
+}
+
+</code>
+
+**Extend classes
+**
+<code>
+class facebook_user extends user
+{
+  public $network;
+  // Construction
+  function __construct($first, $last, $id, $net)
+  {
+    // Use old constructor
+    parent::__construct($first, $last, $id);
+    $this->network = $net;
+  }
+  
+  //Override
+  function toString()
+  {
+    return $this->getName() . "(". $this->network . ")";
+  }
+}
+</code>
+
+Now, we will use the class,
+
+<code>
+$some_user = new user("Steve", "Levine", "123");
+
+print "<p>".$some_user->toString()."</p>";
+
+$another_user = new facebook_user("Steve","Levine","123","MIT");
+
+print "<p>".$another_user->toString()."</p>";
+</code>
+
+===== PHP Cookies and Sessions =====
+
+**Cookies**
+
+  * Cookies are little data files that websites can store on your system.
+  * Cookies are used to store information about the user, or the website state on the computer.
+  * Cookie information exchange happens at the beginning of the HTTP protocol.
+
+Commonly used form,
+
+<code>
+// Keep it at the top of your code
+bool setcookie($name, $value, $expire)
+</code>
+
+**Cookies Example**
+
+<code>
+<?php
+// Cookies happen at the beginning
+
+// See if we have stored a cookie yet.
+if (isset($_COOKIE['username']))
+{
+  // The cookie is set. This means there is a non expired cookie, so the user was already here.
+  $username = $_COOKIE['username'];
+  print "<h1>Welcome Back</h1>";
+  print "<p>I see you have been here before, $username!</p>";
+}
+else
+{
+  // The cookie is not set, so assume that the user has not been there
+  // Check and see if user just submitted.
+  if (isset($_POST['username']))
+  {
+    // The user just submitted, Store a cookie
+    $username = $_POST['username'];
+    setcookie('username', $username, time() + 120);
+    print "<h1>Nice to meet you!</h1>";
+    print "<p>It is nice to meet you, $username!</p>";
+  }
+  else
+  {
+    //The user didn`t submit, and we don`t have a cookie.
+    // Display a form
+    print "<h1>Hello Stranger!</h1>";
+    print "<p>What is your name?</p>"
+    print "<form method =\ "POST\" action=\ "cookie.php\">";
+    print "Username: <input type =\ "text\" name=\ "username\" />;
+    print "<input type=\" submit\" value=\ "Hello!\" />;
+    print "<form>";
+  }
+}
+
+?>
+</code>
+
+**Sessions
+**
+
+  * Sessions are another way to store information about your websites users, kind of like cookies.
+  * Unlike cookies, sessions are stored on the server, not on client computer.
+  * Less chances out there of this data being tampered or altered as you have control of it on the server.
+  * Data stored in sessions can be accessed across different pages in your website.
+  * There is a magic, super global array called $_SESSION. It acts like $_GET, $_POST, and $_REQUEST.
+  * To save information, you get a string valued key of $_SESSION to the data you want.
+  * After you get a session variable, it is visible to all other pages on your website.
+  * You can use sessions to implement a login system, shopping carts.
+
+<code>
+$_SESSION['name'] = 'William B.Rogers';
+</code>
+
+**Session Example**
+
+<code>
+<?php
+// Sessions also must happen at the beginning of HTTP
+session_start();
+
+if(isset($_SESSION['username']))
+{
+  // The cookie is set, this means that there is a non expired cookie, so the user was already here
+  $username = $_SESSION['username'];
+  print "<h1>Welcome back!</h1>";
+  print "<p>I see you have been here before, $username!</p>";
+}
+else
+{
+  // has not been here yet.
+  
+  // Check and see if the user just submitted.
+  if (isset($_POST['username']))
+  {
+     $username = $_POST['username'];
+     $_SESSION['username'] = $username;
+     print "<h1>Nice to meet you!</h1>";
+     print "<p>It is nice to meet you, $username!</p>" 
+  }
+  else
+  {
+    // The user did not submit, we don`t have a cookie,
+    // Display a form
+    print "<h1>Hello, stranger!</h1>";
+    print "<p>What is your name?</p>";
+    print "<form method=\ "POST\" action=\ "session.php\ ">";
+    print "Username: <input type=\ "text\" name=\ "username\" />";
+    print "<input type=\ "submit\" value=\ "Hello!\" />";
+    print "<form>";
+  }
+}
+?>
+</code>
+
+===== Database Connectivity =====
+
+Access MySQL db is via the MySQLi extension for PHP.
+
+**Using MySQLi**
+
+MySQLi represents a connection
+MySQLi_STMT represents a query
+MySQLi_Result represents the result of a query
+
+<code>
+<?php
+//For debugging, turn on error output
+ini_set('display errors','On');
+error_reporting(E_ALL);
+
+// CONNECT
+//************************************************************************
+//If DB username and password are in a separate file, lets import them.
+require_once('private/mysql_info.php');
+
+// Make an MySQLi class, representing a connection to the MySQL database.
+$conn = new mysqli('MYSQL HOST', MYSQL_USER,MYSQL_PASSWORD, 'DATABASE-NAME');
+
+// See if connection was successful
+if(mysqli_connect_errno())
+{
+  print "<p>Couldn`t connect to the mysql server, Bummer!</p>";
+  exit();
+}
+//*************************************************************************
+// Prepare the query
+// bind_params: Fill in all of the ? in the query string with the values.
+// First argument is the type, s for string, i for int etc.
+//*************************************************************************
+// If we get here, it means the connection has been made
+// Prepare a query
+$query = $conn->prepare("SELECT * FROM people WHERE gender=?");
+
+// Bind parameters, corresponding to ?s
+$gender = 'Male';
+$query->bind_param('s',$gender);
+//*************************************************************************
+//Execute query
+$query->execute();
+//*************************************************************************
+// Now process the results.
+// First bind variables corresponding to columns in our results:
+$query->bind_result($name, $course, $gender, $fav_prog_lang);
+print "<table><tr><td>Name</td><td>Course</td><td>Gender</td><td>Favorite Programming Language</td></tr>";
+
+// Continually fetch new results.
+// Put answers in the bound variables.
+// Keep going until no more results to fetch.
+
+while($query->fetch())
+{
+  print "<tr><td>$name</td><td>$course</td><td>gender</td><td>$fav_prog_lang</td></tr>";
+}
+
+print "</table>";
+//***************************************************************************************
+// Close the connection
+$conn->close();
+?>
+</code>
+
+**Output**
+
+<code>
+Name   Course Gender Favorite Programming Language
+Steve  6      Male   PHP   
+Bob    8      Male   C++
+</code>
+
+===== Security =====
+
+MySQL security is very important.
+
+Opening the doors of injection attacks? this code will do,
+
+<code>
+$result = $conn->query("SELECT * FROM people WHERE name=\ "$name\ "");
+</code>
+
+Assume that $name is retrieved directly from form data (i.e., $name = $_POST['name'];)
+
+It works just fine if $name is Mani.
+
+Malicious user types this instead of Mani: 
+<code>
+"; DROP people; SELECT * FROM foo WHERE name="
+</code>
+
+so MySQL query string becomes,
+
+<code>
+SELECT * FROM people WHERE name=""; DROP people;
+SELECT * FROM foo WHERE name = "";
+</code>
+
+Someone has just deleted our MySQL table.
+
+**Solution** 
+
+Escape any text used in a MySQL query.\\
+bind_param in MySQLi does that automatically.
+
+**XSS Attacks**
+
+//Cross Site Scripting.
+//
+
+  * Data entered by one user is visible to another but what if a malicious user wants to enter HTML or Javascript into the database in a forum post. 
+  * If PHP outputs this data as is, it will be interpreted by the browser as HTML. The hacker`s entry will close off the HTML and start executing JavaScript. 
+  * A hacker could potentially read and send off your cookies (perhaps via HTTPRequests/AJAX). 
+  * PHP Sessions are implemented by storing a session ID cookie on the computer. If this is stolen, someone else can impersonate you on the websites. This is Session hijacking.
+
+**Solution**
+
+**use htmlspecialchars()
+**
+
+Takes as input a string, encodes it in a way that the content remains the same but it will not be interpreted as HTML.
+
+<code>
+htmlspecialchars('<script>alert("XSS!");</script>',
+ENT_QUOTES) will output:
+
+&lt;script&gt;alert(&quot;XSS!&quot;);&lt;/script&gt;
+</code>
+
+===== Cool Stuff =====
+
+  * Send emails using email() function.
+  * Download other webpages using cURL (nifty for getting price quotes or directions)
+  * Generate images using GD usesful for creating CAPTCHA systems
+  * Encryption through mcrypt

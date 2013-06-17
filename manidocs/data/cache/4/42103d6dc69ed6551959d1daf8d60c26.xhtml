@@ -1,0 +1,469 @@
+
+<p>
+<strong>MySQL Python</strong>
+</p>
+
+<p>
+Install Mysql
+</p>
+<pre class="code">$ sudo apt-get install mysql-server</pre>
+
+<p>
+We don&#039;t know the package name for the MySQLdb module. We use the apt-cache command to figure it out.
+</p>
+<pre class="code">$ apt-cache search MySQLdb
+python-mysqldb - A Python interface to MySQL
+python-mysqldb-dbg - A Python interface to MySQL (debug extension)
+bibus - bibliographic database
+eikazo - graphical frontend for SANE designed for mass-scanning</pre>
+
+<p>
+Python interface to the MySQL database
+</p>
+<pre class="code">$ sudo apt-get install python-mysqldb</pre>
+
+<p>
+create a new database user and a new database
+</p>
+<pre class="code">$ mysql -u root -p
+mysql&gt; SHOW DATABASES;
+mysql&gt; CREATE DATABASE testdb;
+mysql&gt; CREATE USER &#039;testuser&#039;@&#039;localhost&#039; IDENTIFIED BY &#039;test623&#039;;
+mysql&gt; USE testdb;
+mysql&gt; GRANT ALL ON testdb.* TO &#039;testuser&#039;@&#039;localhost&#039;;
+mysql&gt; quit;</pre>
+
+<p>
+<strong>_mysql module</strong>
+</p>
+
+<p>
+The _mysql module implements the MySQL C <abbr title="Application Programming Interface">API</abbr> directly. It is not compatible with the Python DB <abbr title="Application Programming Interface">API</abbr> interface. Generally, the programmers prefer the object oriented MySQLdb module.
+</p>
+
+<p>
+version of the MySQL database.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import _mysql
+import sys
+
+
+con = None
+
+try:
+
+    con = _mysql.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+        &#039;test623&#039;, &#039;testdb&#039;)
+        
+    con.query(&quot;SELECT VERSION()&quot;)
+    result = con.use_result()
+    
+    print &quot;MySQL version: %s&quot; % \
+        result.fetch_row()[0]
+    
+except _mysql.Error, e:
+  
+    print &quot;Error %d: %s&quot; % (e.args[0], e.args[1])
+    sys.exit(1)
+
+finally:
+    
+    if con:
+        con.close()</pre>
+
+<p>
+<strong>MySQLdb module</strong>
+</p>
+
+<p>
+MySQLdb is a thin Python wrapper around _mysql. It is compatible with the Python DB <abbr title="Application Programming Interface">API</abbr>, which makes the code more portable. Using this model is the preferred way of working with the MySQL.
+</p>
+
+<p>
+version of the MySQL database.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+con = None
+
+try:
+
+    con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+        &#039;test623&#039;, &#039;testdb&#039;);
+
+    cur = con.cursor()
+    cur.execute(&quot;SELECT VERSION()&quot;)
+
+    data = cur.fetchone()
+    
+    print &quot;Database version : %s &quot; % data
+    
+except mdb.Error, e:
+  
+    print &quot;Error %d: %s&quot; % (e.args[0],e.args[1])
+    sys.exit(1)
+    
+finally:    
+        
+    if con:    
+        con.close()</pre>
+
+<p>
+<em>Execution</em>
+</p>
+<pre class="code">&gt;&gt;&gt; 
+Database version : 5.5.29-0ubuntu0.12.04.1 </pre>
+
+<p>
+<strong>Creating and populating a table</strong>
+</p>
+
+<p>
+create a table and populate it with some data.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, &#039;test623&#039;, &#039;testdb&#039;);
+
+with con:
+    
+    cur = con.cursor()
+    cur.execute(&quot;CREATE TABLE IF NOT EXISTS \
+        Writers(Id INT PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(25))&quot;)
+    cur.execute(&quot;INSERT INTO Writers(Name) VALUES(&#039;Jack London&#039;)&quot;)
+    cur.execute(&quot;INSERT INTO Writers(Name) VALUES(&#039;Honore de Balzac&#039;)&quot;)
+    cur.execute(&quot;INSERT INTO Writers(Name) VALUES(&#039;Lion Feuchtwanger&#039;)&quot;)
+    cur.execute(&quot;INSERT INTO Writers(Name) VALUES(&#039;Emile Zola&#039;)&quot;)
+    cur.execute(&quot;INSERT INTO Writers(Name) VALUES(&#039;Truman Capote&#039;)&quot;)
+</pre>
+
+<p>
+<strong>Retrieving data</strong>
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+
+con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+        &#039;test623&#039;, &#039;testdb&#039;);
+
+with con: 
+
+    cur = con.cursor()
+    cur.execute(&quot;SELECT * FROM Writers&quot;)
+
+    rows = cur.fetchall()
+
+    for row in rows:
+        print row</pre>
+
+<p>
+<em>Execution:</em>
+</p>
+<pre class="code">&gt;&gt;&gt; ================================ RESTART ================================
+&gt;&gt;&gt; 
+(1L, &#039;Jack London&#039;)
+(2L, &#039;Honore de Balzac&#039;)
+(3L, &#039;Lion Feuchtwanger&#039;)
+(4L, &#039;Emile Zola&#039;)
+(5L, &#039;Truman Capote&#039;)</pre>
+
+<p>
+<strong>Fetch rows one by one</strong>
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+
+con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+    &#039;test623&#039;, &#039;testdb&#039;);
+
+with con:
+
+    cur = con.cursor()
+    cur.execute(&quot;SELECT * FROM Writers&quot;)
+
+    numrows = int(cur.rowcount)
+
+    for i in range(numrows):
+        row = cur.fetchone()
+        print row[0], row[1]</pre>
+
+<p>
+<em>Execution:</em>
+</p>
+<pre class="code">&gt;&gt;&gt; ================================ RESTART ================================
+&gt;&gt;&gt; 
+1 Jack London
+2 Honore de Balzac
+3 Lion Feuchtwanger
+4 Emile Zola
+5 Truman Capote</pre>
+
+<p>
+<strong>The dictionary cursor
+</strong>
+</p>
+
+<p>
+There are multiple cursor types in the MySQLdb module. The default cursor returns the data in a tuple of tuples. When we use a dictionary cursor, the data is sent in a form of Python dictionaries. This way we can refer to the data by their column names.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+    &#039;test623&#039;, &#039;testdb&#039;)
+
+with con:
+
+    cur = con.cursor(mdb.cursors.DictCursor)
+    cur.execute(&quot;SELECT * FROM Writers&quot;)
+
+    rows = cur.fetchall()
+
+    for row in rows:
+        print &quot;%s %s&quot; % (row[&quot;Id&quot;], row[&quot;Name&quot;])</pre>
+
+<p>
+<em class="u">Execution</em>
+</p>
+<pre class="code">&gt;&gt;&gt; 
+1 Jack London
+2 Honore de Balzac
+3 Lion Feuchtwanger
+4 Emile Zola
+5 Truman Capote
+&gt;&gt;&gt; </pre>
+
+<p>
+<strong>Column headers
+</strong>
+</p>
+
+<p>
+Print column headers with the data from the database table.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+
+con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+    &#039;test623&#039;, &#039;testdb&#039;)
+
+with con:
+
+    cur = con.cursor()
+    cur.execute(&quot;SELECT * FROM Writers&quot;)
+
+    rows = cur.fetchall()
+
+    desc = cur.description
+
+    print &quot;%s %3s&quot; % (desc[0][0], desc[1][0])
+
+    for row in rows:    
+        print &quot;%2s %3s&quot; % row
+</pre>
+
+<p>
+<em>Execution
+</em>
+</p>
+<pre class="code">Id Name
+ 1 Jack London
+ 2 Honore de Balzac
+ 3 Lion Feuchtwanger
+ 4 Emile Zola
+ 5 Truman Capote</pre>
+
+<p>
+<strong>Prepared Statements</strong>
+</p>
+
+<p>
+When we write prepared statements, we use placeholders instead of directly writing the values into the statements. Prepared statements increase security and performance. The Python DB <abbr title="Application Programming Interface">API</abbr> specification suggests 5 different ways how to build prepared statements. MySQLdb module supports one of them, the ANSI printf format codes.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+
+con = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+    &#039;test623&#039;, &#039;testdb&#039;)
+    
+with con:    
+
+    cur = con.cursor()
+        
+    cur.execute(&quot;UPDATE Writers SET Name = %s WHERE Id = %s&quot;, 
+        (&quot;Guy de Maupasant&quot;, &quot;4&quot;))        
+    
+    print &quot;Number of rows updated: %d&quot; % cur.rowcount
+</pre>
+
+<p>
+<em>Execution
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; 
+Number of rows updated: 1
+&gt;&gt;&gt; </pre>
+
+<p>
+<strong>Writing images
+</strong>
+</p>
+
+<p>
+Some people prefer to put their images into the database, some prefer to keep them on the file system for their applications. Technical difficulties arise when we work with millions of images. Images are binary data. MySQL database has a special data type to store binary data called BLOB (Binary Large Object).
+</p>
+
+<p>
+Create table called Images
+</p>
+<pre class="code">mysql&gt; CREATE TABLE Images(Id INT PRIMARY KEY AUTO_INCREMENT, Data MEDIUMBLOB);</pre>
+
+<p>
+Read a png image and insert it into the Images table
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+try:
+    fin = open(&quot;chrome.png&quot;)
+    img = fin.read()
+    fin.close()
+
+except IOError, e:
+
+    print &quot;Error %d: %s&quot; % (e.args[0],e.args[1])
+    sys.exit(1)
+
+ 
+try:
+    conn = mdb.connect(host=&#039;localhost&#039;,user=&#039;testuser&#039;,
+       passwd=&#039;test623&#039;, db=&#039;testdb&#039;)
+    cursor = conn.cursor()
+    cursor.execute(&quot;INSERT INTO Images SET Data=&#039;%s&#039;&quot; % \
+        mdb.escape_string(img))
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+except mdb.Error, e:
+  
+    print &quot;Error %d: %s&quot; % (e.args[0],e.args[1])
+    sys.exit(1)</pre>
+
+<p>
+<strong>Reading images</strong>
+</p>
+
+<p>
+We are going to read the image back from the table.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb 
+import sys
+
+try:
+    conn = mdb.connect(host=&#039;localhost&#039;,user=&#039;testuser&#039;, 
+        passwd=&#039;test623&#039;, db=&#039;testdb&#039;)
+
+    cursor = conn.cursor()
+
+    cursor.execute(&quot;SELECT Data FROM Images LIMIT 1&quot;)
+
+    fout = open(&#039;image.png&#039;,&#039;wb&#039;)
+    fout.write(cursor.fetchone()[0])
+    fout.close()
+
+    cursor.close()
+    conn.close()
+
+except IOError, e:
+
+    print &quot;Error %d: %s&quot; % (e.args[0],e.args[1])
+    sys.exit(1)</pre>
+
+<p>
+<strong>Transaction support</strong>
+</p>
+
+<p>
+A transaction is an atomic unit of database operations against the data in one or more databases. The effects of all the SQL statements in a transaction can be either all committed to the database or all rolled back.
+</p>
+
+<p>
+For databases that support transactions, the Python interface silently starts a transaction when the cursor is created. The commit() method commits the updates made using that cursor, and the rollback() method discards them. Each method starts a new transaction.
+</p>
+
+<p>
+The MySQL database has different types of storage engines. The most common are the MyISAM and the InnoDB engines. The MyISAM is the default one. There is a trade-off between data security and database speed. The MyISAM tables are faster to process and they do not support transactions. The commit() and rollback() methods are not implemented. They do nothing. On the other hand, the InnoDB tables are more safe against the data loss. They support transactions. They are slower to process.
+</p>
+<pre class="code">#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import MySQLdb as mdb
+import sys
+
+try:
+    conn = mdb.connect(&#039;localhost&#039;, &#039;testuser&#039;, 
+        &#039;test623&#039;, &#039;testdb&#039;);
+
+    cursor = conn.cursor()
+    
+    cursor.execute(&quot;UPDATE Writers SET Name = %s WHERE Id = %s&quot;, 
+        (&quot;Leo Tolstoy&quot;, &quot;1&quot;))       
+    cursor.execute(&quot;UPDATE Writers SET Name = %s WHERE Id = %s&quot;, 
+        (&quot;Boris Pasternak&quot;, &quot;2&quot;))
+    cursor.execute(&quot;UPDATE Writer SET Name = %s WHERE Id = %s&quot;, 
+        (&quot;Leonid Leonov&quot;, &quot;3&quot;))   
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+except mdb.Error, e:
+  
+    conn.rollback()
+    print &quot;Error %d: %s&quot; % (e.args[0],e.args[1])
+    sys.exit(1)</pre>
+
+<p>
+Sources:
+<a href="http://zetcode.com/db/mysqlpython/" class="urlextern" title="http://zetcode.com/db/mysqlpython/"  rel="nofollow">http://zetcode.com/db/mysqlpython/</a>
+</p>

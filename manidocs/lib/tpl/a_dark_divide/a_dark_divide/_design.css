@@ -1,0 +1,616 @@
+
+
+
+
+.headerinc {
+	position: fixed;
+	font-size: 0.75em;
+	bottom: 0;
+	opacity: 0.25;
+	font-weight: normal;
+}
+
+html {
+	background-color: #37383F!important;
+}
+.bar {
+	position: fixed;
+	top: 0px;
+	width: 960px;
+	z-index: 99999;
+	margin: 0 auto;
+	
+	margin: 0;
+	padding: 0;
+	border: none;
+	overflow: hidden;
+	border-bottom: 1px solid black;
+	border-top: 1px solid white;
+
+	font-weight: bold;
+	background: #BFBFC5; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#BFBFC5', endColorstr='#81818E'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#BFBFC5), to(#81818E)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #BFBFC5,  #81818E); /* for firefox 3.6+ */
+
+	border-top: 1px solid #5A5C64;
+	-webkit-box-shadow:0px 8px 8px #000;
+	text-shadow: #000 0px -1px 1px;
+	height: 2em;
+	line-height: 2em;
+}
+
+.bar .bar-right  {
+	margin-left: 1em;
+}
+.bar .bar-left  {
+	margin-right: 1em;
+}
+
+.bar a {
+	padding-left: 2em;
+	padding-right: 1em;	
+	line-height: 2em;
+	height: 2em;
+	display: block;
+	float: left;
+	color: black!important;
+	text-shadow: rgba(255,255,255,0.5) 0px 1px 1px;
+	border: 1px solid transparent;
+}
+.bar a:hover {
+	text-decoration: none!important;
+	text-shadow: rgba(255,255,255,0.75) 0px 1px 2px;
+}
+.bar a:active {
+	position: relative;
+	top: 1px;
+}
+
+div.dokuwiki div.bar a.login,
+div.dokuwiki div.bar a.logout,
+div.dokuwiki div.bar a.index,
+div.dokuwiki div.bar a.recent,
+div.dokuwiki div.bar a.create,
+div.dokuwiki div.bar a.edit,
+div.dokuwiki div.bar a.source,
+div.dokuwiki div.bar a.show,
+div.dokuwiki div.bar a.admin,
+div.dokuwiki div.bar a.revisions,
+div.dokuwiki div.bar a.subscribe,
+div.dokuwiki div.bar a.subscribens,
+div.dokuwiki div.bar a.unsubscribe,
+div.dokuwiki div.bar a.unsubscribens,
+div.dokuwiki div.bar a.backlink,
+div.dokuwiki div.bar a.profile,
+div.dokuwiki div.bar a.top,
+div.dokuwiki div.bar a.npd {
+}
+
+div.dokuwiki div.bar a.login {
+  background: transparent url(images/tool-login.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.logout,
+div.dokuwiki div.bar a.logout {
+  background: transparent url(images/tool-logout.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.index {
+  background: transparent url(images/tool-index.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.recent {
+  background: transparent url(images/tool-recent.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.create,
+div.dokuwiki div.bar a.edit,
+div.dokuwiki div.bar a.npd {
+  background: transparent url(images/tool-edit.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.source,
+div.dokuwiki div.bar a.show {
+  background: transparent url(images/tool-source.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.admin {
+  background: transparent url(images/tool-admin.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.revisions {
+  background: transparent url(images/tool-revisions.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.subscribe,
+div.dokuwiki div.bar a.subscribens,
+div.dokuwiki div.bar a.unsubscribe,
+div.dokuwiki div.bar a.unsubscribens {
+  background: transparent url(images/tool-subscribe.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.backlink {
+  background: transparent url(images/tool-backlink.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.profile {
+  background: transparent url(images/tool-profile.png) 0.6em center no-repeat;
+}
+
+div.dokuwiki div.bar a.top {
+  background: transparent url(images/tool-top.png) 0.6em center no-repeat;
+}
+
+
+
+div.dokuwiki div.toolbox_sidebar ul {
+  list-style: none;
+  margin: 0;
+  clear: both;
+	font-weight: bold;
+
+	border-top: 1px solid #5A5C64;
+	text-shadow: #000 0px -1px 1px;
+	line-height: 2em;
+ overflow: hidden;
+	margin: -1em;
+}
+
+
+div.dokuwiki div.toolbox_sidebar a {
+	padding: 2em;
+}
+
+div.dokuwiki div.toolbox_sidebar a.login,
+div.dokuwiki div.toolbox_sidebar a.logout,
+div.dokuwiki div.toolbox_sidebar a.index,
+div.dokuwiki div.toolbox_sidebar a.recent,
+div.dokuwiki div.toolbox_sidebar a.create,
+div.dokuwiki div.toolbox_sidebar a.edit,
+div.dokuwiki div.toolbox_sidebar a.source,
+div.dokuwiki div.toolbox_sidebar a.show,
+div.dokuwiki div.toolbox_sidebar a.admin,
+div.dokuwiki div.toolbox_sidebar a.revisions,
+div.dokuwiki div.toolbox_sidebar a.subscribe,
+div.dokuwiki div.toolbox_sidebar a.subscribens,
+div.dokuwiki div.toolbox_sidebar a.unsubscribe,
+div.dokuwiki div.toolbox_sidebar a.unsubscribens,
+div.dokuwiki div.toolbox_sidebar a.backlink,
+div.dokuwiki div.toolbox_sidebar a.profile,
+div.dokuwiki div.toolbox_sidebar a.revert,
+div.dokuwiki div.toolbox_sidebar a.npd {
+  padding: 1px 0px 1px 18px;
+}
+
+div.dokuwiki div.toolbox_sidebar a.login {
+  background: transparent url(images/tool-login.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.logout {
+  background: transparent url(images/tool-logout.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.index {
+  background: transparent url(images/tool-index.png) 1px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.recent {
+  background: transparent url(images/tool-recent.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.create,
+div.dokuwiki div.toolbox_sidebar a.edit,
+div.dokuwiki div.toolbox_sidebar a.npd {
+  background: transparent url(images/tool-edit.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.source,
+div.dokuwiki div.toolbox_sidebar a.show {
+  background: transparent url(images/tool-source.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.admin {
+  background: transparent url(images/tool-admin.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.revisions {
+  background: transparent url(images/tool-revisions.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.subscribe,
+div.dokuwiki div.toolbox_sidebar a.subscribens,
+div.dokuwiki div.toolbox_sidebar a.unsubscribe,
+div.dokuwiki div.toolbox_sidebar a.unsubscribens {
+  background: transparent url(images/tool-subscribe.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.backlink {
+  background: transparent url(images/tool-backlink.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.profile {
+  background: transparent url(images/tool-profile.png) 0px 1px no-repeat;
+}
+
+div.dokuwiki div.toolbox_sidebar a.revert {
+  background: transparent url(images/tool-revert.png) 0px 1px no-repeat;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.meta {
+	text-align: center;
+}
+
+#menu {
+	font-weight: bold;
+	background: url(images/toolbar.png);
+	-webkit-box-shadow:0px 8px 8px #000;
+	text-shadow: #000 0px -1px 1px;
+	height: 3em;
+	line-height: 3em;
+	width: 960px;
+	margin-left: -1em;
+	margin-top: 1em;
+	padding-left: 1em;
+	padding-right: 1em;
+	
+	position: absolute;
+	bottom: 0em;
+	border-bottom: 1px solid #5A5C64;
+}
+#menu .wikilink2, #menu .wikilink1 {
+	font-weight: bold;
+}
+
+#menu a {
+	background: #40424C; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40424C', endColorstr='#15171C'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#40424C), to(#15171C)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #40424C,  #15171C); /* for firefox 3.6+ */
+	
+
+
+	
+	border-top: 1px solid #5A5C64;
+	-webkit-box-shadow:0px 8px 8px #000;
+	text-shadow: #000 0px -1px 1px;
+	padding: 1em;
+}
+
+#menu ul {
+	list-style: none;
+	margin:0;
+	line-height: 3em;
+}
+
+#menu ul li {
+	list-style: none;
+	float: left;
+	margin-right: 2em;
+}
+
+
+#qsearch_out, .ajax_qsearch {
+	right: 1em!important;
+	background-color: rgba(255,255,255,0.1)!important;
+}
+
+
+#dw__search {
+	margin-top: 1em;
+	width: 25%;
+	float: right;
+	margin-right: 1em;
+	clear: none;
+}
+#dw__search .button {
+	display: none;
+}
+
+#dw__search input {
+	width: 100%;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+}
+
+#header {
+	height:17em;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+	position: relative;
+	overflow: hidden;
+
+	background-color: black;
+	padding: 1em;
+}
+
+
+
+h1#sitename *{
+	font-size: 0.8em!important;
+	color: rgba(255,255,255,1)!important;
+}
+h1#pagename {
+	position: absolute;
+	bottom: 1.25em;
+	font-size: 4em;
+	line-height: 1em!important;
+	width: 75%;
+	color:red ;
+}
+.sidebar-left h1#pagename {
+	margin-left: 25%;
+}
+h1#pagename *{
+	color: rgba(255,255,255,1)!important;
+	line-height: 1em!important;
+}
+
+.sidebar-box {
+	margin-bottom: 1px;
+	border-bottom: 1px solid black;
+}
+
+.sidebar-box h1 {
+	text-transform: uppercase;
+
+}
+.sidebar-box h1 {
+	margin-top: -1em;
+}
+
+.content img {
+	max-width: 100%;
+}
+
+.content table {
+	max-width: 100%;
+}
+
+
+h2 {
+
+}
+
+
+#trail {
+	border-top: 1px solid black;
+	padding: 0.5em 1em;
+	clear: both;
+	background: url(images/toolbar.png);
+}
+
+#trail .bchead{
+	display: block;
+	width: 25%;
+}
+
+
+
+
+html { background:#F1F1F1 none repeat scroll 0 0; }
+body { font:14px/1.5 "Helvetica Neue", Arial, Verdana, sans-serif; color:#AAAAAA; background:#37383F; }
+
+/*vertical rhythm */
+h1, h2,h3, h4, h5 {
+	
+/*	  font-family: "Georgia", "Helvetica", Arial, sans-serif; */
+}
+
+.content h1, .content h2,.sidebar h1, .sidebar h2 {
+	display: block;
+	
+	color: white;
+	margin-left: -1em;
+	margin-right: -1em;
+	padding-left: 1em;
+	padding-right: 1em;
+	margin-bottom: 1em!important;
+		
+	background: #40424C; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40424C', endColorstr='#15171C'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#40424C), to(#15171C)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #40424C,  #15171C); /* for firefox 3.6+ */
+	border-top: 1px solid #5A5C64;
+	-webkit-box-shadow:0px 8px 8px #000;
+	text-shadow: #000 0px -1px 1px;
+
+}
+h1 a, h2 a {
+	line-height: 3em;
+	color: rgba(255,255,255,1)!important;
+}
+
+.page {
+	background-color: #15171C;
+}
+#wrapper {
+	padding-top: 2em;
+	position: relative;
+	margin: auto;
+	min-width: 760px;
+	width: 960px;
+	max-width: 960px;
+	
+	border: 1px solid black;
+	-webkit-box-shadow:0px 1em 1em #000;
+
+	background: #15171C url(images/toolbar.png);
+	background-repeat: repeat-x;
+}
+
+#page {
+	width: 75%;
+	overflow: hidden;
+	clear: none;
+}
+
+#sidebar {
+	width: 25%;
+	background-color: 	#23242A ;
+	overflow: hidden;
+	clear: none;
+}
+
+body.sidebar-left #page {
+	margin-left: 25%;
+	float: none;
+}
+
+body.sidebar-left #sidebar {
+	border-left: 1px solid black;
+	float: left;	
+}
+
+body.sidebar-right #page {
+	margin-right: 25%;
+}
+
+body.sidebar-right #sidebar {
+
+	float: right;
+}
+
+.sidebar-box {
+	padding: 1em;
+}
+
+.sidebar-box:last-child {
+	border-bottom: none;
+}
+
+.content {
+	padding: 1em;
+	border-right: 1px solid black;
+
+}
+
+.footerinc {
+	border-top: 1px solid black;
+	clear: both;
+	margin: 0 auto;
+	min-width: 760px;
+	width: auto;
+	max-width: 1160px;
+	padding: 1em 0;
+	background: #40424C; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40424C', endColorstr='#15171C'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#40424C), to(#15171C)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #40424C,  #15171C); /* for firefox 3.6+ */
+	border-top: 1px solid #5A5C64;
+	-webkit-box-shadow:0px 8px 8px #000;
+	text-shadow: #000 0px -1px 1px;
+
+}
+
+
+div.dokuwiki #page .content > h1:first-child {
+	display: none;
+	margin-top: 0;
+	font-size: 4em;
+	line-height: 1em;
+	margin-bottom: 0.75em;
+
+}
+.content {
+	padding-top: 3.5em;
+}
+
+
+div.dokuwiki #page h1 { 
+	font-weight: bold; 
+	
+	font-size: 2em; /* 24px */
+  line-height: 1.5em; /* 36px */
+  margin-top: 0.75em;
+  margin-bottom: 0em;
+}
+
+div.dokuwiki #page h2 {
+
+	font-weight: bold; 
+
+
+
+
+	font-size: 1.6667em; /* 20px */
+  line-height: 1.8em; /* 36px */
+  margin-top: 0.9em;
+  margin-bottom: 0em;
+}
+div.dokuwiki #page h3 { 
+	font-weight: bold; 
+
+
+	font-size: 1.3333em; /* 16px */
+  line-height: 1.125em; /* 18px */
+  margin-top: 1.125em;
+  margin-bottom: 0em;
+}
+div.dokuwiki #page h4 { 
+	font-weight: bold; 
+
+
+	font-size: 1.3333em; /* 16px */
+  line-height: 1.125em; /* 18px */
+  margin-top: 1.125em;
+  margin-bottom: 0em;
+}
+div.dokuwiki #page h5 { 
+	font-size: 1.1667em; /* 14px */
+	  line-height: 1.2857em; /* 18px */
+	  margin-top: 1.2857em;
+	  margin-bottom: 0em;
+	  font-weight: bold; 
+	  color: black; 
+
+
+
+}
+
+
+.sidebar-box h1, .sidebar-box h2,.sidebar-box h3, .sidebar-box h4,.sidebar-box h5 {
+	font-size: 100%;
+	-webkit-box-shadow:0px 4px 4px #000;
+}
+
+.sidebar-box {
+	font-size: 90%;
+}
+
+
+
+p {
+  font-size: 1em; /* 12px */
+  line-height: 1.5em; /* 18px */
+  margin: 0 0 1.5em 0;
+}
+
+
+
+
+
+
+/* end of rhythm */

@@ -1,0 +1,593 @@
+**Drush Site Deployment
+**
+
+**Site Install
+**
+1- Download Drupal
+<code> drush dl drupal </code>
+
+2- Create DB. (Remember name, password). 
+    * PHPMyAdmin on localhost
+    * Development Environment
+      Creating a Database for Use With Drupal: Drupal requires not only UTF-8 encoded tables, but additionally a UTF-8 encoded database
+<code>CREATE DATABASE **DBNAME** DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci</code>
+
+3- Site Install 
+<code>
+drush site-install standard --account-name=admin --account-pass=[useruser_pass] --db-url=mysql://[db_user]:[db_pass]@localhost/[db_name]
+</code>
+
+OR
+
+<code>drush si --db-url=mysql://[db_user]:[db_pass]@localhost/[db_name]</code>
+
+4- Drush enables clean urls by default. Disable Clean urls. 
+
+<code>drush vset clean_url 0</code>
+
+5- Check Site Status
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush status
+ Drupal version                  :  7.19                  
+ Site URI                        :  http://default        
+ Database driver                 :  mysql                 
+ Database hostname               :  localhost             
+ Database username               :  root                  
+ Database name                   :  drupalearn            
+ Database                        :  Connected             
+ Drupal bootstrap                :  Successful            
+ Drupal user                     :  Anonymous             
+ Default theme                   :  bartik                
+ Administration theme            :  seven                 
+ PHP configuration               :  /etc/php5/cli/php.ini 
+ Drush version                   :  5.8                   
+ Drush configuration             :                        
+ Drupal root                     :  /var/www/drupal-7.19  
+ Site path                       :  sites/default         
+ File directory path             :  sites/default/files   
+ Temporary file directory path   :  /tmp                  
+</code>
+
+5- Enjoy !
+
+**Packages**
+
+6- Check Packages (all)
+
+<code> drush pml </code>
+<code>drush pml --status="not installed"</code>
+<code>drush pml --status="not installed, disabled"</code>
+<code>drush pml --type=theme</code>
+
+7- Download Devel
+
+<code> drush dl devel </code>
+<code> drush pml </code>
+Devel is in Development package. 
+
+Show Development package.
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush pml --package=development
+ Name                                   Type    Status         Version 
+ Devel (devel)                          Module  Not installed  7.x-1.3 
+ Devel generate (devel_generate)        Module  Not installed  7.x-1.3 
+ Devel node access (devel_node_access)  Module  Not installed  7.x-1.3 
+</code> 
+
+Get Package information
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush pmi devel
+ Extension        :  devel                                                
+ Project          :  devel                                                
+ Type             :  module                                               
+ Title            :  Devel                                                
+ Description      :  Various blocks, pages, and functions for developers. 
+ Version          :  7.x-1.3                                              
+ Package          :  Development                                          
+ Core             :  7.x                                                  
+ PHP              :  5.2.4                                                
+ Status           :  not installed                                        
+ Path             :  sites/all/modules/devel                              
+ Schema version   :  no schema installed                                  
+ Files            :  devel.test, devel.mail.inc                           
+ Requires         :  none                                                 
+ Required by      :  devel_generate                                       
+
+
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush rln devel
+
+</code>
+
+8- Drush pipe pml information on a Module
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush pml | grep -i comment
+ Core         Comment (comment)                      Module  Enabled        7.19    
+</code>
+
+9- Drush Disable Module
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush dis comment
+</code>
+
+10- Drush Enable Module
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush -y en devel
+</code>
+
+11- Drush Uninstall Module
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush pm-uninstall comment
+</code>
+
+To avoid answering yes-no options
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush -y pm-uninstall comment
+</code>
+
+12- Check Installed modules in Core package and count lines (Number of Modules in the Core)
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush pml --type=module --package=core --status=enabled --pipe | wc -l
+29
+</code>
+
+**Themes**
+
+13- List available themes
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush pml --type=theme
+ Package  Name               Status    Version 
+ Core     Bartik (bartik)    Enabled   7.19    
+ Core     Garland (garland)  Disabled  7.19    
+ Core     Seven (seven)      Enabled   7.19    
+ Core     Stark (stark)      Disabled  7.19    
+</code>
+
+14- What is the current theme
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget theme_default
+theme_default: "bartik"
+</code>
+
+15- Enable a theme
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush -y en garland
+The following extensions will be enabled: garland
+Do you really want to continue? (y/n): y
+garland was enabled successfully.  
+</code>
+
+16- Set default theme
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vset theme_default garland
+theme_default was set to "garland". 
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget theme_default
+theme_default: "garland"
+</code>
+
+17- Drupal Admin Theme
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget admin_theme
+admin_theme: "seven"
+node_admin_theme: "1"
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget admin_theme --exact
+admin_theme: "seven"
+</code>
+
+Download a new admin theme rubik tao and replace the admin theme.
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush dl rubik tao
+Project rubik (7.x-4.0-beta8) downloaded to /var/www/drupal-7.19/sites/all/themes/rubik.                        [success]
+Project tao (7.x-3.0-beta4) downloaded to /var/www/drupal-7.19/sites/all/themes/tao.                            [success]
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush -y en rubik tao
+The following extensions will be enabled: rubik, tao
+Do you really want to continue? (y/n): y
+rubik was enabled successfully.                                                                                 [ok]
+tao was enabled successfully.  
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vset admin_theme rubik
+admin_theme was set to "rubik".                
+</code>
+
+Set admin theme back to seven
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vset admin_theme seven
+admin_theme was set to "seven". 
+</code>
+
+**Coding Values and tracking changes to Drupal
+**
+
+18- Comparison of data based on introducing a variable. Write values to a file "before" before before making a change and then write the values to a file named "after", after making the changes.
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget > before
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget > after
+mani@mani-ubuntu:/var/www/drupal-7.19$ diff before after
+7a8,9
+> default_nodes_main: "10"
+> drupal_http_request_fails: "FALSE"
+66a69,70
+> site_403: ""
+> site_404: ""
+67a72
+> site_frontpage: "node"
+69c74,75
+< site_name: "Site-Install"
+---
+> site_name: "Drush"
+> site_slogan: "A Command line shell and scripting interface for Drupal"
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget site_name --pipe
+$variables['site_name'] = 'Drush';
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush vget site_slogan --pipe
+$variables['site_slogan'] = 'A Command line shell and scripting interface for Drupal';
+</code>
+
+**User Management**
+
+Get information about a user.
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush uinf admin
+ User ID       :  1                                 
+ User name     :  admin                             
+ User mail     :  admin@example.com                 
+ User roles    :  authenticated user, administrator 
+ User status   :  active      
+</code>
+
+Get full information about a user
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush uinf admin --full
+uid: 1
+name: admin
+pass: $S$DJBFoq/vRz.8gPwCROeTQAnwYfXJRSZ4.JyGArEbGzdEb6QP2SRA
+mail: admin@example.com
+theme: 
+signature: 
+signature_format: 
+created: Thu, 01/17/2013 - 10:11
+access: Thu, 01/17/2013 - 13:05
+login: Thu, 01/17/2013 - 10:34
+status: 1
+timezone: America/Anguilla
+language: 
+picture: 
+init: admin@example.com
+roles: 
+Array
+(
+    [2] => authenticated user
+    [3] => administrator
+)
+
+rdf_mapping: 
+Array
+(
+    [rdftype] => Array
+        (
+            [0] => sioc:UserAccount
+        )
+
+    [name] => Array
+        (
+            [predicates] => Array
+                (
+                    [0] => foaf:name
+                )
+
+        )
+
+    [homepage] => Array
+        (
+            [predicates] => Array
+                (
+                    [0] => foaf:page
+                )
+
+            [type] => rel
+        )
+
+)
+
+</code>
+
+**Change Admin Password
+**
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush upwd admin --password=hello
+</code>
+
+**Generate a one time login URL.
+**
+
+Preferable method.
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush uli admin
+default does not appear to be a resolvable hostname or IP, not starting browser.                                [warning]
+http://default/?q=user/reset/1/1358443596/bSPfk8_3_uS-yiKAn-k1USMQsQwkt6TMH2IhS_T3LcU/login
+</code>
+
+{{:onetimelogin.png|}}
+
+**Create User
+**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush ucrt test --mail="test@example.com" --password=test
+ User ID       :  2                  
+ User name     :  test               
+ User mail     :  test@example.com   
+ User roles    :  authenticated user 
+ User status   :  active  
+
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush uinf test
+ User ID       :  2                  
+ User name     :  test               
+ User mail     :  test@example.com   
+ User roles    :  authenticated user 
+ User status   :  active          
+</code>
+
+**Block User**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush ublk test
+</code>
+
+**Check User Info
+**
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush uinf test
+ User ID       :  2                  
+ User name     :  test               
+ User mail     :  test@example.com   
+ User roles    :  authenticated user 
+ User status   :  blocked   
+</code>
+
+Note: If you want to be able to block both admin and the user test.
+
+<code>drush blk 1,test</code>
+
+**Unblock User**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush uublk test
+sh: 1: /usr/sbin/sendmail: not found
+WD mail: Error sending e-mail (from admin@example.com to test@example.com).                                     [error]
+Unable to send e-mail. Contact the site administrator if the problem persists.
+</code>
+
+**Cancel User Account**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush ucan test --delete-content
+Cancelling the user account with the following information:
+ User ID       :  2                  
+ User name     :  test               
+ User mail     :  test@example.com   
+ User roles    :  authenticated user 
+ User status   :  active             
+
+All content created by this user will be deleted!
+Cancel user account?:  (y/n): y
+test has been deleted.
+</code>
+
+**Drupal Site Management**
+
+**Clear Cache
+**
+
+Drupal Blocks and Menus consistently burden the site with cache buildup.
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush cc all
+'all' cache was cleared in /var/www/drupal-7.19#default 
+</code>
+
+**Cron Job
+**
+         * Execute scheduled jobs.
+         * Execute updates etcetera.
+
+<code>drush cron</code>  
+
+Note: When cron finds issues, i.e updates. it tries to email. If you have setup an email, you should be able to receive one.
+
+**Check Recent Log Messages
+**
+Used to be watchdog (named retained in DB). D7 uses dblog module.
+
+**Watchdog DB related system communication**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush wd-list
+Select a message type or severity level.
+ [0]   :  Cancel                
+          == message types ==   
+ [1]   :  actions               
+ [2]   :  cron                  
+ [3]   :  mail                  
+ [4]   :  system                
+ [5]   :  user                  
+          == severity levels == 
+ [6]   :  emergency(0)          
+ [7]   :  alert(1)              
+ [8]   :  critical(2)           
+ [9]   :  error(3)              
+ [10]  :  warning(4)            
+ [11]  :  notice(5)             
+ [12]  :  info(6)               
+ [13]  :  debug(7)       
+</code>
+
+**Show Watchdog log messages
+**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush ws
+ Id  Date          Severity  Type    Message                                                            
+ 57  17/Jan 13:39  notice    user    Deleted user: test .                                               
+ 56  17/Jan 13:38  error     mail    Error sending e-mail (from admin@example.com to test@example.com). 
+ 55  17/Jan 13:32  notice    user    Session opened for test.                                           
+ 54  17/Jan 13:28  notice    cron    Cron run completed.                                                
+ 53  17/Jan 13:28  notice    user    Session opened for admin.                                          
+ 52  17/Jan 13:28  notice    user    User admin used one-time login link at time 1358443596.            
+ 51  17/Jan 10:34  notice    user    Session opened for admin.                                          
+ 50  17/Jan 10:12  notice    cron    Cron run completed.                                                
+ 49  17/Jan 10:11  notice    user    Session opened for admin.                                          
+ 48  17/Jan 10:11  info      system  update module enabled.            
+</code>
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush ws --count=5 --type=system
+ Id  Date          Severity  Type    Message                    
+ 48  17/Jan 10:11  info      system  update module enabled.     
+ 47  17/Jan 10:11  info      system  update module installed.   
+ 34  17/Jan 10:11  info      system  standard module enabled.   
+ 33  17/Jan 10:11  info      system  standard module installed. 
+ 32  17/Jan 10:11  info      system  toolbar module enabled.   
+</code>
+
+
+**Check messages in real time.
+**
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.19$ drush ws --tail
+ Id  Date          Severity  Type    Message                                                            
+ 48  17/Jan 10:11  info      system  update module enabled.                                             
+ 49  17/Jan 10:11  notice    user    Session opened for admin.                                          
+ 50  17/Jan 10:12  notice    cron    Cron run completed.                                                
+ 51  17/Jan 10:34  notice    user    Session opened for admin.                                          
+ 52  17/Jan 13:28  notice    user    User admin used one-time login link at time 1358443596.            
+ 53  17/Jan 13:28  notice    user    Session opened for admin.                                          
+ 54  17/Jan 13:28  notice    cron    Cron run completed.                                                
+ 55  17/Jan 13:32  notice    user    Session opened for test.                                           
+ 56  17/Jan 13:38  error     mail    Error sending e-mail (from admin@example.com to test@example.com). 
+ 57  17/Jan 13:39  notice    user    Deleted user: test .                                               
+
+ 58  17/Jan 13:56  notice    user    Login attempt failed for test.      
+</code>
+
+**Updating Drupal
+**
+
+No need to use update.php. You can update the db as well in one go.
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush up
+</code>
+
+**Archiving and Restoring Sites**
+
+**Export entire schema and data
+**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush sql-dump --result-file=../backup-2013-01-17.sql
+Database dump saved to ../backup-2013-01-17.sql 
+</code>
+
+**Delete DB
+**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush sql-drop
+Do you really want to drop all tables? (y/n): y
+</code>
+
+**Restore DB**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush sql-drop
+Do you really want to drop all tables? (y/n): y
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush sqlq --file=../backup-2013-01-17.sql 
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush cache-clear
+Enter a number to choose which cache to clear.
+ [0]  :  Cancel         
+ [1]  :  all            
+ [2]  :  drush          
+ [3]  :  theme-registry 
+ [4]  :  menu           
+ [5]  :  css-js         
+ [6]  :  block          
+ [7]  :  module-list    
+ [8]  :  theme-list     
+ [9]  :  registry       
+
+1
+'all' cache was cleared in /var/www/drupal-7.15#default   
+</code>
+
+**Backup site, DB, code into a single tar file**
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush ard --destination=../backup-2013-01-17.tar
+ Drupal version                  :  7.19                  
+ Site URI                        :  http://default        
+ Database driver                 :  mysql                 
+ Database hostname               :  localhost             
+ Database username               :  root                  
+ Database name                   :  drupalold             
+ Database                        :  Connected             
+ Drupal bootstrap                :  Successful            
+ Drupal user                     :  Anonymous             
+ Default theme                   :  bartik                
+ Administration theme            :  seven                 
+ PHP configuration               :  /etc/php5/cli/php.ini 
+ Drush version                   :  5.8                   
+ Drush configuration             :                        
+ Drupal root                     :  /var/www/drupal-7.15  
+ Site path                       :  sites/default         
+ File directory path             :  sites/default/files   
+ Temporary file directory path   :  /tmp                  
+
+Archive saved to /var/www/backup-2013-01-17.tar
+</code>
+
+//Drop the site DB again//
+
+<code>
+mani@mani-ubuntu:/var/www/drupal-7.15$ drush sql-drop
+Do you really want to drop all tables? (y/n): y
+</code>
+
+//Delete the site folder//
+
+<code>
+mani@mani-ubuntu:/var/www$ sudo rm -Rf drupal-7.15
+[sudo] password for mani: 
+</code>
+
+//Archive Restore//
+
+<code>
+mani@mani-ubuntu:/var/www$ drush arr backup-2013-01-17.tar
+No tables to drop.                                                                                                                                  [ok]
+Archive restored to /var/www/drupal-7.15  
+</code>
+
+//Clear Cache//
+
+<code>
+mani@mani-ubuntu:/var/www$ drush cc all
+'drush' cache was cleared 
+</code>
+
+Check website now.

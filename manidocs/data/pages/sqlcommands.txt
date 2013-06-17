@@ -1,0 +1,671 @@
+**MySQL Commands**
+
+Start and Stop mysql server
+
+<code>
+sudo /etc/init.d/mysql start
+kojan:~> sudo /etc/init.d/mysql restart
+[sudo] password for chris: 
+Stopping MySQL database server: mysqld.
+Starting MySQL database server: mysqld.
+Checking for corrupt, not cleanly closed and upgrade needing tables..
+</code>
+
+Using killall to kill mysql processes
+
+<code>
+# killall mysqld
+# ps aux|grep mysql
+root     12288  0.0  0.0  3508  448 pts/0    S+   16:23   0:00 grep -i mysql
+</code>
+
+Start SQL Instance
+
+<code>
+sudo mysqld_safe --defaults-file=/etc/mysql/my.cnf &
+sudo mysqld_safe --defaults-file=/etc/mysql2/my.cnf &
+</code>
+
+Check Logs
+
+<code>
+mani@mani-ubuntu:~$ sudo tail -f /var/log/syslog
+</code>
+
+Permissions
+
+<code>
+chown -R mysql:mysql *
+</code>
+
+To login (from unix shell) use -h only if needed.
+
+<code>
+# [mysql dir]/bin/mysql -h hostname -u root -p
+</code>
+
+Create a database 
+
+<code>
+mysql> create database [databasename];
+</code>
+
+List all databases
+
+<code>
+mysql> show databases;
+</code>
+
+Switch to a database
+
+<code>
+mysql> use [db name];
+</code>
+
+See all tables
+
+<code>
+mysql> show tables;
+</code>
+
+Database field formats
+
+<code>
+mysql> describe [table name];
+</code>
+
+Delete Database
+
+<code>
+mysql> drop database [database name];
+</code>
+
+Delete Table
+
+<code>
+mysql> drop table [table name];
+</code>
+
+Show all data in a table
+
+<code>
+mysql> SELECT * FROM [table name];
+</code>
+
+Returns the columns and column information pertaining to the designated table.
+
+<code>
+mysql> show columns from [table name];
+</code>
+
+Show certain selected rows with the value "whatever".
+
+<code>
+mysql> SELECT * FROM [table name] WHERE [field name] = "whatever";
+</code>
+
+Show all records containing the name "Bob" AND the phone number '3444444'.
+
+<code>
+mysql> SELECT * FROM [table name] WHERE name = "Bob" AND phone_number = '3444444';
+</code>
+
+Show all records not containing the name "Bob" AND the phone number '3444444' order by the phone_number field.
+
+<code>
+mysql> SELECT * FROM [table name] WHERE name != "Bob" AND phone_number = '3444444' order by phone_number;
+</code>
+
+Show all records starting with the letters 'bob' AND the phone number '3444444'.
+
+<code>
+mysql> SELECT * FROM [table name] WHERE name like "Bob%" AND phone_number = '3444444';
+</code>
+
+Show all records starting with the letters 'bob' AND the phone number '3444444' limit to records 1 through 5
+
+<code>
+mysql> SELECT * FROM [table name] WHERE name like "Bob%" AND phone_number = '3444444' limit 1,5;
+</code>
+
+Use a regular expression to find records. Use "REGEXP BINARY" to force case-sensitivity. This finds any record beginning with a
+
+<code>
+mysql> SELECT * FROM [table name] WHERE rec RLIKE "^a";
+</code>
+
+Show unique records
+
+<code>
+mysql> SELECT DISTINCT [column name] FROM [table name];
+</code>
+
+Show selected records sorted in an ascending (asc) or descending (desc).
+
+<code>
+mysql> SELECT [col1],[col2] FROM [table name] ORDER BY [col2] DESC;
+</code>
+
+Return number of rows
+
+<code>
+mysql> SELECT COUNT(*) FROM [table name];
+</code>
+
+Sum column.
+
+<code>
+mysql> SELECT SUM(*) FROM [table name];
+</code>
+
+Join tables on common columns.
+
+<code>
+mysql> select lookup.illustrationid, lookup.personid,person.birthday from lookup left join person
+on lookup.personid=person.personid=statement to join birthday in person table with primary illustration id;
+</code>
+
+Creating a new user. Login as root. Switch to the MySQL db. Make the user. Update privileges.
+
+<code>
+# mysql -u root -p
+mysql> use mysql;
+mysql> INSERT INTO user (Host,User,Password)
+VALUES('%','username',PASSWORD('password'));
+mysql> flush privileges;
+</code>
+
+Change a users password from unix shell.
+
+<code>
+# [mysql dir]/bin/mysqladmin -u username -h hostname.blah.org -p password 'new-password'
+</code>
+
+Change a users password from MySQL prompt. Login as root. Set the password. Update privileges.
+
+<code>
+# mysql -u root -p
+mysql> SET PASSWORD FOR 'user'@'hostname' =
+PASSWORD('passwordhere');
+mysql> flush privileges;
+</code>
+
+Recover a MySQL root password. Stop the MySQL server process. Start again with no grant tables.
+Login to MySQL as root. Set new password. Exit MySQL and restart MySQL server.
+
+<code>
+# /etc/init.d/mysql stop
+# mysqld_safe --skip-grant-tables &
+# mysql -u root
+mysql> use mysql;
+mysql> update user set password=PASSWORD("newrootpassword")
+where User='root';
+mysql> flush privileges;
+mysql> quit
+# /etc/init.d/mysql stop
+# /etc/init.d/mysql start
+</code>
+
+Set a root password if there is on root password.
+
+<code>
+# mysqladmin -u root password newpassword
+</code>
+
+Update a root password.
+
+<code>
+# mysqladmin -u root -p oldpassword newpassword
+</code>
+
+Allow the user "mani" to connect to the server from localhost using the password "passwd". Login as
+root. Switch to the MySQL db. Give privileges. Update privileges.
+
+<code>
+# mysql -u root -p
+mysql> use mysql;
+mysql> grant usage on *.* to mani@localhost identified by 'passwd';
+mysql> flush privileges;
+</code>
+
+Give user privilages for a db. Login as root. Switch to the MySQL db. Grant privileges. Update privileges.
+
+<code>
+# mysql -u root -p
+mysql> use mysql;
+mysql> INSERT INTO db
+(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv ,Create_priv,Drop_priv) VALUES
+('%','databasename','username','Y','Y','Y','Y','Y','N');
+mysql> flush privileges;
+
+or
+
+mysql> grant all privileges on databasename.* to
+username@localhost;
+mysql> flush privileges
+</code>
+
+To update info already in a table
+
+<code>
+mysql> UPDATE [table name] SET Select_priv = 'Y',Insert_priv = 'Y',Update_priv = 'Y' where [field name] = 'user';
+</code>
+
+Delete a row(s) from a table
+
+<code>
+mysql> DELETE from [table name] where [field name] = 'whatever';
+</code>
+
+Update database permissions/privilages
+
+<code>
+mysql> flush privileges;
+</code>
+
+Delete a column.
+
+<code>
+mysql> alter table [table name] drop column [column name];
+</code>
+
+Add a new column to db
+
+<code>
+mysql> alter table [table name] add column [new column name] varchar (20);
+</code>
+
+Change column name.
+
+<code>
+mysql> alter table [table name] change [old column name] [new column name] varchar (50);
+</code>
+
+Make a unique column so you get no duplicates.
+
+<code>
+mysql> alter table [table name] add unique ([column name]);
+</code>
+
+Make a column bigger.
+
+<code>
+mysql> alter table [table name] modify [column name] VARCHAR(3);
+</code>
+
+Delete unique from table.
+
+<code>
+mysql> alter table [table name] drop index [colmn name];
+</code>
+
+Load a CSV file into a table.
+
+<code>
+mysql> LOAD DATA INFILE '/tmp/filename.csv' replace INTO TABLE [table name] FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' (field1,field2,field3);
+</code>
+
+Dump all databases for backup. Backup file is sql commands to recreate all db's.
+
+<code>
+# [mysql dir]/bin/mysqldump -u root -ppassword --opt >/tmp/alldatabases.sql
+</code>
+
+Dump one database for backup.
+
+<code>
+# [mysql dir]/bin/mysqldump -u username -ppassword --databases databasename >/tmp/databasename.sql
+</code>
+
+Dump a table from a database.
+
+<code>
+# [mysql dir]/bin/mysqldump -c -u username -ppassword databasename tablename > /tmp/databasename.tablename.sql
+</code>
+
+Restore database (or database table) from backup.
+
+<code>
+# [mysql dir]/bin/mysql -u username -ppassword databasename < /tmp/databasename.sql
+</code>
+
+Create Table Example 1
+
+<code>
+mysql> CREATE TABLE [table name] (firstname VARCHAR(20),
+middleinitial VARCHAR(3), lastname VARCHAR(35),suffix
+VARCHAR(3),officeid VARCHAR(10),userid VARCHAR(15),username
+VARCHAR(8),email VARCHAR(35),phone VARCHAR(25), groups
+VARCHAR(15),datestamp DATE,timestamp time,pgpemail
+VARCHAR(255));
+</code>
+
+Create Table Example 2
+
+<code>
+mysql> create table [table name] (personid int(50) not null
+auto_increment primary key,firstname varchar(35),middlename
+varchar(50),lastnamevarchar(50) default 'bato');
+</code>
+
+**20 MySQL (Mysqladmin) Commands for Database Administration in Linux
+**
+
+1. How to set MySQL Root password?
+
+<code>
+# mysqladmin -u root password YOURNEWPASSWORD
+</code>
+
+2. How to Change MySQL Root password?
+
+<code>
+mysqladmin -u root -p123456 password 'xyz123'
+</code>
+
+3. How to check MySQL Server is running?
+
+<code>
+# mysqladmin -u root -p ping
+
+Enter password:
+mysqld is alive
+</code>
+
+4. How to Check which MySQL version I am running?
+
+<code>
+# mysqladmin -u root -p version
+
+Enter password:
+mysqladmin  Ver 8.42 Distrib 5.5.28, for Linux on i686
+Copyright (c) 2000, 2012, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Server version          5.5.28
+Protocol version        10
+Connection              Localhost via UNIX socket
+UNIX socket             /var/lib/mysql/mysql.sock
+Uptime:                 7 days 14 min 45 sec
+
+Threads: 2  Questions: 36002  Slow queries: 0  Opens: 15  Flush tables: 1  Open tables: 8  Queries per second avg: 0.059
+</code>
+
+5. How to Find out current Status of MySQL server?
+
+<code>
+# mysqladmin -u root -ptmppassword status
+
+Enter password:
+Uptime: 606704  Threads: 2  Questions: 36003  Slow queries: 0  Opens: 15  Flush tables: 1  Open tables: 8  Queries per second avg: 0.059
+</code>
+
+6. How to check status of all MySQL Server Variable’s and value’s?
+
+<code>
+# mysqladmin -u root -p extended-status
+
+Enter password:
++------------------------------------------+-------------+
+| Variable_name                            | Value       |
++------------------------------------------+-------------+
+| Aborted_clients                          | 3           |
+| Aborted_connects                         | 3           |
+| Binlog_cache_disk_use                    | 0           |
+| Binlog_cache_use                         | 0           |
+| Binlog_stmt_cache_disk_use               | 0           |
+| Binlog_stmt_cache_use                    | 0           |
+| Bytes_received                           | 6400357     |
+| Bytes_sent                               | 2610105     |
+| Com_admin_commands                       | 3           |
+| Com_assign_to_keycache                   | 0           |
+| Com_alter_db                             | 0           |
+| Com_alter_db_upgrade                     | 0           |
+| Com_alter_event                          | 0           |
+| Com_alter_function                       | 0           |
+| Com_alter_procedure                      | 0           |
+| Com_alter_server                         | 0           |
+| Com_alter_table                          | 0           |
+| Com_alter_tablespace                     | 0           |
++------------------------------------------+-------------+
+</code>
+
+7. How to see all MySQL server Variables and Values?
+
+<code>
+# mysqladmin  -u root -p variables
+
+Enter password:
++---------------------------------------------------+----------------------------------------------+
+| Variable_name                                     | Value                                        |
++---------------------------------------------------+----------------------------------------------+
+| auto_increment_increment                          | 1                                            |
+| auto_increment_offset                             | 1                                            |
+| autocommit                                        | ON                                           |
+| automatic_sp_privileges                           | ON                                           |
+| back_log                                          | 50                                           |
+| basedir                                           | /usr                                         |
+| big_tables                                        | OFF                                          |
+| binlog_cache_size                                 | 32768                                        |
+| binlog_direct_non_transactional_updates           | OFF                                          |
+| binlog_format                                     | STATEMENT                                    |
+| binlog_stmt_cache_size                            | 32768                                        |
+| bulk_insert_buffer_size                           | 8388608                                      |
+| character_set_client                              | latin1                                       |
+| character_set_connection                          | latin1                                       |
+| character_set_database                            | latin1                                       |
+| character_set_filesystem                          | binary                                       |
+| character_set_results                             | latin1                                       |
+| character_set_server                              | latin1                                       |
+| character_set_system                              | utf8                                         |
+| character_sets_dir                                | /usr/share/mysql/charsets/                   |
+| collation_connection                              | latin1_swedish_ci                            |
++---------------------------------------------------+----------------------------------------------+
+</code>
+
+8. How to check all the running Process of MySQL server?
+
+<code>
+# mysqladmin -u root -p processlist
+
+Enter password:
++-------+---------+-----------------+---------+---------+------+-------+------------------+
+| Id    | User    | Host            | db      | Command | Time | State | Info             |
++-------+---------+-----------------+---------+---------+------+-------+------------------+
+| 18001 | rsyslog | localhost:38307 | rsyslog | Sleep   | 5590 |       |                  |
+| 18020 | root    | localhost       |         | Query   | 0    |       | show processlist |
++-------+---------+-----------------+---------+---------+------+-------+------------------+
+</code>
+
+9. How to create a Database in MySQL server?
+
+<code>
+# mysqladmin -u root -p create databasename
+
+Enter password:
+</code>
+
+<code>
+# mysql -u root -p
+
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 18027
+Server version: 5.5.28 MySQL Community Server (GPL) by Remi
+
+Copyright (c) 2000, 2012, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| databasename       |
+| mysql              |
+| test               |
++--------------------+
+8 rows in set (0.01 sec)
+
+mysql>
+</code>
+
+10. How to drop a Database in MySQL server?
+
+<code>
+# mysqladmin -u root -p drop databasename
+
+Enter password:
+Dropping the database is potentially a very bad thing to do.
+Any data stored in the database will be destroyed.
+
+Do you really want to drop the 'databasename' database [y/N] y
+Database "databasename" dropped
+</code>
+
+11. How to reload/refresh MySQL Privileges?
+
+<code>
+# mysqladmin -u root -p reload;
+# mysqladmin -u root -p refresh
+</code>
+
+12. How to shutdown MySQL server Safely?
+
+<code>
+mysqladmin -u root -p shutdown
+
+Enter password:
+</code>
+
+You can also use the following commands to start/stop MySQL server.
+
+<code>
+# /etc/init.d/mysqld stop
+# /etc/init.d/mysqld start
+</code>
+
+13. Some useful MySQL Flush commands
+
+  * flush-hosts: Flush all host information from host cache.
+  * flush-tables: Flush all tables.
+  * flush-threads: Flush all threads cache.
+  * flush-logs: Flush all information logs.
+  * flush-privileges: Reload the grant tables (same as reload).
+  * flush-status: Clear status variables.
+
+<code>
+# mysqladmin -u root -p flush-hosts
+# mysqladmin -u root -p flush-tables
+# mysqladmin -u root -p flush-threads
+# mysqladmin -u root -p flush-logs
+# mysqladmin -u root -p flush-privileges
+# mysqladmin -u root -p flush-status
+</code>
+
+14. How to kill Sleeping MySQL Client Process?
+
+<code>
+# mysqladmin -u root -p processlist
+
+Enter password:
++----+------+-----------+----+---------+------+-------+------------------+
+| Id | User | Host      | db | Command | Time | State | Info             |
++----+------+-----------+----+---------+------+-------+------------------+
+| 5  | root | localhost |    | Sleep   | 14   |       |					 |
+| 8  | root | localhost |    | Query   | 0    |       | show processlist |
++----+------+-----------+----+---------+------+-------+------------------+
+</code>
+
+<code>
+# mysqladmin -u root -p kill 5
+
+Enter password:
++----+------+-----------+----+---------+------+-------+------------------+
+| Id | User | Host      | db | Command | Time | State | Info             |
++----+------+-----------+----+---------+------+-------+------------------+
+| 12 | root | localhost |    | Query   | 0    |       | show processlist |
++----+------+-----------+----+---------+------+-------+------------------+
+</code>
+
+<code>
+# mysqladmin -u root -p kill 5,10
+</code>
+
+15. How to run multiple mysqladmin commands together?
+
+<code>
+# mysqladmin  -u root -p processlist status version
+
+Enter password:
++----+------+-----------+----+---------+------+-------+------------------+
+| Id | User | Host      | db | Command | Time | State | Info             |
++----+------+-----------+----+---------+------+-------+------------------+
+| 8  | root | localhost |    | Query   | 0    |       | show processlist |
++----+------+-----------+----+---------+------+-------+------------------+
+Uptime: 3801  Threads: 1  Questions: 15  Slow queries: 0  Opens: 15  Flush tables: 1  Open tables: 8  Queries per second avg: 0.003
+mysqladmin  Ver 8.42 Distrib 5.5.28, for Linux on i686
+Copyright (c) 2000, 2012, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Server version          5.5.28
+Protocol version        10
+Connection              Localhost via UNIX socket
+UNIX socket             /var/lib/mysql/mysql.sock
+Uptime:                 1 hour 3 min 21 sec
+
+Threads: 1  Questions: 15  Slow queries: 0  Opens: 15  Flush tables: 1  Open tables: 8  Queries per second avg: 0.003
+</code>
+
+16. How to Connect remote mysql server
+
+<code>
+# mysqladmin  -h 172.16.25.126 -u root -p
+</code>
+
+17. How to execute command on remote MySQL server
+
+<code>
+# mysqladmin  -h 172.16.25.126 -u root -p status
+</code>
+
+18. How to start/stop MySQL replication on a slave server?
+
+<code>
+# mysqladmin  -u root -p start-slave
+# mysqladmin  -u root -p stop-slave
+</code>
+
+19. How to store MySQL server Debug Information to logs?
+
+<code>
+# mysqladmin  -u root -p debug
+
+Enter password:
+</code>
+
+20. How to view mysqladmin options and usage
+
+<code>
+# mysqladmin --help
+</code>
+
+Useful commands: http://crashmag.net/list-of-useful-mysql-commands
+
+**Drush Check Database with Website credentials
+**
+
+<code>
+mani@relentless:/srv/www/VRE/sites/etc.lib.unb.ca.acva.contestedterrain> drush sql-cli
+</code>

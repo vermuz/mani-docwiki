@@ -1,0 +1,9 @@
+repositoryformatversion
+configureadvancedaction
+testdynamicsectionsnojs
+runtestgenericfieldinfo
+testgenericaddallfields
+drupalcreatecontenttype
+testnodeexamplerevision
+testxmlrpcexampleclient
+testxmlrpcexampleserver

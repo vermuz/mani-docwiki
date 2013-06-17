@@ -1,0 +1,9 @@
+**CLEAR SCREEN**
+
+<code>
+>>> def wiper() :
+	print("\n" * 100)
+
+	
+>>> wiper()
+</code>

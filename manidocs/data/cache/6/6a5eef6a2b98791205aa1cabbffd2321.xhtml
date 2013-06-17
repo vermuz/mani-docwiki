@@ -1,0 +1,381 @@
+
+<h1 class="sectionedit1" id="block_example">Block Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Block Example" [1-29] -->
+<h2 class="sectionedit2" id="block_exampleinfo">block_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Block Example
+   2 description = An example outlining how a module can define blocks.
+   3 package = Example modules
+   4 core = 7.x
+   5 dependencies[] = block
+   6 files[] = block_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "block_example.info" [30-284] -->
+<h2 class="sectionedit3" id="block_exampleinstall">block_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Install, update and uninstall functions for the block_example module.
+   5  */
+   6 
+   7 /**
+   8  * Implements hook_uninstall().
+   9  *
+  10  * @ingroup block_example
+  11  */
+  12 function block_example_uninstall() {
+  13   variable_del(&#039;block_example_string&#039;);
+  14 }</pre>
+
+</div>
+<!-- EDIT3 SECTION "block_example.install" [285-648] -->
+<h2 class="sectionedit4" id="block_examplemodule">block_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Module file for block_example.
+   5  */
+   6 
+   7 /**
+   8  * @defgroup block_example Example: Block
+   9  * @ingroup examples
+  10  * @{
+  11  * Demonstrates code creation of blocks.
+  12  *
+  13  * This is an example outlining how a module can define blocks that can be
+  14  * displayed on various pages of a site, or how to alter blocks provided by
+  15  * other modules.
+  16  */
+  17 
+  18 /**
+  19  * Implements hook_menu().
+  20  *
+  21  * Provides a default page to explain what this module does.
+  22  */
+  23 function block_example_menu() {
+  24   $items[&#039;examples/block_example&#039;] = array(
+  25     &#039;page callback&#039; =&gt; &#039;block_example_page&#039;,
+  26     &#039;access callback&#039; =&gt; TRUE,
+  27     &#039;title&#039; =&gt; &#039;Block Example&#039;,
+  28   );
+  29   return $items;
+  30 }
+  31 
+  32 /**
+  33  * Simple page function to explain what the block example is about.
+  34  */
+  35 function block_example_page() {
+  36   $page = array(
+  37     &#039;#type&#039; =&gt; &#039;markup&#039;,
+  38     &#039;#markup&#039; =&gt; t(&#039;The Block Example provides two sample blocks which demonstrate the various block APIs. To experiment with the blocks, enable and configure them on &lt;a href=&quot;@url&quot;&gt;the block admin page&lt;/a&gt;.&#039;, array(&#039;@url&#039; =&gt; url(&#039;admin/structure/block&#039;))),
+  39   );
+  40   return $page;
+  41 }
+  42 /**
+  43  * Implements hook_block_info().
+  44  *
+  45  * This hook declares what blocks are provided by the module.
+  46  */
+  47 function block_example_block_info() {
+  48   // This hook returns an array, each component of which is an array of block
+  49   // information. The array keys are the &#039;delta&#039; values used in other block
+  50   // hooks.
+  51 
+  52   // The required block information is a block description, which is shown
+  53   // to the site administrator in the list of possible blocks. You can also
+  54   // provide initial settings for block weight, status, etc.
+  55 
+  56   // Many options are defined in hook_block_info():
+  57   $blocks[&#039;example_configurable_text&#039;] = array(
+  58     // info: The name of the block.
+  59     &#039;info&#039; =&gt; t(&#039;Example: configurable text string&#039;),
+  60     // Block caching options (per role, per user, etc.)
+  61     &#039;cache&#039; =&gt; DRUPAL_CACHE_PER_ROLE, // default
+  62   );
+  63 
+  64   // This sample shows how to provide default settings. In this case we&#039;ll
+  65   // enable the block in the first sidebar and make it visible only on
+  66   // &#039;node/*&#039; pages. See the hook_block_info() documentation for these.
+  67   $blocks[&#039;example_empty&#039;] = array(
+  68     &#039;info&#039; =&gt; t(&#039;Example: empty block&#039;),
+  69     &#039;status&#039; =&gt; TRUE,
+  70     &#039;region&#039; =&gt; &#039;sidebar_first&#039;,  // Not usually provided.
+  71     &#039;visibility&#039; =&gt; BLOCK_VISIBILITY_LISTED,  // Not usually provided.
+  72     &#039;pages&#039; =&gt; &#039;node/*&#039;, // Not usually provided here.
+  73   );
+  74 
+  75   $blocks[&#039;example_uppercase&#039;] = array(
+  76     // info: The name of the block.
+  77     &#039;info&#039; =&gt; t(&#039;Example: uppercase this please&#039;),
+  78     &#039;status&#039; =&gt; TRUE,
+  79     &#039;region&#039; =&gt; &#039;sidebar_first&#039;,  // Not usually provided.
+  80   );
+  81 
+  82   return $blocks;
+  83 }
+  84 
+  85 /**
+  86  * Implements hook_block_configure().
+  87  *
+  88  * This hook declares configuration options for blocks provided by this module.
+  89  */
+  90 function block_example_block_configure($delta = &#039;&#039;) {
+  91   // The $delta parameter tells us which block is being configured.
+  92   // In this example, we&#039;ll allow the administrator to customize
+  93   // the text of the &#039;configurable text string&#039; block defined in this module.
+  94 
+  95   $form = array();
+  96   if ($delta == &#039;example_configurable_text&#039;) {
+  97     // All we need to provide is the specific configuration options for our
+  98     // block. Drupal will take care of the standard block configuration options
+  99     // (block title, page visibility, etc.) and the save button.
+ 100     $form[&#039;block_example_string&#039;] = array(
+ 101       &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 102       &#039;#title&#039; =&gt; t(&#039;Block contents&#039;),
+ 103       &#039;#size&#039; =&gt; 60,
+ 104       &#039;#description&#039; =&gt; t(&#039;This text will appear in the example block.&#039;),
+ 105       &#039;#default_value&#039; =&gt; variable_get(&#039;block_example_string&#039;,  t(&#039;Some example content.&#039;)),
+ 106     );
+ 107   }
+ 108   return $form;
+ 109 }
+ 110 
+ 111 /**
+ 112  * Implements hook_block_save().
+ 113  *
+ 114  * This hook declares how the configured options for a block
+ 115  * provided by this module are saved.
+ 116  */
+ 117 function block_example_block_save($delta = &#039;&#039;, $edit = array()) {
+ 118   // We need to save settings from the configuration form.
+ 119   // We need to check $delta to make sure we are saving the right block.
+ 120   if ($delta == &#039;example_configurable_text&#039;) {
+ 121     // Have Drupal save the string to the database.
+ 122     variable_set(&#039;block_example_string&#039;, $edit[&#039;block_example_string&#039;]);
+ 123   }
+ 124   return;
+ 125 }
+ 126 
+ 127 /**
+ 128  * Implements hook_block_view().
+ 129  *
+ 130  * This hook generates the contents of the blocks themselves.
+ 131  */
+ 132 function block_example_block_view($delta = &#039;&#039;) {
+ 133   //The $delta parameter tells us which block is being requested.
+ 134   switch ($delta) {
+ 135     case &#039;example_configurable_text&#039;:
+ 136       // The subject is displayed at the top of the block. Note that it
+ 137       // should be passed through t() for translation. The title configured
+ 138       // for the block using Drupal UI supercedes this one.
+ 139       $block[&#039;subject&#039;] = t(&#039;Title of first block (example_configurable_text)&#039;);
+ 140       // The content of the block is typically generated by calling a custom
+ 141       // function.
+ 142       $block[&#039;content&#039;] = block_example_contents($delta);
+ 143       break;
+ 144     case &#039;example_empty&#039;:
+ 145       $block[&#039;subject&#039;] = t(&#039;Title of second block (example_empty)&#039;);
+ 146       $block[&#039;content&#039;] = block_example_contents($delta);
+ 147       break;
+ 148     case &#039;example_uppercase&#039;:
+ 149       $block[&#039;subject&#039;] = t(&quot;uppercase this please&quot;);
+ 150       $block[&#039;content&#039;] = t(&quot;This block&#039;s title will be changed to uppercase. Any other block with &#039;uppercase&#039; in the subject or title will also be altered. If you change this block&#039;s title through the UI to omit the word &#039;uppercase&#039;, it will still be altered to uppercase as the subject key has not been changed.&quot;);
+ 151       break;
+ 152   }
+ 153   return $block;
+ 154 }
+ 155 
+ 156 /**
+ 157  * A module-defined block content function.
+ 158  */
+ 159 function block_example_contents($which_block) {
+ 160   switch ($which_block) {
+ 161     case &#039;example_configurable_text&#039;:
+ 162       // Modules would typically perform some database queries to fetch the
+ 163       // content for their blocks. Here, we&#039;ll just use the variable set in the
+ 164       // block configuration or, if none has set, a default value.
+ 165       // Block content can be returned in two formats: renderable arrays
+ 166       // (as here) are preferred though a simple string will work as well.
+ 167       // Block content created through the UI defaults to a string.
+ 168       return array(&#039;#markup&#039; =&gt; variable_get(&#039;block_example_string&#039;,  t(&#039;A default value. This block was created at %time&#039;, array(&#039;%time&#039; =&gt; date(&#039;c&#039;)))));
+ 169     case &#039;example_empty&#039;:
+ 170       // It is possible that a block not have any content, since it is
+ 171       // probably dynamically constructed. In this case, Drupal will not display
+ 172       // the block at all. This block will not be displayed.
+ 173       return;
+ 174   }
+ 175 }
+ 176 
+ 177 /*
+ 178  * The following hooks can be used to alter blocks
+ 179  * provided by your own or other modules.
+ 180  */
+ 181 
+ 182 /**
+ 183  * Implements hook_block_list_alter().
+ 184  *
+ 185  * This hook allows you to add, remove or modify blocks in the block list. The
+ 186  * block list contains the block definitions. This example requires
+ 187  * search module and the search block enabled
+ 188  * to see how this hook implementation works.
+ 189  *
+ 190  * You may also be interested in hook_block_info_alter(), which allows changes
+ 191  * to the behavior of blocks.
+ 192  */
+ 193 function block_example_block_list_alter(&amp;$blocks) {
+ 194   // We are going to make the search block sticky on bottom of regions. For
+ 195   // this example, we will modify the block list and append the search block at
+ 196   // the end of the list, so even if the administrator configures the block to
+ 197   // be on the top of the region, it will demote to bottom again.
+ 198   foreach ($blocks as $bid =&gt; $block) {
+ 199     if (($block-&gt;module == &#039;search&#039;) &amp;&amp; ($block-&gt;delta == &#039;form&#039;)) {
+ 200       // Remove the block from the list and append to the end.
+ 201       unset($blocks[$bid]);
+ 202       $blocks[$bid] = $block;
+ 203       break;
+ 204     }
+ 205   }
+ 206 }
+ 207 
+ 208 /**
+ 209  * Implements hook_block_view_alter().
+ 210  *
+ 211  * This hook allows you to modify the output of any block in the system.
+ 212  *
+ 213  * In addition, instead of hook_block_view_alter(), which is called for all
+ 214  * blocks, you can also use hook_block_view_MODULE_DELTA_alter() to alter a
+ 215  * specific block. To change only our block using
+ 216  * hook_block_view_MODULE_DELTA_alter, we would use the function:
+ 217  * block_example_block_view_block_example_example_configurable_text_alter()
+ 218  *
+ 219  * We are going to uppercase the subject (the title of the block as shown to the
+ 220  * user) of any block if the string &quot;uppercase&quot; appears in the block title or
+ 221  * subject. Default block titles are set programmatically in the subject key;
+ 222  * titles created through the UI are saved in the title key. This module creates
+ 223  * an example block to demonstrate this effect (default title set
+ 224  * programmatically as subject).  You can also demonstrate the effect of this
+ 225  * hook by creating a new block whose title has the string &#039;uppercase&#039; in it
+ 226  * (set as title through the UI).
+ 227  */
+ 228 function block_example_block_view_alter(&amp;$data, $block) {
+ 229   // We&#039;ll search for the string &#039;uppercase&#039;.
+ 230   if ((!empty($block-&gt;title) &amp;&amp; stristr($block-&gt;title, &#039;uppercase&#039;)) || (!empty($data[&#039;subject&#039;]) &amp;&amp; stristr($data[&#039;subject&#039;], &#039;uppercase&#039;))) {
+ 231     // This will uppercase the default title.
+ 232     $data[&#039;subject&#039;] = isset($data[&#039;subject&#039;]) ? drupal_strtoupper($data[&#039;subject&#039;]) : &#039;&#039;;
+ 233     // This will uppercase a title set in the UI.
+ 234     $block-&gt;title = isset($block-&gt;title) ? drupal_strtoupper($block-&gt;title) : &#039;&#039;;
+ 235   }
+ 236 }
+ 237 /**
+ 238  * @} End of &quot;defgroup block_example&quot;.
+ 239  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "block_example.module" [649-11175] -->
+<h2 class="sectionedit5" id="block_exampletest">block_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Test case for testing the block example module.
+   5  */
+   6 class BlockExampleTestCase extends DrupalWebTestCase {
+   7   protected $web_user;
+   8 
+   9   public static function getInfo() {
+  10     return array(
+  11       &#039;name&#039; =&gt; &#039;Block example functionality&#039;,
+  12       &#039;description&#039; =&gt; &#039;Test the configuration options and block created by Block Example module.&#039;,
+  13       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  14     );
+  15   }
+  16 
+  17   /**
+  18    * Enable modules and create user with specific permissions.
+  19    */
+  20   function setUp() {
+  21     parent::setUp(&#039;block_example&#039;, &#039;search&#039;);
+  22     // Create user. Search content permission granted for the search block to
+  23     // be shown.
+  24     $this-&gt;web_user = $this-&gt;drupalCreateUser(array(&#039;administer blocks&#039;, &#039;search content&#039;, &#039;access contextual links&#039;));
+  25   }
+  26 
+  27   /**
+  28    * Login user, create an example node, and test block functionality through
+  29    * the admin and user interfaces.
+  30    */
+  31   function testBlockExampleBasic() {
+  32     // Login the admin user.
+  33     $this-&gt;drupalLogin($this-&gt;web_user);
+  34 
+  35     // Find the blocks in the settings page.
+  36     $this-&gt;drupalGet(&#039;admin/structure/block&#039;);
+  37     $this-&gt;assertRaw(t(&#039;Example: configurable text string&#039;), &#039;Block configurable-string found.&#039;);
+  38     $this-&gt;assertRaw(t(&#039;Example: empty block&#039;), &#039;Block empty-block found.&#039;);
+  39 
+  40     // Verify the default settings for block are processed.
+  41     $this-&gt;assertFieldByName(&#039;blocks[block_example_example_empty][region]&#039;, &#039;sidebar_first&#039;, &#039;Empty block is enabled in first sidebar successfully verified.&#039;);
+  42     $this-&gt;assertFieldByName(&#039;blocks[block_example_example_configurable_text][region]&#039;, -1, &#039;Configurable text block is disabled in first sidebar successfully verified.&#039;);
+  43 
+  44     // Verify that blocks are not shown
+  45     $this-&gt;drupalGet(&#039;/&#039;);
+  46     $this-&gt;assertNoRaw(t(&#039;Title of first block (example_configurable_text)&#039;), &#039;Block configurable test not found.&#039;);
+  47     $this-&gt;assertNoRaw(t(&#039;Title of second block (example_empty)&#039;), &#039;Block empty not found.&#039;);
+  48 
+  49     // Enable the Configurable text block and verify
+  50     $this-&gt;drupalPost(&#039;admin/structure/block&#039;, array(&#039;blocks[block_example_example_configurable_text][region]&#039; =&gt; &#039;sidebar_first&#039;), t(&#039;Save blocks&#039;));
+  51     $this-&gt;assertFieldByName(&#039;blocks[block_example_example_configurable_text][region]&#039;, &#039;sidebar_first&#039;, &#039;Configurable text block is enabled in first sidebar successfully verified.&#039;);
+  52 
+  53     // Verify that blocks are there. Empty block will not be shown, because it is empty
+  54     $this-&gt;drupalGet(&#039;/&#039;);
+  55     $this-&gt;assertRaw(t(&#039;Title of first block (example_configurable_text)&#039;), &#039;Block configurable text found.&#039;);
+  56 
+  57     // Change content of configurable text block
+  58     $string = $this-&gt;randomName();
+  59     $this-&gt;drupalPost(&#039;admin/structure/block/manage/block_example/example_configurable_text/configure&#039;, array(&#039;block_example_string&#039; =&gt; $string), t(&#039;Save block&#039;));
+  60 
+  61     // Verify that new content is shown
+  62     $this-&gt;drupalGet(&#039;/&#039;);
+  63     $this-&gt;assertRaw($string, &#039;Content of configurable text block successfully verified.&#039;);
+  64 
+  65     // Make sure our example uppercased block is shown as altered by the
+  66     // hook_block_view_alter().
+  67     $this-&gt;assertRaw(t(&#039;UPPERCASE THIS PLEASE&#039;));
+  68 
+  69     // Create a new block and make sure it gets uppercased.
+  70     $post = array(
+  71       &#039;title&#039; =&gt; t(&#039;configurable block to be uppercased&#039;),
+  72       &#039;info&#039; =&gt; t(&#039;configurable block to be uppercased&#039;),
+  73       &#039;body[value]&#039; =&gt; t(&#039;body of new  block&#039;),
+  74       &#039;regions[bartik]&#039; =&gt; &#039;sidebar_first&#039;,
+  75     );
+  76     $this-&gt;drupalPost(&#039;admin/structure/block/add&#039;, $post, t(&#039;Save block&#039;));
+  77     $this-&gt;drupalGet(&#039;/&#039;);
+  78     $this-&gt;assertRaw((&#039;CONFIGURABLE BLOCK TO BE UPPERCASED&#039;));
+  79 
+  80     // Verify that search block is at the bottom of the region.
+  81 
+  82     // Enable the search block on top of sidebar_first.
+  83     $block_options = array(
+  84       &#039;blocks[search_form][region]&#039; =&gt; &#039;sidebar_first&#039;,
+  85       &#039;blocks[search_form][weight]&#039; =&gt; -9,
+  86     );
+  87     $this-&gt;drupalPost(&#039;admin/structure/block&#039;, $block_options, t(&#039;Save blocks&#039;));
+  88 
+  89     // The first &#039;configure block&#039; link should be from our configurable block,
+  90     // the second from the Navigation menu, and the fifth (#4) from
+  91     // search block if it was successfully pushed to the bottom.
+  92     $this-&gt;drupalGet(&#039;/&#039;);
+  93     $this-&gt;clickLink(&#039;Configure block&#039;, 4);
+  94     $this-&gt;assertText(t(&quot;&#039;@search&#039; block&quot;, array(&#039;@search&#039; =&gt; t(&#039;Search form&#039;))), &#039;hook_block_info_alter successfully verified.&#039;);
+  95   }
+  96 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "block_example.test" [11176-] -->

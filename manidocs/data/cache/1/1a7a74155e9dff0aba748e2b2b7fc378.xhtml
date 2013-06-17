@@ -1,0 +1,349 @@
+
+<h1 class="sectionedit1" id="querying_the_database_with_query_methods">Querying the database with query methods</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Querying the database with query methods" [1-56] -->
+<h1 class="sectionedit2" id="moddev-querying-files-start">moddev-querying-files-start</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT2 SECTION "moddev-querying-files-start" [57-99] -->
+<h2 class="sectionedit3" id="demo2info">demo2.info</h2>
+<div class="level2">
+<pre class="code">name = Demo 2
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT3 SECTION "demo2.info" [100-196] -->
+<h2 class="sectionedit4" id="demo2install">demo2.install</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/*
+ *Implement hook_schema().
+ */
+function demo2_schema() {
+  $schema = array();
+  $schema[&#039;demo2&#039;] = array(
+    &#039;description&#039; =&gt; &#039;Information about node views.&#039;,
+    &#039;fields&#039; =&gt; array(
+      &#039;nid&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &quot;The node&#039;s {node}.nid.&quot;,
+      ),
+      &#039;uid&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &quot;The user&#039;s {uid}.uid.&quot;,
+      ),
+      &#039;view_count&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &#039;Simple node view counter per user.&#039;,
+      ),
+    ),
+    &#039;primary key&#039; =&gt; array(&#039;nid&#039;, &#039;uid&#039;),
+  );
+
+  return $schema;
+}
+
+/*
+ *Implements hook_update_N().
+ */
+function demo2_update_7000() {
+  drupal_install_schema(&#039;demo2&#039;);
+}</pre>
+
+</div>
+<!-- EDIT4 SECTION "demo2.install" [197-1189] -->
+<h2 class="sectionedit5" id="demo2module">demo2.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/**
+ * Implements hook_node_view().
+ */
+function demo2_node_view($node, $view_mode = &#039;full&#039;) {
+  //only when looking at the full version, NOT the teaser
+  if ($view_mode == &#039;full&#039;) {
+
+    // Everytime a node is viewed, increment the node_views count
+    // in the user&#039;s session by one and include the result in the node content
+
+    //make sure there is a record in the session
+    if (empty($_SESSION[&#039;node_views&#039;][$node-&gt;nid])) {
+      $_SESSION[&#039;node_views&#039;][$node-&gt;nid] = 0;
+    }
+    
+    #krumo(&#039;Before: &#039;.$_SESSION[&#039;node_views&#039;][$node-&gt;nid]);
+
+    //add another to the session
+    $_SESSION[&#039;node_views&#039;][$node-&gt;nid]++;
+
+    #krumo(&#039;After: &#039;.$_SESSION[&#039;node_views&#039;][$node-&gt;nid]);
+
+
+    // Set up an array of placeholders to pass to t().
+    $t_args = array(
+      &#039;%num&#039; =&gt; $_SESSION[&#039;node_views&#039;][$node-&gt;nid],
+    );
+
+    $node-&gt;content[&#039;node_views&#039;] = array(
+      &#039;#markup&#039; =&gt; t(&#039;You have viewed this page %num times.&#039;, $t_args),
+      &#039;#weight&#039; =&gt; 10,
+    );
+  }
+}</pre>
+
+</div>
+<!-- EDIT5 SECTION "demo2.module" [1190-2214] -->
+<h1 class="sectionedit6" id="moddev-querying-files-end">moddev-querying-files-end</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT6 SECTION "moddev-querying-files-end" [2215-2255] -->
+<h2 class="sectionedit7" id="demo2info1">demo2.info</h2>
+<div class="level2">
+<pre class="code">name = Demo 2
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT7 SECTION "demo2.info" [2256-2352] -->
+<h2 class="sectionedit8" id="demo2install1">demo2.install</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/*
+ *Implement hook_schema().
+ */
+function demo2_schema() {
+  $schema = array();
+  $schema[&#039;demo2&#039;] = array(
+    &#039;description&#039; =&gt; &#039;Information about node views.&#039;,
+    &#039;fields&#039; =&gt; array(
+      &#039;nid&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &quot;The node&#039;s {node}.nid.&quot;,
+      ),
+      &#039;uid&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &quot;The user&#039;s {uid}.uid.&quot;,
+      ),
+      &#039;view_count&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &#039;Simple node view counter per user.&#039;,
+      ),
+    ),
+    &#039;primary key&#039; =&gt; array(&#039;nid&#039;, &#039;uid&#039;),
+  );
+
+  return $schema;
+}
+
+/*
+ *Implements hook_update_N().
+ */
+function demo2_update_7000() {
+  drupal_install_schema(&#039;demo2&#039;);
+}</pre>
+
+</div>
+<!-- EDIT8 SECTION "demo2.install" [2353-3345] -->
+<h2 class="sectionedit9" id="demo2module1">demo2.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/**
+ * Implements hook_node_view().
+ */
+function demo2_node_view($node, $view_mode = &#039;full&#039;) {
+  //only when looking at the full version, NOT the teaser
+  if ($view_mode == &#039;full&#039;) {
+
+    global $user;
+
+    // Everytime a node is viewed, increment the node_views count
+    // in the demo2 table by one and include the result in the node content
+
+
+    // Get record
+    $record = demo2_get_record($node-&gt;nid, $user-&gt;uid);
+
+    //If no record, create one that we can insert later
+    if ($record === FALSE) {
+      $record = new StdClass();
+      $record-&gt;nid = $node-&gt;nid;
+      $record-&gt;uid = $user-&gt;uid;
+      $record-&gt;view_count = 0;
+    }
+
+    // Increment view_count by 1
+    $record-&gt;view_count++;
+
+
+    // Set the record
+    demo2_set_record($record);
+
+    krumo($record);
+
+
+    // Set up an array of placeholders to pass to t().
+    $t_args = array(
+      &#039;%num&#039; =&gt; $record-&gt;view_count,
+    );
+
+    $node-&gt;content[&#039;node_views&#039;] = array(
+      &#039;#markup&#039; =&gt; t(&#039;You have viewed this page %num times.&#039;, $t_args),
+      &#039;#weight&#039; =&gt; 10,
+    );
+  }
+}
+
+
+/**
+ * Get the record.
+ *
+ * @param int $nid
+ *   The node id.
+ * @param int $uid
+ *   The user id.
+ * @return mixed
+ *   The stdClass record, or FALSE if no record exists.
+ */
+
+function demo2_get_record($nid, $uid) {
+  //SELECT view_count FROM demo2 WHERE nid = $nid &amp; uid = $uid
+  $query = db_select(&#039;demo2&#039;, &#039;d&#039;)
+    -&gt;fields(&#039;d&#039;, array(&#039;nid&#039;, &#039;uid&#039;, &#039;view_count&#039;))
+    -&gt;condition(&#039;nid&#039;, $nid)
+    -&gt;condition(&#039;uid&#039;, $uid);
+  $record = $query-&gt;execute()-&gt;fetch();
+  return $record;
+
+}
+
+
+/**
+ * Save a record.
+ *
+ * @param stdClass $record
+ *   The record to save.
+ */
+function demo2_set_record($record) {
+  //sanity check
+  if (!is_object($record)) {
+    return watchdog(&#039;demo2&#039;, &#039;We could not update information about node views.&#039;, array(), WATCHDOG_ERROR);
+  }
+
+
+  //INSERT/UPDATE into demo2 (&#039;nid&#039;, &#039;uid&#039;, &#039;node_views&#039;) VALUES (&#039;nid&#039;, &#039;uid&#039;, &#039;node_views&#039;)
+  $query = db_merge(&#039;demo2&#039;)
+    -&gt;key(array(&#039;nid&#039; =&gt;$record-&gt;nid))
+    -&gt;key(array(&#039;uid&#039; =&gt; $record-&gt;uid))
+    -&gt;fields((array) $record);
+  $query-&gt;execute();
+
+}</pre>
+
+</div>
+<!-- EDIT9 SECTION "demo2.module" [3346-5474] -->
+<h1 class="sectionedit10" id="database_queries_cheatsheet">Database Queries Cheatsheet</h1>
+<div class="level1">
+<pre class="code">http://drupal.org/developing/api/database
+
+
+
+SELECT QUERY
+
+  //SELECT column1, column2, columnN 
+  //FROM {tablename} 
+  //WHERE column1 = $value1 
+  //AND column2 &lt;&gt; $value2
+  //ORDERBY &#039;sticky&#039;, DESC
+  //ORDERBY &#039;created&#039;, DESC
+  //LIMIT 10;
+
+  $query = db_select(&#039;tablename&#039;, &#039;optional alias&#039;)
+    -&gt;fields(&#039;tablename or alias if given&#039;, array(&#039;colunm1&#039;, &#039;column2&#039; ..., &#039;columnN&#039;))
+    -&gt;condition(&#039;column1&#039;, &#039;value1&#039;)
+    -&gt;condition(&#039;column2&#039;, &#039;value2&#039;, &#039;optional &lt;&gt;&#039;)
+    -&gt;orderBy(&#039;sticky&#039;, &#039;DESC&#039;)
+    -&gt;orderBy(&#039;created&#039;, &#039;DESC&#039;)
+    -&gt;limit(variable_get(&#039;default_nodes_main&#039;, 10))
+    -&gt;extend(&#039;PagerDefault&#039;);
+  return $query-&gt;execute()-&gt;fetch();
+  //Calling fields() with no field list will result in a &quot;SELECT *&quot; query.
+
+
+
+INSERT QUERY
+
+  //INSERT INTO {tablename} (&#039;column1&#039;, &#039;column2&#039;) VALUES (&#039;value1&#039;, &#039;value2&#039;);
+
+  $query = db_insert(&#039;tablename&#039;)
+    -&gt;fields(array(&#039;column1&#039;, &#039;column2&#039;))
+    -&gt;values(array(&#039;column1&#039; =&gt; &#039;value1&#039;, &#039;column2&#039; =&gt; &#039;value2&#039;))
+    -&gt;execute();
+
+
+
+UPDATE QUERY
+
+  //UPDATE {tablename}
+  //SET column1 = value1, column2 = value2
+  //WHERE column3 &gt;= value3
+  
+  $query = db_update(&#039;tablename&#039;)
+    -&gt;fields(array(&#039;column1&#039; =&gt; &#039;value1&#039;, &#039;column2&#039; =&gt; &#039;value2&#039;))
+    -&gt;condition(&#039;column3&#039;, &#039;value3&#039;, &#039;&gt;=&#039;)
+    -&gt;execute();
+  //The third parameter for -&gt;condition() is optional and defaults to &quot;=&quot;
+
+
+
+MERGE QUERY
+
+  //In tablename, if the field = value exists, update field1 = value1 &amp;&amp; field2 = value2 
+  //UPDATE {tablename} SET column1 = value1, column2 = value2 WHERE column = value
+
+  //If tablename, if the field = value does NOT exists, 
+  //INSERT INTO {tablename} (&#039;column&#039;, &#039;column1&#039;, &#039;column2&#039;) VALUES (&#039;value&#039;, &#039;value1&#039;, &#039;value2&#039;);
+
+  $query = db_merge(&#039;tablename&#039;)
+    -&gt;key(array(&#039;column&#039; =&gt; &#039;value&#039;))
+    -&gt;fields(array(
+        &#039;column1&#039; =&gt; &#039;value1&#039;,
+        &#039;column2&#039; =&gt; &#039;value2&#039;,
+    ))
+    -&gt;execute();
+
+
+
+DELETE QUERY
+  //DELETE FROM {tablename} WHERE column = value;
+  $query = db_delete(&#039;tablename&#039;)
+    -&gt;condition(&#039;column&#039;, &#039;value&#039;)
+    -&gt;execute();</pre>
+
+</div>
+<!-- EDIT10 SECTION "Database Queries Cheatsheet" [5475-] -->

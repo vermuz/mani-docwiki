@@ -1,0 +1,30 @@
+a:2:{s:7:"current";a:8:{s:4:"date";a:2:{s:7:"created";i:1371322652;s:8:"modified";i:1371322652;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371322652;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"C";s:2:"id";s:7:"alterdb";s:4:"user";s:5:"admin";s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}s:5:"title";s:21:"Altering the database";s:11:"description";a:2:{s:15:"tableofcontents";a:9:{i:0;a:4:{s:3:"hid";s:21:"altering_the_database";s:5:"title";s:21:"Altering the database";s:4:"type";s:2:"ul";s:5:"level";i:1;}i:1;a:4:{s:3:"hid";s:24:"moddev-alter-files-start";s:5:"title";s:24:"moddev-alter-files-start";s:4:"type";s:2:"ul";s:5:"level";i:1;}i:2;a:4:{s:3:"hid";s:9:"demo2info";s:5:"title";s:10:"demo2.info";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:3;a:4:{s:3:"hid";s:12:"demo2install";s:5:"title";s:13:"demo2.install";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:4;a:4:{s:3:"hid";s:11:"demo2module";s:5:"title";s:12:"demo2.module";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:5;a:4:{s:3:"hid";s:22:"moddev-alter-files-end";s:5:"title";s:22:"moddev-alter-files-end";s:4:"type";s:2:"ul";s:5:"level";i:1;}i:6;a:4:{s:3:"hid";s:10:"demo2info1";s:5:"title";s:10:"demo2.info";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:7;a:4:{s:3:"hid";s:13:"demo2install1";s:5:"title";s:13:"demo2.install";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:8;a:4:{s:3:"hid";s:12:"demo2module1";s:5:"title";s:12:"demo2.module";s:4:"type";s:2:"ul";s:5:"level";i:2;}}s:8:"abstract";s:503:"demo2.info
+
+
+name = Demo 2
+description = Just a Demo module.
+core = 7.x
+
+
+demo2.install
+
+
+<?php
+
+/*
+ *Implement hook_schema().
+ */
+function demo2_schema() {
+  $schema = array();
+  $schema['demo2'] = array(
+    'description' => 'Information about node views.',
+    'fields' => array(
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => "The node's {node}.nid.",
+      ),
+      'uid' => array(
+        …";}s:8:"internal";a:2:{s:5:"cache";b:1;s:3:"toc";b:1;}s:8:"relation";a:1:{s:10:"firstimage";s:0:"";}}s:10:"persistent";a:4:{s:4:"date";a:1:{s:7:"created";i:1371322652;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371322652;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"C";s:2:"id";s:7:"alterdb";s:4:"user";s:5:"admin";s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}}}

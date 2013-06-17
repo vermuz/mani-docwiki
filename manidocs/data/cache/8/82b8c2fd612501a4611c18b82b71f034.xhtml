@@ -1,0 +1,196 @@
+
+<p>
+<strong>Github Procedures</strong>
+</p>
+
+<p>
+<a href="http://www.vogella.com/articles/Git/article.html" class="urlextern" title="http://www.vogella.com/articles/Git/article.html"  rel="nofollow">http://www.vogella.com/articles/Git/article.html</a>
+</p>
+
+<p>
+<strong>Useful Commands</strong>
+</p>
+
+<p>
+<strong>Install GIT</strong>
+</p>
+<pre class="code">sudo apt-get install git-core </pre>
+
+<p>
+<strong>Git settings</strong>
+</p>
+<pre class="code">git config --list </pre>
+
+<p>
+<strong>Ignore certain files</strong>
+</p>
+<pre class="code"># Ignore all files ending with ~
+*~
+# Ignore the target directory
+# Matches &quot;target&quot; in any subfolder
+target/ </pre>
+
+<p>
+<strong>Create directory</strong>
+</p>
+<pre class="code">#Switch to home
+cd ~/
+# Create a directory
+mkdir ~/repo01
+# Switch into it
+cd repo01
+# Create a new directory
+mkdir datafiles </pre>
+
+<p>
+<strong>Create Git repository</strong>
+</p>
+<pre class="code"># Initialize the Git repository
+# for the current directory
+git init </pre>
+
+<p>
+<strong>Create content</strong>
+</p>
+<pre class="code"># Switch to your new directory
+cd ~/repo01
+# Create a new directory
+mkdir datafiles
+# Create a few files
+touch test01
+touch test02
+touch test03
+touch datafiles/data.txt
+# Put a little text into the first file
+ls &gt;test01 </pre>
+
+<p>
+<strong>Add files to Git index</strong>
+</p>
+<pre class="code"># Add all (files and directories) to the index of the 
+# Git repository
+git add .</pre>
+
+<p>
+<strong>Commit to Git repository
+</strong>
+</p>
+<pre class="code"># Make a commit of your file to the local repository
+git commit -m &quot;Initial commit&quot;
+
+# Show the log file with the commits
+git log </pre>
+
+<p>
+<strong>See differences since the last commit
+</strong>
+</p>
+<pre class="code"># Make some changes to the file
+echo &quot;This is a change&quot; &gt; test01
+echo &quot;and this is another change&quot; &gt; test02
+
+# Check the changes via the diff command 
+git diff
+
+# Commit the changes, -a will commit changes for modified files
+# but will not add automatically new files
+git commit -a -m &quot;These are new changes&quot; </pre>
+
+<p>
+<strong>Procedure</strong>
+</p>
+
+<p>
+<em>Go to to each of the folders you plan on making a repo out of.
+</em>
+</p>
+<pre class="code">git init</pre>
+
+<p>
+<em>Add files to it
+</em>
+</p>
+<pre class="code">git add .
+git add *</pre>
+<pre class="code">git commit -m &#039; MESSAGE &#039;</pre>
+<pre class="code">git log -v</pre>
+
+<p>
+Go to GITHUB, create a repository
+</p>
+
+<p>
+<em>Add as a remote
+</em>
+</p>
+<pre class="code">git add remote github/origin</pre>
+
+<p>
+<em>Push Changes
+</em>
+</p>
+<pre class="code">git push origin master/stable</pre>
+
+<p>
+<strong>Git Tagging</strong>
+</p>
+
+<p>
+Drupal can see tag version info to see if an upgrade is available
+</p>
+
+<p>
+Add version to module.info
+</p>
+<pre class="code">git tag 1.02 (Create tag)
+
+git push --tags origin master (Push Tags)
+
+git checkout -b 7.x (Create a new branch on the local system)
+
+git branch (get branch(es))
+
+git push origin 7.x:7.x  (push local 7.x state to remote 7.x)
+
+git branch -d master (Delete master branch)
+
+git push origin :master (push nothing to master to delete it)</pre>
+
+<p>
+<strong>Deleting Tag
+</strong>
+</p>
+<pre class="code">git tag -d 1.02
+
+git push --tags origin 7.x (Push tags)
+
+git status (check status)
+
+git add -p (check what HUNKS are there to add)
+
+              - y
+
+git commit -m &quot;MESSAGE&quot;  
+</pre>
+
+<p>
+<strong>Make Changes to work
+</strong>
+</p>
+<pre class="code">git pull origin (to see if your state is in sync with remote state)
+
+if all is up-to-date (your box is synced)
+
+git status
+
+git add - p (hunks to add)
+  
+git commit -m &quot;MESSAGE&quot;
+
+git push origin        master
+         ======        ======
+         remote        branch
+           ||            ||
+     &lt;In our case&gt;  &lt;Can be any name&gt; 
+           ||
+         GITHUB</pre>

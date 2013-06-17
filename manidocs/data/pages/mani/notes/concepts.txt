@@ -1,0 +1,71 @@
+**Dynamically Typed**
+
+No need to explicitly declare type
+
+**Strongly Typed
+**
+
+The interpreter will not accept jokes like adding char to an integer type.
+<code>
+1 + a  (will not work)
+</code>
+
+**Immutability**
+
+Once you give data a type, it has that type forever.
+
+<code>
+a - 3.14
+a = int(a) --> will work
+b = int(a) --> will not work
+</code>
+
+**Evaluation Strategy**
+
+//Call by value
+//
+
+The argument expression is evaluated, and the resulting value is bound to the corresponding variable in the function (frequently by copying the value into a new memory region). Separation of data in terms of outside the function and inside the function. foo(a): when a is passed to foo, a new copy is created.
+
+<code>
+function operates on a copy of the passed-in arguments
+</code>
+
+//Call by reference
+//
+
+Function receives an implicit reference to the argument, rather than a copy of its value. In case of foo(a): data being passed here is the same data as being modified by the function.
+
+<code>
+function operates on the original outside arguments
+</code>
+//**
+Call by reference has the advantage of greater time and space efficiency (since arguments do not need to be copied).**//
+
+**Python - Call by Sharing (Call by object-sharing)**
+
+The semantics of call by sharing differ from call by reference in that assignments to function arguments within the function are not visible to the caller. However, since the function has access to the same object as the caller (no copy is made), mutations to those objects within the function are visible to the caller, which differs from call by value. Strings are immutable.
+
+<code>
+If an argument value is a mutable object, Python uses call by reference.
+If an argument value is immutable, Python uses call by value.
+</code>
+
+<code>
+#!/usr/bin/python
+
+# Function definition is here
+def changeme (mylist):
+    "This changes a passed list into this function"
+    mylist.append([1,2,3,4]);
+    print "Values inside the function: ", mylist
+    return
+
+# Now you can call changeme function
+mylist = [10,20,30];
+changeme(mylist);
+print("Values outside the function: ", mylist)
+
+Values inside the function:  [10, 20, 30, [1, 2, 3, 4]]
+Values outside the function:  [10, 20, 30, [1, 2, 3, 4]]
+</code>

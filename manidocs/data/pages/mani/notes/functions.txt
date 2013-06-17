@@ -1,0 +1,417 @@
+
+
+**Functions** 
+
+
+    * Code reuse
+    * Easier to maintain
+    * Increase readability
+    * Hide complexity from user
+
+
+**Duck Typing ** 
+
+
+In computer programming with object-oriented programming languages, duck typing is a style of dynamic typing in which an object's methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface. The name of the concept refers to the duck test, attributed to James Whitcomb Riley, which may be phrased as follows: When I see a bird that walks like a duck and swims like a duck and quacks like a duck, I call that bird a duck.
+
+
+<code>
+                          
+                   def adder(x,y) :
+                       print(x,y)
+                   **HIT ENTER TWICE**
+                   Test: adder(2,4)  
+                             
+                   def power(p):
+                   '''
+                   Calculates 2 to the power of p
+                   '''
+                   r = 2 ** p
+                   return r
+                   print('2 to the power of 2 is', power(2))
+</code>
+
+
+**Function Syntax** 
+
+
+<code>
+name = my_func(arg1, arg2, arg = 'Default')
+</code>
+
+
+__parameters → Design time placeholders argument → runtime data object__ 
+
+
+Without name: my_func loses its data immediately.
+
+
+**Python 3 (builtins) ** 
+
+
+<code>
+>>> import builtins>>> dir(builtins)
+['ArithmeticError', 'AssertionError', 'AttributeError', 'BaseException', 'BufferError', 'BytesWarning', 'DeprecationWarning', 'EOFError', 'Ellipsis', 'EnvironmentError', 'Exception', 'False', 'FloatingPointError', 'FutureWarning', 'GeneratorExit', 'IOError', 'ImportError', 'ImportWarning', 'IndentationError', 'IndexError', 'KeyError', 'KeyboardInterrupt', 'LookupError', 'MemoryError', 'NameError', 'None', 'NotImplemented', 'NotImplementedError', 'OSError', 'OverflowError', 'PendingDeprecationWarning', 'ReferenceError', 'ResourceWarning', 'RuntimeError', 'RuntimeWarning', 'StopIteration', 'SyntaxError', 'SyntaxWarning', 'SystemError', 'SystemExit', 'TabError', 'True', 'TypeError', 'UnboundLocalError', 'UnicodeDecodeError', 'UnicodeEncodeError', 'UnicodeError', 'UnicodeTranslateError', 'UnicodeWarning', 'UserWarning', 'ValueError', 'Warning', 'ZeroDivisionError', '__build_class__', '__debug__', '__doc__', '__import__', '__name__', '__package__', 'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'compile', 'complex', 'copyright', 'credits', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec', 'exit', 'filter', 'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id', 'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'license', 'list', 'locals', 'map', 'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print', 'property', 'quit', 'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip']
+</code>
+
+
+**Functions and Methods **       \\ //Function://      Standalone code block which is called independently.     \\ //Method://      Function that is bound to an object
+
+
+To ensure that our functions and classes don`t collide → we use namespaces.      \\ We have to two modules M1 and M2 both containing a T() function. When we call the T() function how does Python know whether we are calling the M1.T() or M2.T(). Yep, there we need namespaces. Python wants you to import the builtins before using them both in commandline and scripting.
+
+
+<code>
+>>> randint(1,10)
+Traceback (most recent call last):
+  File "<pyshell#5>", line 1, in <module>
+    randint(1,10)
+NameError: name 'randint' is not defined>>> import random>>> random.randint(1,10)
+7
+To be able to keep the value 
+you need a variable 7 will just get lost.>>> result = random.randint(1,10)>>> result
+4
+</code>
+
+
+**Return values**      If you don`t return anything from a function - your data just evaporates.     \\ If no return value    - Python function returns a special value (NONE)      \\ Single return value   - return x
+
+
+<code>
+def uc(a):
+ a = a.upper()
+ print (a)
+ return a 
+uc('Hello There')
+HELLO THERE>>> resp2= uc('guido van rossum')
+GUIDO VAN ROSSUM>>> resp2
+'GUIDO VAN ROSSUM'
+</code>
+
+
+**Return Data Type Script ** 
+
+
+<code>
+# no return value
+m8.py
+def typer(x):
+    '''
+    return datatype for x (limited use)
+    '''
+    if type(x) == int:
+        print('This is an integer')
+    elif type(x) == str:
+        print('This is a string')
+    else:
+        print('This is neither a string nor an int')
+print(typer(200))>>> import m8
+This is an integer
+None>>> dir(m8)
+['__builtins__', '__cached__', '__doc__', '__file__', '__name__', '__package__', 'typer']>>> m8.typer(200)
+This is an integer
+</code>
+
+
+Multiple return value - return x,y –> Python puts it in a tuple
+
+
+<code>
+def name(fn, ln='Warner'):
+    # return value, default value
+    r = print('Your name  is', fn, ln)
+    return r
+If I take>>> import m9>>> dir(m9)
+['__builtins__', '__cached__', '__doc__', '__file__', '__name__', '__package__', 'name']
+
+** JUST PASS one name">>> fullname = m9.name('Mani')
+Your name  is Mani Warner>>> fullname
+
+** JUST PASS two names">>> m9.name('Mani','Ali')
+Your name  is Mani Ali
+
+** JUST PASS nothing">>> m9.name()
+Traceback (most recent call last):
+  File "<pyshell#33>", line 1, in <module>
+    m9.name()
+TypeError: name() takes at least 1 argument (0 given)>>>
+</code>
+
+
+**Passing Order in Functions ** 
+
+
+<code>
+m10.py
+def fun(name, location, year=2010):
+    # from www.java2s.com
+    nly = "%s/%s/%d" % (name, location, year)
+    print (nly)
+    return nly
+
+#- No worries for order is explicit
+#fun(location="L.A.", year=2004, name="Guido")
+#Order is important if not explicit in the call
+#fun("Guido", "L.A", year=2004)>>> import m10>>> rz = m10.fun(location="L.A.", year=2004, name="Caleb")
+Caleb/L.A./2004>>> rz
+'Caleb/L.A./2004'
+Note: rz is immutable now. So if you change something in fun- it will not effect rz
+</code>
+
+
+**Arbitrary # of Arguments** 
+
+
+The special syntax,<nowiki> *</nowiki>args and<nowiki> *</nowiki><nowiki>*</nowiki>kwargs in function definitions is used to pass a variable number of arguments to a function. The single asterisk form (<nowiki>*</nowiki>args) is used to pass a non-keyworded, variable-length argument list, and the double asterisk form is used to pass a keyworded, variable-length argument list.
+
+
+<code>
+>>> def foo(a,b, *args) :
+	#simple example of arbitrary argument
+	print("Here is 'a'", a)
+	print("Here is 'b'", b)
+	print("Here is '*args'", *args)>>> print(foo('spam', 'eggs', 'arb1', 'arb2', 'arb3'))
+Here is 'a' spam
+Here is 'b' eggs
+Here is '*args' arb1 arb2 arb3
+None
+</code>
+
+
+<code>
+def test_var_args(farg, *args):
+    print "formal arg:", farg
+    for arg in args:
+        print "another arg:", arg
+
+test_var_args(1, "two", 3)
+formal arg: 1
+another arg: two
+another arg: 3
+
+def test_var_kwargs(farg, **kwargs):
+    print "formal arg:", farg
+    for key in kwargs:
+        print "another keyword arg: %s: %s" % (key, kwargs[key])
+
+test_var_kwargs(farg=1, myarg2="two", myarg3=3)
+formal arg: 1
+another keyword arg: myarg2: two
+another keyword arg: myarg3: 3
+
+Using *args and **kwargs when calling a function
+************************************************
+def test_var_args_call(arg1, arg2, arg3):
+    print "arg1:", arg1
+    print "arg2:", arg2
+    print "arg3:", arg3
+
+args = ("two", 3)
+test_var_args_call(1, *args)
+arg1: 1
+arg2: two
+arg3: 3
+
+def test_var_args_call(arg1, arg2, arg3):
+    print "arg1:", arg1
+    print "arg2:", arg2
+    print "arg3:", arg3
+
+kwargs = {"arg3": 3, "arg2": "two"}
+test_var_args_call(1, **kwargs)
+
+arg1: 1
+arg2: two
+arg3: 3
+</code>
+
+
+<code>
+def foo(a, b, *args, **kwargs):
+    print("Here is 'a'", a)
+    print("Here is 'b'", b)
+    print("Here is '*args'", *args)
+print(foo('spam','eggs','arb1','arb2','arb3'))
+
+Argument   Latch
+*****************
+spam       a 
+eggs       b
+arb1       *args
+arb2       *args
+arb3       *args
+</code>
+
+
+**Variable Scope ** 
+
+
+Global variables are accessible inside and outside of functions. Local variables are only accessible inside the function.
+
+
+<code>
+def demo (f_in):
+    global somevar # shared with main code
+    demo.tom = 16  # An attribute accessible from main code
+    somevar += 1
+    another = 12   # A local variable, independent of main code
+    res = f_in+14  # Value passed in (f_in)
+    return res     # Return object
+
+somevar = 27  # accessed in function via global    
+another = 17  # not accessed in function
+pval = 16     # accessed in function via parameter
+
+print demo (pval)
+
+print demo.tom  # function attribute
+print somevar
+print another
+</code>
+
+
+**Advanced Topics ** 
+
+
+**Generators: 
+**
+<code>
+      - Resumable function (We can save state)
+      - It returns results one at a time
+      - We can suspend state.
+      - We can resume state.
+Generator Expressions: return results on demand instead of a full list
+Purpose: Save memory, computing cycles
+</code>
+
+//Generator Function://
+
+<code>
+def gensq(n):
+    for i in range(n): # range is iterable
+        yield i ** 2 # creates generator object
+a = gensq(6)
+next(a) # invoked automatically
+</code>
+
+<code>
+>>> def gensq(n):
+	for i in range(n):
+		yield i ** 2
+
+		
+>>> a = gensq(4)
+>>> a
+<generator object gensq at 0xb5ec1cd4>
+>>> type(a)
+<class 'generator'>
+>>> next(a)
+0
+>>> next(a)
+1
+>>> next(a)
+4
+>>> next(a)
+9
+>>> next(a)
+Traceback (most recent call last):
+  File "<pyshell#12>", line 1, in <module>
+    next(a)
+StopIteration
+>>> 
+</code>
+
+<code>
+>>> def itsq(n):
+	result = []
+	for i in range(n):
+		result.append(i ** 2)
+	return result
+
+>>> b = itsq(4)
+>>> b
+[0, 1, 4, 9]
+>>> type(b)
+<class 'list'>
+</code>
+
+**Generator Expressions
+**
+
+//List Comprehension
+//
+
+<code>>>> 
+ls = [i ** 2 for i in range(10)]
+>>> ls
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+</code>
+
+__Generator Expression - (Paren instead of ]
+__
+
+<code>
+>>> gx = (i ** 2 for i in range(1,11))
+>>> gx
+<generator object <genexpr> at 0xb55abaf4>
+</code>
+
+<code>
+>>> ml = [1,2,4,8,16,32,64]
+>>> genx= (i for i in ml if i > 10)
+>>> genx
+<generator object <genexpr> at 0xb554fd4c>
+>>> next(genx)
+16
+>>> next(genx)
+32
+>>> next(genx)
+64
+# Generators cannot be rewound
+# this will not work
+>>> for j in genx: 
+	print(j)
+</code>
+
+**Decorators**
+
+<code>
+Meta Programming: Metaprogramming is the writing of computer programs that 
+write or manipulate other programs (or themselves) as their data, or that 
+do part of the work at compile time that would otherwise be done at runtime. 
+In some cases, this allows programmers to minimize the number of lines of code 
+to express a solution (hence reducing development time), or it gives programs 
+greater flexibility to efficiently handle new situations without recompilation.
+
+Functions to wrap other functions in.
+
+A function that takes another function as an argument.
+</code>
+
+<code>
+>>> def et(myfunc):
+	def innerf(*args):
+		for i in range(8):
+			myfunc(*args)
+	return innerf
+
+>>> def nondec1():
+	print('eggs')
+
+	
+>>> nondec1()
+eggs
+>>> @et # Attach et
+def decl():
+	print('spam')
+
+>>> decl()
+spam
+spam
+spam
+spam
+spam
+spam
+spam
+spam
+</code>

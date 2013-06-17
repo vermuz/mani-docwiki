@@ -1,0 +1,58 @@
+
+<h1 class="sectionedit1" id="altering_forms_with_hook_form_alter">Altering forms with hook_form_alter()</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Altering forms with hook_form_alter()" [1-54] -->
+<h2 class="sectionedit2" id="demoinfo">demo.info</h2>
+<div class="level2">
+<pre class="code">name = Demo
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT2 SECTION "demo.info" [55-149] -->
+<h2 class="sectionedit3" id="demomodule">demo.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/*
+ * Implements hook_form_alter().
+ */
+function demo_form_alter(&amp;$form, &amp;$form_state, $form_id) {
+  #krumo($form_id);
+  switch ($form_id) {
+    case &#039;user_profile_form&#039; :
+      
+      $form[&#039;account&#039;][&#039;pass&#039;][&#039;#description&#039;] = t(&#039;To change the current user password, enter the new password in both fields. Please do not use common passwords like &quot;password&quot;, &quot;12345&quot;, &quot;love&quot;.&#039;);
+      #krumo($form);
+
+    break;
+  }
+}
+
+
+/*
+ * Implement hook_form_FORM_ID_alter().
+ */
+function demo_form_user_register_form_alter(&amp;$form, &amp;$form_state, $form_id) {
+
+  $form[&#039;account&#039;][&#039;pass&#039;][&#039;#description&#039;] = t(&#039;To change the current user password, enter the new password in both fields. Please do not use common passwords like &quot;password&quot;, &quot;12345&quot;, &quot;love&quot;.&#039;);
+  $form[&#039;#validate&#039;][] = &#039;demo_validate_password&#039;;
+  #krumo($form);
+}
+
+
+/*
+ * Custom password validation
+ */
+function demo_validate_password($form, &amp;$form_state) {
+  $badpasswords = array(&#039;password&#039;, &#039;12345&#039;, &#039;love&#039;);
+  if (in_array($form_state[&#039;values&#039;][&#039;pass&#039;],  $badpasswords)) {
+    form_set_error(&#039;pass&#039;, t(&#039;Please use a more secure password.&#039;));
+  }
+  #krumo($form_state);
+}</pre>
+
+</div>
+<!-- EDIT3 SECTION "demo.module" [150-] -->

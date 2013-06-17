@@ -1,0 +1,348 @@
+====== Cron Example ======
+
+===== cron_example.info =====
+<code>
+  1 name = Cron example
+   2 description = Demonstrates hook_cron() and related features
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = cron_example.test
+</code>
+===== cron_example.module =====
+<code>
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Demonstrates use of the Cron API in Drupal - hook_cron()
+   6  */
+   7 
+   8 /**
+   9  * @defgroup cron_example Example: Cron
+  10  * @ingroup examples
+  11  * @{
+  12  * Example using Cron API, including hook_cron() and hook_cron_queue_info().
+  13  *
+  14  * This example is part of the Examples for Developers Project
+  15  * which you can download and experiment with at
+  16  * http://drupal.org/project/examples
+  17  */
+  18 
+  19 /**
+  20  * Implements hook_menu().
+  21  */
+  22 function cron_example_menu() {
+  23 
+  24   $items['examples/cron_example'] = array(
+  25     'title' => 'Cron Example',
+  26     'page callback' => 'drupal_get_form',
+  27     'page arguments' => array('cron_example_form'),
+  28     'access callback' => TRUE,
+  29   );
+  30 
+  31   return $items;
+  32 }
+  33 
+  34 /**
+  35  * The form to provide a link to cron.php.
+  36  */
+  37 function cron_example_form($form, &$form_state) {
+  38   $form['status'] = array(
+  39     '#type' => 'fieldset',
+  40     '#title' => t('Cron status information'),
+  41   );
+  42   $form['status']['intro'] = array(
+  43     '#markup' => '<div>' . t('The cron example demonstrates hook_cron() and hook_cron_queue_info() processing. If you have administrative privileges you can run cron from this page and see the results.') . '</div>',
+  44   );
+  45   $form['status']['last'] = array(
+  46     '#markup' => '<div>' . t('cron_example_cron() will next execute the first time cron runs after %time (%seconds seconds from now)' . '</div>',
+  47       array(
+  48         '%time' => date_iso8601(variable_get('cron_example_next_execution', time())),
+  49         '%seconds' => variable_get('cron_example_next_execution', time()) - time(),
+  50       )
+  51     ),
+  52   );
+  53 
+  54   if (user_access('administer site configuration')) {
+  55     $form['cron_run'] = array(
+  56       '#type' => 'fieldset',
+  57       '#title' => t('Run cron manually'),
+  58     );
+  59     $form['cron_run']['cron_reset'] = array(
+  60       '#type' => 'checkbox',
+  61       '#title' => t("Run cron_example's cron regardless of whether interval has expired."),
+  62       '#default_value' => FALSE,
+  63     );
+  64     $form['cron_run']['cron_trigger'] = array(
+  65       '#type' => 'submit',
+  66       '#value' => t('Run cron now'),
+  67       '#submit' => array('cron_example_form_cron_run_submit'),
+  68     );
+  69   }
+  70 
+  71   $form['cron_queue_setup'] = array(
+  72     '#type' => 'fieldset',
+  73     '#title' => t('Cron queue setup (for hook_cron_queue_info(), etc.)'),
+  74   );
+  75   $queue_1 = DrupalQueue::get('cron_example_queue_1');
+  76   $queue_2 = DrupalQueue::get('cron_example_queue_2');
+  77   $form['cron_queue_setup']['current_cron_queue_status'] = array(
+  78     '#markup' => '<div>' . t('There are currently %queue_1 items in queue 1 and %queue_2 items in queue 2',
+  79       array(
+  80         '%queue_1' => $queue_1->numberOfItems(),
+  81         '%queue_2' => $queue_2->numberOfItems(),
+  82       )) . '</div>',
+  83   );
+  84   $form['cron_queue_setup']['num_items'] = array(
+  85     '#type' => 'select',
+  86     '#title' => t('Number of items to add to queue'),
+  87     '#options' => drupal_map_assoc(array(1, 5, 10, 100, 1000)),
+  88     '#default_value' => 5,
+  89   );
+  90   $form['cron_queue_setup']['queue'] = array(
+  91     '#type' => 'radios',
+  92     '#title' => t('Queue to add items to'),
+  93     '#options' => array(
+  94       'cron_example_queue_1' => t('Queue 1'),
+  95       'cron_example_queue_2' => t('Queue 2'),
+  96     ),
+  97     '#default_value' => 'cron_example_queue_1',
+  98   );
+  99   $form['cron_queue_setup']['submit'] = array(
+ 100     '#type' => 'submit',
+ 101     '#value' => t('Add jobs to queue'),
+ 102     '#submit' => array('cron_example_add_jobs_to_queue'),
+ 103   );
+ 104 
+ 105   $form['configuration'] = array(
+ 106     '#type' => 'fieldset',
+ 107     '#title' => t('Configuration of cron_example_cron()'),
+ 108   );
+ 109   $form['configuration']['cron_example_interval'] = array(
+ 110     '#type' => 'select',
+ 111     '#title' => t('Cron interval'),
+ 112     '#description' => t('Time after which cron_example_cron will respond to a processing request.'),
+ 113     '#default_value' => variable_get('cron_example_interval', 60*60),
+ 114     '#options' => array(
+ 115       60 => t('1 minute'),
+ 116       300 => t('5 minutes'),
+ 117       3600 => t('1 hour'),
+ 118       60*60*24 => t('1 day'),
+ 119     ),
+ 120   );
+ 121 
+ 122   return system_settings_form($form);
+ 123 }
+ 124 
+ 125 /**
+ 126  * Allow user to directly execute cron, optionally forcing it.
+ 127  */
+ 128 function cron_example_form_cron_run_submit($form, &$form_state) {
+ 129   if (!empty($form_state['values']['cron_reset'])) {
+ 130     variable_set('cron_example_next_execution', 0);
+ 131   }
+ 132 
+ 133   // We don't usually use globals in this way. This is used here only to
+ 134   // make it easy to tell if cron was run by this form.
+ 135   $GLOBALS['cron_example_show_status_message'] = TRUE;
+ 136   if (drupal_cron_run()) {
+ 137     drupal_set_message(t('Cron ran successfully.'));
+ 138   }
+ 139   else {
+ 140     drupal_set_message(t('Cron run failed.'), 'error');
+ 141   }
+ 142 }
+ 143 
+ 144 /**
+ 145  * #submit function used to add the items to the queue when signaled by
+ 146  * the form.
+ 147  */
+ 148 function cron_example_add_jobs_to_queue($form, &$form_state) {
+ 149   $queue = $form_state['values']['queue'];
+ 150   $num_items = $form_state['values']['num_items'];
+ 151 
+ 152   $queue = DrupalQueue::get($queue);
+ 153   for ($i=1; $i <= $num_items; $i++) {
+ 154     $item = new stdClass();
+ 155     $item->created = time();
+ 156     $item->sequence = $i;
+ 157     $queue->createItem($item);
+ 158   }
+ 159 }
+ 160 /**
+ 161  * Implements hook_cron().
+ 162  *
+ 163  * hook_cron() is the traditional (pre-Drupal 7) hook for doing "background"
+ 164  * processing. It gets called every time the Drupal cron runs and must decide
+ 165  * what it will do.
+ 166  *
+ 167  * In this example, it does a watchdog() call after the time named in
+ 168  * the variable 'cron_example_next_execution' has arrived, and then it
+ 169  * resets that variable to a time in the future.
+ 170  */
+ 171 function cron_example_cron() {
+ 172   // Default to an hourly interval. Of course, cron has to be running at least
+ 173   // hourly for this to work.
+ 174   $interval = variable_get('cron_example_interval', 60*60);
+ 175   // We usually don't want to act every time cron runs (which could be every
+ 176   // minute) so keep a time for the next run in a variable.
+ 177 
+ 178   if (time() >= variable_get('cron_example_next_execution', 0)) {
+ 179     // This is a silly example of a cron job.
+ 180     // It just makes it obvious that the job has run without
+ 181     // making any changes to your database.
+ 182     watchdog('cron_example', 'cron_example ran');
+ 183     if (!empty($GLOBALS['cron_example_show_status_message'])) {
+ 184       drupal_set_message(t('cron_example executed at %time', array('%time' => date_iso8601(time(0)))));
+ 185     }
+ 186     variable_set('cron_example_next_execution', time() + $interval);
+ 187   }
+ 188 }
+ 189 
+ 190 
+ 191 /**
+ 192  * Implements hook_cron_queue_info().
+ 193  *
+ 194  * hook_cron_queue_info() and family are new since Drupal 7, and allow any
+ 195  * process to add work to the queue to be acted on when cron runs. Queues are
+ 196  * described and worker callbacks are provided, and then only the worker
+ 197  * callback needs to be implemented.
+ 198  *
+ 199  * All the details of queue use are done by the cron_queue implementation, so
+ 200  * one doesn't need to know much about DrupalQueue().
+ 201  *
+ 202  * @see queue_example.module
+ 203  */
+ 204 function cron_example_cron_queue_info() {
+ 205   $queues['cron_example_queue_1'] = array(
+ 206     'worker callback' => 'cron_example_queue_1_worker',
+ 207     'time' => 1, // One second max runtime per cron run.
+ 208   );
+ 209   $queues['cron_example_queue_2'] = array(
+ 210     'worker callback' => 'cron_example_queue_2_worker',
+ 211     'time' => 10,
+ 212   );
+ 213   return $queues;
+ 214 }
+ 215 
+ 216 /**
+ 217  * Simple workers for the two queues.
+ 218  *
+ 219  * @param $item
+ 220  *   Any object to be worked on.
+ 221  */
+ 222 function cron_example_queue_1_worker($item) {
+ 223   cron_example_queue_report_work(1, $item);
+ 224 }
+ 225 function cron_example_queue_2_worker($item) {
+ 226   cron_example_queue_report_work(2, $item);
+ 227 }
+ 228 
+ 229 /**
+ 230  * Simple reporter for the workers.
+ 231  *
+ 232  * @param $worker
+ 233  *   (integer) worker number
+ 234  * @param $item
+ 235  *   (object) the $item which was stored in the cron queue.
+ 236  */
+ 237 function cron_example_queue_report_work($worker, $item) {
+ 238   if (!empty($GLOBALS['cron_example_show_status_message'])) {
+ 239     drupal_set_message(t('Queue @worker worker processed item with sequence @sequence created at @time', array('@worker' => $worker, '@sequence' => $item->sequence, '@time' => date_iso8601($item->created))));
+ 240   }
+ 241   watchdog('cron_example', 'Queue @worker worker processed item with sequence @sequence created at @time', array('@worker' => $worker, '@sequence' => $item->sequence, '@time' => date_iso8601($item->created)));
+ 242 }
+ 243 
+ 244 /**
+ 245  * @} End of "defgroup cron_example".
+ 246  */
+</code>
+===== cron_example.test =====
+<code>
+ 1 <?php
+   2 /**
+   3  * @file
+   4  * Test case for testing the cron example module.
+   5  */
+   6 
+   7 /**
+   8  * @addtogroup cron_example
+   9  * @{
+  10  */
+  11 
+  12 /**
+  13  * cron_example test class
+  14  */
+  15 class CronExampleTestCase extends DrupalWebTestCase {
+  16   protected $web_user;
+  17 
+  18   public static function getInfo() {
+  19     return array(
+  20       'name' => 'Cron example functionality',
+  21       'description' => 'Test the functionality of the Cron Example.',
+  22       'group' => 'Examples',
+  23     );
+  24   }
+  25 
+  26   /**
+  27    * Enable modules and create user with specific permissions.
+  28    */
+  29   function setUp() {
+  30     parent::setUp('cron_example');
+  31     // Create user. Search content permission granted for the search block to
+  32     // be shown.
+  33     $this->web_user = $this->drupalCreateUser(array('administer site configuration'));
+  34     $this->drupalLogin($this->web_user);
+  35   }
+  36 
+  37   /**
+  38    * Login user, create an example node, and test block functionality through
+  39    * the admin and user interfaces.
+  40    */
+  41   function testCronExampleBasic() {
+  42     // Pretend that cron has never been run (even though simpletest seems to
+  43     // run it once...)
+  44     variable_set('cron_example_next_execution', 0);
+  45     $this->drupalGet('examples/cron_example');
+  46 
+  47     // Initial run should cause cron_example_cron() to fire.
+  48     $post = array();
+  49     $this->drupalPost('examples/cron_example', $post, t('Run cron now'));
+  50     $this->assertText(t('cron_example executed at'));
+  51 
+  52     // Forcing should also cause cron_example_cron() to fire.
+  53     $post['cron_reset'] = TRUE;
+  54     $this->drupalPost(NULL, $post, t('Run cron now'));
+  55     $this->assertText(t('cron_example executed at'));
+  56 
+  57     // But if followed immediately and not forced, it should not fire.
+  58     $post['cron_reset'] = FALSE;
+  59     $this->drupalPost(NULL, $post, t('Run cron now'));
+  60     $this->assertNoText(t('cron_example executed at'));
+  61 
+  62 
+  63     $this->assertText(t('There are currently 0 items in queue 1 and 0 items in queue 2'));
+  64     $post = array(
+  65       'num_items' => 5,
+  66       'queue' => 'cron_example_queue_1',
+  67     );
+  68     $this->drupalPost(NULL, $post, t('Add jobs to queue'));
+  69     $this->assertText('There are currently 5 items in queue 1 and 0 items in queue 2');
+  70     $post = array(
+  71       'num_items' => 100,
+  72       'queue' => 'cron_example_queue_2',
+  73     );
+  74     $this->drupalPost(NULL, $post, t('Add jobs to queue'));
+  75     $this->assertText('There are currently 5 items in queue 1 and 100 items in queue 2');
+  76 
+  77     $post = array();
+  78     $this->drupalPost('examples/cron_example', $post, t('Run cron now'));
+  79     $this->assertPattern('/Queue 1 worker processed item with sequence 5 /');
+  80     $this->assertPattern('/Queue 2 worker processed item with sequence 100 /');
+  81   }
+  82 }
+  83 
+  84 /**
+  85  * @} End of "addtogroup cron_example".
+  86  */
+</code>

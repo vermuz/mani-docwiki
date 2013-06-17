@@ -1,0 +1,703 @@
+a:25:{i:0;a:3:{i:0;s:14:"document_start";i:1;a:0:{}i:2;i:0;}i:1;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:13:"Image Example";i:1;i:1;i:2;i:1;}i:2;i:1;}i:2;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:1;}i:2;i:1;}i:3;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:30;}i:4;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:18:"image_example.info";i:1;i:2;i:2;i:30;}i:2;i:30;}i:5;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:30;}i:6;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:201:"
+   1 name = Image Example
+   2 description = Example implementation of image.module hooks.
+   3 package = Example modules
+   4 core = 7.x
+   5 dependencies[] = image
+   6 files[] = image_example.test
+";i:1;N;i:2;N;}i:2;i:66;}i:7;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:276;}i:8;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:21:"image_example.install";i:1;i:2;i:2;i:276;}i:2;i:276;}i:9;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:276;}i:10;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:1586:"
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Install, update, and uninstall functions for the image_example module.
+   6  */
+   7 
+   8 /**
+   9  * Implements hook_install().
+  10  *
+  11  * @ingroup image_example
+  12  */
+  13 function image_example_install() {
+  14   // Set a variable containing the name of the style to use when the module
+  15   // outputs an image.
+  16   variable_set('image_example_style_name', 'image_example_style');
+  17 }
+  18 
+  19 /**
+  20  * Implements hook_uninstall().
+  21  *
+  22  * @ingroup image_example
+  23  */
+  24 function image_example_uninstall() {
+  25   variable_del('image_example_style_name');
+  26   variable_del('image_example_image_fid');
+  27 }
+  28 
+  29 /**
+  30  * Implements hook_enable().
+  31  *
+  32  * @ingroup image_example
+  33  */
+  34 function image_example_enable() {
+  35   // There is currently no way to manually flush an image style which causes
+  36   // problems when installing a new module that implements
+  37   // hook_image_styles_alter(). If the new module modifies an image style that
+  38   // modification will not be applied to any images that have already been
+  39   // generated unless the styles are flushed. This is one way around that.
+  40   $styles = image_styles();
+  41   foreach ($styles as $style) {
+  42     image_style_flush($style);
+  43   }
+  44 }
+  45 
+  46 /**
+  47  * Implements hook_disable().
+  48  *
+  49  * @ingroup image_example
+  50  */
+  51 function image_example_disable() {
+  52   // Solves the same problem as image_example_enable().
+  53   image_example_enable();
+  54 }
+";i:1;N;i:2;N;}i:2;i:315;}i:11;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:1910;}i:12;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:20:"image_example.module";i:1;i:2;i:2;i:1910;}i:2;i:1910;}i:13;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:1910;}i:14;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:16820:"
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Module file for image_example
+   6  */
+   7 
+   8 /**
+   9  * @defgroup image_example Example: Image
+  10  * @ingroup examples
+  11  * @{
+  12  * Demonstrates the basic use of image API.
+  13  *
+  14  * This module demonstrates the use of Drupal 7's new image styles and effects
+  15  * including the following topics.
+  16  *  - Define default image styles in code. Useful for modules that want to ship
+  17  *    with predefined image styles and for site developers who want their image
+  18  *    style configurations to be in version control.
+  19  *    hook_image_default_styles().
+  20  *  - Define new image effects. Demonstrates how a module can add additional
+  21  *    effects to the options available when creating image styles.
+  22  *    hook_image_effect_info().
+  23  *  - Alter existing image styles. Demonstrates the use of
+  24  *    hook_image_styles_alter() to modify existing image effects, especially
+  25  *    those defined by other modules in hook_image_default_styles() without
+  26  *    having to override the styles.
+  27  *  - Demonstrates the use of hook_image_style_save() and
+  28  *    hook_image_style_delete() to update module specific variables when an
+  29  *    image style is either re-named or deleted.
+  30  *  - Generate a form with a field of type #managed_file that allows the user
+  31  *    to upload an image and choose a style to use when displaying that image.
+  32  *  - Demonstrates the use of theme_image_style() to display images using an
+  33  *    image style.
+  34  *
+  35  * @see hook_image_default_styles().
+  36  * @see hook_image_effect_info().
+  37  * @see hook_image_style_save().
+  38  * @see hook_image_style_delete().
+  39  * @see theme_image_style().
+  40  */
+  41 
+  42 /**
+  43  * Implements hook_menu().
+  44  *
+  45  * Provide a menu item and a page to demonstrate features of this example
+  46  * module.
+  47  */
+  48 function image_example_menu() {
+  49   $items = array();
+  50   $items['image_example/styles'] = array(
+  51     'title' => 'Image Example',
+  52     'page callback' => 'drupal_get_form',
+  53     'page arguments' => array('image_example_style_form'),
+  54     'access arguments' => array('access content'),
+  55     'file' => 'image_example.pages.inc',
+  56   );
+  57   return $items;
+  58 }
+  59 
+  60 /**
+  61  * Implements hook_help().
+  62  */
+  63 function image_example_help($path) {
+  64   switch ($path) {
+  65     case 'image_example/styles':
+  66       $output =  '<p>' . t('Use this form to upload an image and choose an Image Style to use when displaying the image. This demonstrates basic use of the Drupal 7 Image styles & effects system.') . '</p>';
+  67       $output .= '<p>' . t('Image styles can be added/edited using the !link.', array('!link' => l(t('Image styles UI'), 'admin/config/media/image-styles'))) . '</p>';
+  68       return $output;
+  69   }
+  70 }
+  71 
+  72 /**
+  73  * Implements hook_image_default_styles().
+  74  *
+  75  * hook_image_default_styles() declares to Drupal any image styles that are
+  76  * provided by the module. An image style is a collection of image effects that
+  77  * are performed in a specified order, manipulating the image and generating a
+  78  * new derivative image.
+  79  *
+  80  * This hook can be used to declare image styles that your module depends on or
+  81  * allow you to define image styles in code and gain the benefits of using
+  82  * a version control system.
+  83  */
+  84 function image_example_image_default_styles() {
+  85   // This hook returns an array, each component of which describes an image
+  86   // style. The array keys are the machine-readable image style names and
+  87   // to avoid namespace conflicts should begin with the name of the
+  88   // implementing module. e.g.) 'mymodule_stylename'. Styles names should
+  89   // use only alpha-numeric characters, underscores (_), and hyphens (-).
+  90   $styles = array();
+  91   $styles['image_example_style'] = array();
+  92 
+  93   // Each style array consists of an 'effects' array that is made up of
+  94   // sub-arrays which define the individual image effects that are combined
+  95   // together to create the image style.
+  96   $styles['image_example_style']['effects'] = array(
+  97     array(
+  98       // Name of the image effect. See image_image_effect_info() in
+  99       // modules/image/image.effects.inc for a list of image effects available
+ 100       // in Drupal 7 core.
+ 101       'name' => 'image_scale',
+ 102       // Arguments to pass to the effect callback function.
+ 103       // The arguments that an effect accepts are documented with each
+ 104       // individual image_EFFECT_NAME_effect function. See image_scale_effect()
+ 105       // for an example.
+ 106       'data' => array(
+ 107         'width' => 100,
+ 108         'height' => 100,
+ 109         'upscale' => 1,
+ 110       ),
+ 111       // The order in which image effects should be applied when using this
+ 112       // style.
+ 113       'weight' => 0,
+ 114     ),
+ 115     // Add a second effect to this image style. Effects are executed in order
+ 116     // and are cummulative. When applying an image style to an image the result
+ 117     // will be the combination of all effects associated with that style.
+ 118     array(
+ 119       'name' => 'image_example_colorize',
+ 120       'data' => array(
+ 121         'color' => '#FFFF66',
+ 122       ),
+ 123       'weight' => 1,
+ 124     ),
+ 125   );
+ 126 
+ 127   return $styles;
+ 128 }
+ 129 
+ 130 /**
+ 131  * Implements hook_image_style_save().
+ 132  *
+ 133  * Allows modules to respond to updates to an image style's
+ 134  * settings.
+ 135  */
+ 136 function image_example_image_style_save($style) {
+ 137   // The $style parameter is an image style array with one notable exception.
+ 138   // When a user has choosen to replace a deleted style with another style the
+ 139   // $style['name'] property contains the name of the replacement style and
+ 140   // $style['old_name'] contains the name of the style being deleted.
+ 141 
+ 142   // Here we update a variable that contains the name of the image style that
+ 143   // the block provided by this module uses when formating images to use the
+ 144   // new user choosen style name.
+ 145   if (isset($style['old_name']) && $style['old_name'] == variable_get('image_example_style_name', '')) {
+ 146     variable_set('image_example_style_name', $style['name']);
+ 147   }
+ 148 }
+ 149 
+ 150 /**
+ 151  * Implements hook_image_style_delete().
+ 152  *
+ 153  * This hook allows modules to respond to image styles being deleted.
+ 154  *
+ 155  * @see image_example_style_save()
+ 156  */
+ 157 function image_example_image_style_delete($style) {
+ 158   // See information about $style paramater in documentation for
+ 159   // image_example_style_save().
+ 160 
+ 161   // Update the modules variable that contains the name of the image style
+ 162   // being deleted to the name of the replacement style.
+ 163   if (isset($style['old_name']) && $style['old_name'] == variable_get('image_example_style_name', '')) {
+ 164     variable_set('image_example_style_name', $style['name']);
+ 165   }
+ 166 }
+ 167 
+ 168 /**
+ 169  * Implements hook_image_style_flush().
+ 170  *
+ 171  * This hook allows modules to respond when a style is being flushed. Styles
+ 172  * are flushed any time a style is updated, an effect associated with the style
+ 173  * is updated, a new effect is added to the style, or an existing effect is
+ 174  * removed.
+ 175  *
+ 176  * Flushing removes all images generated using this style from the host. Once a
+ 177  * style has been flushed derivative images will need to be regenerated. New
+ 178  * images will be generated automatically as needed but it is worth noting that
+ 179  * on a busy site with lots of images this could have an impact on performance.
+ 180  *
+ 181  * Note: This function does not currently have any effect as the example module
+ 182  * does not use any caches. It is demonstrated here for completeness sake only.
+ 183  */
+ 184 function image_example_style_flush($style) {
+ 185   // The $style parameter is an image style array.
+ 186 
+ 187   // Empty any caches populated by our module that could contain stale data
+ 188   // after the style has been flushed. Stale data occurs because the module may
+ 189   // have cached content with a reference to the derivative image which is
+ 190   // being deleted.
+ 191   cache_clear_all('*', 'image_example', TRUE);
+ 192 }
+ 193 
+ 194 /**
+ 195  * Implements hook_image_styles_alter().
+ 196  *
+ 197  * Allows your module to modify, add, or remove image styles provided
+ 198  * by other modules. The best use of this hook is to modify default styles that
+ 199  * have not been overriden by the user. Altering styles that have been
+ 200  * overriden by the user could have an adverse affect on the user experience.
+ 201  * If you add an effect to a style through this hook and the user attempts to
+ 202  * remove the effect it will immediatly be re-applied.
+ 203  */
+ 204 function image_example_image_styles_alter(&$styles) {
+ 205   // The $styles paramater is an array of image style arrays keyed by style
+ 206   // name. You can check to see if a style has been overriden by checking the
+ 207   // $styles['stylename']['storage'] property.
+ 208 
+ 209   // Verify that the effect has not been overriden.
+ 210   if ($styles['thumbnail']['storage'] == IMAGE_STORAGE_DEFAULT) {
+ 211     // Add an additional colorize effect to the system provided thumbnail
+ 212     // effect.
+ 213     $styles['thumbnail']['effects'][] = array(
+ 214       'label' => t('Colorize #FFFF66'),
+ 215       'name' => 'image_example_colorize',
+ 216       'effect callback' => 'image_example_colorize_effect',
+ 217       'data' => array(
+ 218         'color' => '#FFFF66',
+ 219       ),
+ 220       'weight' => 1,
+ 221     );
+ 222   }
+ 223 }
+ 224 
+ 225 /**
+ 226  * Implements hook_image_effect_info().
+ 227  *
+ 228  * This hook allows your module to define additional image manipulation effects
+ 229  * that can be used with image styles.
+ 230  */
+ 231 function image_example_image_effect_info() {
+ 232   $effects = array();
+ 233 
+ 234   // The array is keyed on the machine-readable effect name.
+ 235   $effects['image_example_colorize'] = array(
+ 236     // Human readable name of the effect.
+ 237     'label' => t('Colorize'),
+ 238     // (optional) Brief description of the effect that will be shown when
+ 239     // adding or configuring this image effect.
+ 240     'help' => t('The colorize effect will first remove all color from the source image and then tint the image using the color specified.'),
+ 241     // Name of function called to perform this effect.
+ 242     'effect callback' => 'image_example_colorize_effect',
+ 243     // (optional) Name of function that provides a $form array with options for
+ 244     // configuring the effect. Note that you only need to return the fields
+ 245     // specific to your module. Submit buttons will be added automatically, and
+ 246     // configuration options will be serailized and added to the 'data' element
+ 247     // of the effect. The function will recieve the $effect['data'] array as
+ 248     // its only parameter.
+ 249     'form callback' => 'image_example_colorize_form',
+ 250     // (optional) Name of a theme function that will output a summary of this
+ 251     // effects configuation. Used when displaying list of effects associated
+ 252     // with an image style. In this example the function
+ 253     // theme_image_example_colorize_summary will be called via the theme()
+ 254     // function. Your module must also implement hook_theme() in order for this
+ 255     // function to work correctly. See image_example_theme() and
+ 256     // theme_image_example_colorize_summary().
+ 257     'summary theme' => 'image_example_colorize_summary',
+ 258   );
+ 259 
+ 260   return $effects;
+ 261 }
+ 262 
+ 263 /**
+ 264  * Form Builder; Configuration settings for colorize effect.
+ 265  *
+ 266  * Create a $form array with the fields necessary for configuring the
+ 267  * image_example_colorize effect.
+ 268  *
+ 269  * Note that this is not a complete form, it only contains the portion of the
+ 270  * form for configuring the colorize options. Therefore it does not not need to
+ 271  * include metadata about the effect, nor a submit button.
+ 272  *
+ 273  * @param $data
+ 274  *   The current configuration for this colorize effect.
+ 275  */
+ 276 function image_example_colorize_form($data) {
+ 277   $form = array();
+ 278   // You do not need to worry about handling saving/updating/deleting of the
+ 279   // data collected. The image module will automatically serialize and store
+ 280   // all data associated with an effect.
+ 281   $form['color'] = array(
+ 282     '#type' => 'textfield',
+ 283     '#title' => t('Color'),
+ 284     '#description' => t('The color to use when colorizing the image. Use web-style hex colors. e.g.) #FF6633.'),
+ 285     '#default_value' => isset($data['color']) ? $data['color'] : '',
+ 286     '#size' => 7,
+ 287     '#max_length' => 7,
+ 288     '#required' => TRUE,
+ 289   );
+ 290   return $form;
+ 291 }
+ 292 
+ 293 /**
+ 294  * Image effect callback; Colorize an image resource.
+ 295  *
+ 296  * @param $image
+ 297  *   An image object returned by image_load().
+ 298  * @param $data
+ 299  *   An array of attributes to use when performing the colorize effect with the
+ 300  *   following items:
+ 301  *   - "color": The web-style hex color to use when colorizing the image.
+ 302  * @return
+ 303  *   TRUE on success. FALSE on failure to colorize image.
+ 304  */
+ 305 function image_example_colorize_effect(&$image, $data) {
+ 306   // Image manipulation should be done to the $image->resource, which will be
+ 307   // automatically saved as a new image once all effects have been applied.
+ 308   // If your effect makes changes to the $image->resource that relate to any
+ 309   // information stored in the $image->info array (width, height, etc.) you
+ 310   // should update that information as well. See modules/system/image.gd.inc
+ 311   // for examples of functions that perform image manipulations.
+ 312 
+ 313   // Not all GD installations are created equal. It is a good idea to check for
+ 314   // the existence of image manipulation functions before using them.
+ 315   // PHP installations using non-bundled GD do not have imagefilter(). More
+ 316   // information about image manipulation functions is available in the PHP
+ 317   // manual. http://www.php.net/manual/en/book.image.php
+ 318   if (!function_exists('imagefilter')) {
+ 319     watchdog('image', 'The image %image could not be colorized because the imagefilter() function is not available in this PHP installation.', array('%file' => $image->source));
+ 320     return FALSE;
+ 321   }
+ 322 
+ 323   // Verify that Drupal is using the PHP GD library for image manipulations
+ 324   // since this effect depends on functions in the GD library.
+ 325   if ($image->toolkit != 'gd') {
+ 326     watchdog('image', 'Image colorize failed on %path. Using non GD toolkit.', array('%path' => $image->source), WATCHDOG_ERROR);
+ 327     return FALSE;
+ 328   }
+ 329 
+ 330   // Convert short #FFF syntax to full #FFFFFF syntax.
+ 331   if (strlen($data['color']) == 4) {
+ 332     $c = $data['color'];
+ 333     $data['color'] = $c[0] . $c[1] . $c[1] . $c[2] . $c[2] . $c[3] . $c[3];
+ 334   }
+ 335 
+ 336   // Convert #FFFFFF syntax to hexadecimal colors.
+ 337   $data['color'] = hexdec(str_replace('#', '0x', $data['color']));
+ 338 
+ 339   // Convert the hexadecimal color value to a color index value.
+ 340   $rgb = array();
+ 341   for ($i = 16; $i >= 0; $i -= 8) {
+ 342     $rgb[] = (($data['color'] >> $i) & 0xFF);
+ 343   }
+ 344 
+ 345   // First desaturate the image, and then apply the new color.
+ 346   imagefilter($image->resource, IMG_FILTER_GRAYSCALE);
+ 347   imagefilter($image->resource, IMG_FILTER_COLORIZE, $rgb[0], $rgb[1], $rgb[2]);
+ 348 
+ 349   return TRUE;
+ 350 }
+ 351 
+ 352 /**
+ 353  * Implements hook_theme().
+ 354  */
+ 355 function image_example_theme() {
+ 356   return array(
+ 357     'image_example_colorize_summary' => array(
+ 358       'variables' => array('data' => NULL),
+ 359     ),
+ 360     'image_example_image' => array(
+ 361       'variables' => array('image' => NULL, 'style' => NULL),
+ 362       'file' => 'image_example.pages.inc',
+ 363     ),
+ 364   );
+ 365 }
+ 366 
+ 367 /**
+ 368  * Formats a summary of an image colorize effect.
+ 369  *
+ 370  * @param $variables
+ 371  *   An associative array containing:
+ 372  *   - data: The current configuration for this colorize effect.
+ 373  */
+ 374 function theme_image_example_colorize_summary($variables) {
+ 375   $data = $variables['data'];
+ 376   return t('as color #@color.', array('@color' => $data['color']));
+ 377 }
+ 378 /**
+ 379  * @} End of "defgroup image_example".
+ 380  */
+";i:1;N;i:2;N;}i:2;i:1948;}i:15;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:18777;}i:16;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:23:"image_example.pages.inc";i:1;i:2;i:2;i:18777;}i:2;i:18777;}i:17;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:18777;}i:18;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:7409:"
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Page/form showing image styles in use.
+   6  */
+   7 
+   8 /**
+   9  * Form for uploading and displaying an image using selected style.
+  10  *
+  11  * This page provides a form that allows the user to upload an image and choose
+  12  * a style from the list of defined image styles to use when displaying the
+  13  * the image. This serves as an example of integrating image styles with your
+  14  * module and as a way to demonstrate that the styles and effects defined by
+  15  * this module are available via Drupal's image handling system.
+  16  *
+  17  * @see theme_image_style()
+  18  *
+  19  * @ingroup image_example
+  20  */
+  21 function image_example_style_form($form, &$form_state) {
+  22   // If there is already an uploaded image display the image here.
+  23   if ($image_fid = variable_get('image_example_image_fid', FALSE)) {
+  24     $image = file_load($image_fid);
+  25     $style = variable_get('image_example_style_name', 'thumbnail');
+  26     $form['image'] = array(
+  27       '#markup' => theme('image_example_image', array('image' => $image, 'style' => $style)),
+  28     );
+  29   }
+  30 
+  31   // Use the #managed_file FAPI element to upload an image file.
+  32   $form['image_example_image_fid'] = array(
+  33     '#title' => t('Image'),
+  34     '#type' => 'managed_file',
+  35     '#description' => t('The uploaded image will be displayed on this page using the image style choosen below.'),
+  36     '#default_value' => variable_get('image_example_image_fid', ''),
+  37     '#upload_location' => 'public://image_example_images/',
+  38   );
+  39 
+  40   // Provide a select field for choosing an image style to use when displaying
+  41   // the image.
+  42   $form['image_example_style_name'] = array(
+  43     '#title' => t('Image style'),
+  44     '#type' => 'select',
+  45     '#description' => t('Choose an image style to use when displaying this image.'),
+  46     // The image_style_options() function returns an array of all available
+  47     // image styles both the key and the value of the array are the image
+  48     // style's name. The fucntion takes on paramater, a boolean flag
+  49     // signifying wether or not the array should include a <none> option.
+  50     '#options' => image_style_options(TRUE),
+  51     '#default_value' => variable_get('image_example_style_name', ''),
+  52   );
+  53 
+  54   // Submit Button.
+  55   $form['submit'] = array(
+  56     '#type' => 'submit',
+  57     '#value' => t('Save'),
+  58   );
+  59 
+  60   return $form;
+  61 }
+  62 
+  63 /**
+  64  * Verifies that the user supplied an image with the form..
+  65  *
+  66  * @ingroup image_example
+  67  */
+  68 function image_example_style_form_validate($form, &$form_state) {
+  69   if (!isset($form_state['values']['image_example_image_fid']) || !is_numeric($form_state['values']['image_example_image_fid'])) {
+  70     form_set_error('image_example_image_fid', t('Please select an image to upload.'));
+  71   }
+  72 }
+  73 
+  74 /**
+  75  * Form Builder; Display a form for uploading an image.
+  76  *
+  77  * @ingroup image_example
+  78  */
+  79 function image_example_style_form_submit($form, &$form_state) {
+  80   // When using the #managed_file form element the file is automatically
+  81   // uploaded an saved to the {file} table. The value of the corresponding
+  82   // form element is set to the {file}.fid of the new file.
+  83 
+  84 
+  85   // If fid is not 0 we have a valid file.
+  86   if ($form_state['values']['image_example_image_fid'] != 0) {
+  87     // The new file's status is set to 0 or temporary and in order to ensure
+  88     // that the file is not removed after 6 hours we need to change it's status
+  89     // to 1. Save the ID of the uploaded image for later use.
+  90     $file = file_load($form_state['values']['image_example_image_fid']);
+  91     $file->status = FILE_STATUS_PERMANENT;
+  92     file_save($file);
+  93 
+  94     // When a module is managing a file, it must manage the usage count.
+  95     // Here we increment the usage count with file_usage_add().
+  96     file_usage_add($file, 'image_example', 'sample_image', 1);
+  97 
+  98     // Save the fid of the file so that the module can reference it later.
+  99     variable_set('image_example_image_fid', $file->fid);
+ 100     drupal_set_message(t('The image @image_name was uploaded and saved with an ID of @fid and will be displayed using the style @style.', array('@image_name' => $file->filename, '@fid' => $file->fid, '@style' => $form_state['values']['image_example_style_name'])));
+ 101   }
+ 102   // If the file was removed we need to remove the module's reference to the
+ 103   // removed file's fid, and remove the file.
+ 104   elseif ($form_state['values']['image_example_image_fid'] == 0) {
+ 105     // Retrieve the old file's id.
+ 106     $fid = variable_get('image_example_image_fid', FALSE);
+ 107     $file = $fid ? file_load($fid) : FALSE;
+ 108     if ($file) {
+ 109       // When a module is managing a file, it must manage the usage count.
+ 110       // Here we decrement the usage count with file_usage_delete().
+ 111       file_usage_delete($file, 'image_example', 'sample_image', 1);
+ 112 
+ 113       // The file_delete() function takes a file object and checks to see if
+ 114       // the file is being used by any other modules. If it is the delete
+ 115       // operation is cancelled, otherwise the file is deleted.
+ 116       file_delete($file);
+ 117     }
+ 118 
+ 119     // Either way the module needs to update it's reference since even if the
+ 120     // file is in use by another module and not deleted we no longer want to
+ 121     // use it.
+ 122     variable_set('image_example_image_fid', FALSE);
+ 123     drupal_set_message(t('The image @image_name was removed.', array('@image_name' => $file->filename)));
+ 124   }
+ 125 
+ 126   // Save the name of the image style choosen by the user.
+ 127   variable_set('image_example_style_name', $form_state['values']['image_example_style_name']);
+ 128 }
+ 129 
+ 130 /**
+ 131  * Theme function displays an image rendered using the specified style.
+ 132  *
+ 133  * @ingroup image_example
+ 134  */
+ 135 function theme_image_example_image($variables) {
+ 136   $image = $variables['image'];
+ 137   $style = $variables['style'];
+ 138 
+ 139   // theme_image_style() is the primary method for displaying images using
+ 140   // one of the defined styles. The $variables array passed to the theme
+ 141   // contains the following two important values:
+ 142   //   'style_name': the name of the image style to use when displaying the
+ 143   //   image.
+ 144   //   'path': the $file->uri of the image to display.
+ 145   // When given a style and an image path the function will first determine
+ 146   // if a derivative image already exists, in which case the existing image
+ 147   // will be displayed. If the derivative image does not already exist the
+ 148   // function returns an <img> tag with a specially crafted callback URL
+ 149   // as the src attribute for the tag. When accessed, the callback URL will
+ 150   // generate the derivative image and serve it to the browser.
+ 151   $output = theme('image_style', array('style_name' => $style, 'path' => $image->uri, 'getsize' => FALSE));
+ 152   $output .= '<p>' . t('This image is being displayed using the image style %style_name.', array('%style_name' => $style)) . '</p>';
+ 153   return $output;
+ 154 }
+";i:1;N;i:2;N;}i:2;i:18818;}i:19;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:26236;}i:20;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:18:"image_example.test";i:1;i:2;i:2;i:26236;}i:2;i:26236;}i:21;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:26236;}i:22;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:4888:"
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Test case for testing the image example module.
+   6  *
+   7  * This file contains the tests cases to check if the module is performing as
+   8  * expected.
+   9  */
+  10 class ImageExampleTestCase extends DrupalWebTestCase {
+  11   protected $web_user;
+  12 
+  13   public static function getInfo() {
+  14     return array(
+  15       'name' => 'Image example functionality',
+  16       'description' => 'Test functionality of the Image Example module.',
+  17       'group' => 'Examples',
+  18     );
+  19   }
+  20 
+  21   /**
+  22    * Enable modules and create user with specific permissions.
+  23    */
+  24   function setUp() {
+  25     parent::setUp('image_example');
+  26     // Create user with permission to administer image styles.
+  27     $this->web_user = $this->drupalCreateUser(array('administer image styles', 'administer blocks'));
+  28   }
+  29 
+  30   /**
+  31    * Test implementations of image API hooks.
+  32    */
+  33   function testImageExample() {
+  34     // Login the admin user.
+  35     $this->drupalLogin($this->web_user);
+  36 
+  37     // Verify that the default style added by
+  38     // image_example_image_default_styles() is in the list of image styles.
+  39     $image_styles = image_styles();
+  40     $this->assertTrue(isset($image_styles['image_example_style']), 'The default style image_example_style is in the list of image styles.');
+  41 
+  42     // Verify that the effect added to the default 'thumbnail' style by
+  43     // image_example_image_styles_alter() is present.
+  44     $this->assertTrue((isset($image_styles['thumbnail']['effects'][1]['name']) && $image_styles['thumbnail']['effects'][1]['name'] == 'image_example_colorize'), 'Effect added to the thumbnail style via hook_image_styles_alter() is present.');
+  45 
+  46     // Create a new image style and add the effect provided by
+  47     // image_example_effect_info().
+  48     $new_style = array('name' => drupal_strtolower($this->randomName()));
+  49     $new_style = image_style_save($new_style);
+  50     $this->assertTrue(isset($new_style['isid']), format_string('Image style @style_name created.', array('@style_name' => $new_style['name'])));
+  51 
+  52     $edit = array(
+  53       'new' => 'image_example_colorize',
+  54     );
+  55     $this->drupalPost('admin/config/media/image-styles/edit/' . $new_style['name'], $edit, t('Add'));
+  56 
+  57     // Verify the 'color' field provided by image_example_colorize_form()
+  58     // appears on the effect configuration page. And that we can fill it out.
+  59     $this->assertField('data[color]', 'Color field provided by image_example_effect_colorize_form is present on effect configuration page.');
+  60     $edit = array(
+  61       'data[color]' => '#000000',
+  62     );
+  63     $this->drupalPost(NULL, $edit, t('Add effect'));
+  64     $this->assertText(t('The image effect was successfully applied.'), format_string('Colorize effect added to @style_name.', array('@style_name' => $new_style['name'])));
+  65 
+  66     // Set the variable 'image_example_style_name' to the name of our new style
+  67     // then rename the style and ensure the variable name is changed.
+  68 
+  69     // @todo Enable this block once http://drupal.org/node/713872 is fixed.
+  70     if (defined('bug_713872_fixed')) {
+  71       $style = image_style_load($new_style['name']);
+  72       variable_set('image_example_style_name', $style['name']);
+  73       $style['name'] = drupal_strtolower($this->randomName());
+  74       $style = image_style_save($style);
+  75       $variable = variable_get('image_example_style_name', '');
+  76       $this->assertTrue(($variable == $style['name']), 'Variable image_example_style_name successfully updated when renaming image style.');
+  77     }
+  78   }
+  79 
+  80   /**
+  81    * Tests for image block provided by module.
+  82    */
+  83   function testImageExamplePage() {
+  84     // Login the admin user.
+  85     $this->drupalLogin($this->web_user);
+  86     $this->drupalCreateNode(array('promote' => 1));
+  87 
+  88     // Upload an image to the image page.
+  89     $images = $this->drupalGetTestFiles('image');
+  90     $edit = array(
+  91       'files[image_example_image_fid]' => drupal_realpath($images[0]->uri),
+  92       'image_example_style_name' => 'image_example_style',
+  93     );
+  94     $this->drupalPost('image_example/styles', $edit, t('Save'));
+  95     $this->assertText(t('The image @image_name was uploaded', array('@image_name' => $images[0]->filename)), 'Image uploaded to image block.');
+  96 
+  97     // Verify the image is displayed.
+  98     $this->drupalGet('image_example/styles');
+  99     $fid = variable_get('image_example_image_fid', FALSE);
+ 100     $image = isset($fid) ? file_load($fid) : NULL;
+ 101     $this->assertRaw(file_uri_target($image->uri), 'Image is displayed');
+ 102   }
+ 103 }
+";i:1;N;i:2;N;}i:2;i:26272;}i:23;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:31168;}i:24;a:3:{i:0;s:12:"document_end";i:1;a:0:{}i:2;i:31168;}}

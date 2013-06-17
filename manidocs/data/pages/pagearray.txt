@@ -1,0 +1,22 @@
+====== Altering the page array ======
+
+===== menu_mangler.info =====
+<code>
+name = Menu Mangler
+description = Example of implementing hook_page_alter().
+core = 7.x
+dependencies[] = menu_magic
+</code>
+===== menu_mangler.module =====
+<code>
+<?php
+/**
+ * Implements hook_page_alter().
+ */
+function menu_mangler_page_alter(&$page) {
+  if (arg(0) == 'magic') {
+    dsm($page);
+    $page['content']['system_main']['renderable_element']['#type'] = 'ol';
+  }
+}
+</code>

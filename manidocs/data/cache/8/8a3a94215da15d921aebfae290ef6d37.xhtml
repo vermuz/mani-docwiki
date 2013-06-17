@@ -1,0 +1,55 @@
+
+<p>
+<strong>For Loop, String Continuation
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; l = [&#039;apple&#039;,&#039;tomato&#039;,&#039;oranges&#039;]
+&gt;&gt;&gt; &#039;grape&#039; in l
+False
+&gt;&gt;&gt; &#039;apple&#039; in l
+True
+&gt;&gt;&gt; for i in l :
+	print (i, len(i))
+
+	
+apple 5
+tomato 6
+oranges 7
+&gt;&gt;&gt; l2 = [&quot;This is a long string&quot;, \
+      &quot;Another one&quot;]
+&gt;&gt;&gt; l2
+[&#039;This is a long string&#039;, &#039;Another one&#039;]
+&gt;&gt;&gt; s1 = &quot;Super long string \
+continuing, etc.&quot;
+&gt;&gt;&gt; s1
+&#039;Super long string continuing, etc.&#039;</pre>
+
+<p>
+<strong>Escape Characters
+</strong>
+</p>
+
+<p>
+We don`t want to confuse python by using \n,\t in a statement so just to avoid putting Python into misery of deciphering, what you are trying to talk about use escape chars.
+</p>
+
+<p>
+\\n \\t
+</p>
+<pre class="code">&gt;&gt;&gt; ls = &#039;&#039;&#039;The quick brown fox jumped over the lazy dog \
+all day long.
+
+More More More More .&#039;&#039;&#039;
+&gt;&gt;&gt; ls
+&#039;The quick brown fox jumped over the lazy dog all day long.\n\nMore More More More .&#039;
+&gt;&gt;&gt; print(ls)
+The quick brown fox jumped over the lazy dog all day long.
+
+More More More More .
+&gt;&gt;&gt; print(&#039;CBT Nuggets&#039;)
+CBT Nuggets
+&gt;&gt;&gt; print(&#039;CBT\nNuggets&#039;)
+CBT
+Nuggets
+&gt;&gt;&gt; print(&#039;C:\\newfiles\\text.txt&#039;)
+C:\newfiles\text.txt</pre>

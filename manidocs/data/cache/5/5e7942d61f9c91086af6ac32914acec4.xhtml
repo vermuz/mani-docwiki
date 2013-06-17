@@ -1,0 +1,1789 @@
+
+<h1 class="sectionedit1" id="git">GIT</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "GIT" [1-18] -->
+<h2 class="sectionedit2" id="git_configuration">Git Configuration</h2>
+<div class="level2">
+
+<p>
+<strong>Statement</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> cat .gitconfig</div>
+</li>
+<li class="level1"><div class="li"> git config –global –list</div>
+</li>
+<li class="level1"><div class="li"> cat ~/.gitconfig</div>
+</li>
+<li class="level1"><div class="li"> git config –global core.editor sublime</div>
+</li>
+<li class="level1"><div class="li"> git config –global help.autocorrect 1</div>
+</li>
+<li class="level1"><div class="li"> git config –global colour.ui auto</div>
+</li>
+<li class="level1"><div class="li"> git config –global core.autocrlf input</div>
+</li>
+<li class="level1"><div class="li"> git config –global –list</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~$ cat .gitconfig
+[user]
+	name = Chaudhry Usman Ali
+	email = maniali@gmail.com
+mani@mani-ubu12x:~$ cat ~/.gitconfig
+[user]
+	name = Chaudhry Usman Ali
+	email = maniali@gmail.com
+mani@mani-ubu12x:~$ git config --global --list
+user.name=Chaudhry Usman Ali
+user.email=maniali@gmail.com
+mani@mani-ubu12x:~$ cat ~/.gitconfig
+[user]
+	name = Chaudhry Usman Ali
+	email = maniali@gmail.com
+mani@mani-ubu12x:~$ git config --global core.editor sublime
+mani@mani-ubu12x:~$ git config --global help.autocorrect 1
+mani@mani-ubu12x:~$ cd Downloads
+mani@mani-ubu12x:~/Downloads$ cd gitplay
+mani@mani-ubu12x:~/Downloads/gitplay$ git statsu
+WARNING: You called a Git command named &#039;statsu&#039;, which does not exist.
+Continuing under the assumption that you meant &#039;status&#039;
+in 0.1 seconds automatically...
+fatal: Not a git repository (or any of the parent directories): .git
+mani@mani-ubu12x:~/Downloads/gitplay$ cd
+mani@mani-ubu12x:~$ gitconfig colour.ui auto
+gitconfig: command not found
+mani@mani-ubu12x:~$ git config --global colour.ui auto
+mani@mani-ubu12x:~$ git config --global core.autocrlf input
+mani@mani-ubu12x:~$ git config --global --list
+user.name=Chaudhry Usman Ali
+user.email=maniali@gmail.com
+core.editor=sublime
+core.autocrlf=input
+help.autocorrect=1
+colour.ui=auto
+mani@mani-ubu12x:~$ cat ~/.gitconfig
+[user]
+	name = Chaudhry Usman Ali
+	email = maniali@gmail.com
+[core]
+	editor = sublime
+	autocrlf = input
+[help]
+	autocorrect = 1
+[colour]
+	ui = auto</pre>
+
+</div>
+<!-- EDIT2 SECTION "Git Configuration" [19-1813] -->
+<h2 class="sectionedit3" id="creating_a_local_repo_adding_files_and_committing_changes">Creating a local Repo, adding files and committing changes</h2>
+<div class="level2">
+
+<p>
+<strong>Statements
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git init</div>
+</li>
+<li class="level1"><div class="li"> git status</div>
+</li>
+<li class="level1"><div class="li"> git add </div>
+</li>
+<li class="level1"><div class="li"> git commit -m “Added readme”</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~$ cd Downloads
+mani@mani-ubu12x:~/Downloads$ cd gitplay
+mani@mani-ubu12x:~/Downloads/gitplay$ dir
+imagefield_prev_gen
+mani@mani-ubu12x:~/Downloads/gitplay$ ls -la
+total 12
+drwxrwxr-x  3 mani mani 4096 Mar 15 11:43 .
+drwxr-xr-x 17 mani mani 4096 Mar 18 10:29 ..
+drwxrwxr-x  2 mani mani 4096 Mar 15 11:45 imagefield_prev_gen
+mani@mani-ubu12x:~/Downloads/gitplay$ clear
+
+mani@mani-ubu12x:~/Downloads/gitplay$ ls -la
+total 12
+drwxrwxr-x  3 mani mani 4096 Mar 15 11:43 .
+drwxr-xr-x 17 mani mani 4096 Mar 18 10:29 ..
+drwxrwxr-x  2 mani mani 4096 Mar 15 11:45 imagefield_prev_gen
+mani@mani-ubu12x:~/Downloads/gitplay$ git init
+Initialized empty Git repository in /home/mani/Downloads/gitplay/.git/
+mani@mani-ubu12x:~/Downloads/gitplay$ ls -la
+total 16
+drwxrwxr-x  4 mani mani 4096 Mar 18 10:32 .
+drwxr-xr-x 17 mani mani 4096 Mar 18 10:29 ..
+drwxrwxr-x  7 mani mani 4096 Mar 18 10:32 .git
+drwxrwxr-x  2 mani mani 4096 Mar 15 11:45 imagefield_prev_gen
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Hello, Git&quot; &gt; README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+#
+# Initial commit
+#
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	README.txt
+#	imagefield_prev_gen/
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+mani@mani-ubu12x:~/Downloads/gitplay$ git add .
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#   (use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README.txt
+#	new file:   imagefield_prev_gen/imagefield_prev_gen.info
+#	new file:   imagefield_prev_gen/imagefield_prev_gen.module
+#
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit
+Aborting commit due to empty commit message.
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Added readme&quot;
+[master (root-commit) 957304a] Added readme
+ 3 files changed, 127 insertions(+)
+ create mode 100644 README.txt
+ create mode 100644 imagefield_prev_gen/imagefield_prev_gen.info
+ create mode 100644 imagefield_prev_gen/imagefield_prev_gen.module
+mani@mani-ubu12x:~/Downloads/gitplay$ git log
+commit 957304a8dd0c668f4502d8ec49b94f81d24fe32d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:37:22 2013 -0300
+
+    Added readme
+mani@mani-ubu12x:~/Downloads/gitplay$ sudo git commit
+[sudo] password for mani: 
+# On branch master
+nothing to commit (working directory clean)
+mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime README.txt 
+mani@mani-ubu12x:~/Downloads/gitplay$ git add -u
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	modified:   README.txt
+#
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Updated README.txt&quot;
+[master ec750d2] Updated README.txt
+ 1 file changed, 1 insertion(+)
+mani@mani-ubu12x:~/Downloads/gitplay$ git log
+commit ec750d224abf50db0031ffb03401c2e62a8d6724
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:41:19 2013 -0300
+
+    Updated README.txt
+
+commit 957304a8dd0c668f4502d8ec49b94f81d24fe32d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:37:22 2013 -0300</pre>
+
+</div>
+<!-- EDIT3 SECTION "Creating a local Repo, adding files and committing changes" [1814-5184] -->
+<h2 class="sectionedit4" id="viewing_history_and_diffs">Viewing History and Diffs</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git diff 957304..ec750d</div>
+</li>
+<li class="level1"><div class="li"> git diff HEAD~1..HEAD</div>
+</li>
+<li class="level1"><div class="li"> git diff HEAD~1..</div>
+</li>
+<li class="level1"><div class="li"> git add -u</div>
+</li>
+<li class="level1"><div class="li"> git add -A</div>
+</li>
+</ul>
+<pre class="code">*************************************************************
+# Compare using Hash
+mani@mani-ubu12x:~/Downloads/gitplay$ git diff 957304..ec750d
+diff --git a/README.txt b/README.txt
+index b7aec52..a10a8a5 100644
+--- a/README.txt
++++ b/README.txt
+@@ -1 +1,2 @@
+ Hello, Git
++Hello
+\ No newline at end of file
+***************************************************************
+mani@mani-ubu12x:~/Downloads/gitplay$ git diff HEAD~1..HEAD
+diff --git a/README.txt b/README.txt
+index b7aec52..a10a8a5 100644
+--- a/README.txt
++++ b/README.txt
+@@ -1 +1,2 @@
+ Hello, Git
++Hello
+\ No newline at end of file
+mani@mani-ubu12x:~/Downloads/gitplay$ git diff HEAD~1..
+diff --git a/README.txt b/README.txt
+index b7aec52..a10a8a5 100644
+--- a/README.txt
++++ b/README.txt
+@@ -1 +1,2 @@
+ Hello, Git
++Hello
+\ No newline at end of file
+mani@mani-ubu12x:~/Downloads/gitplay$ touch file1.txt file2.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	file1.txt
+#	file2.txt
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+mani@mani-ubu12x:~/Downloads/gitplay$ git add -u
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	file1.txt
+#	file2.txt
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+******************************************************************************
+-A option (track untracked whatever is in there add it all)
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git add -A
+mani@mani-ubu12x:~/Downloads/gitplay$ git status 
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   file1.txt
+#	new file:   file2.txt
+#
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Added cool new feature&quot;
+[master 82791bb] Added cool new feature
+ 0 files changed
+ create mode 100644 file1.txt
+ create mode 100644 file2.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git log
+commit 82791bb0b624f7f6d3be355eb0d3b9806af98e35
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:55:59 2013 -0300
+
+    Added cool new feature
+
+commit ec750d224abf50db0031ffb03401c2e62a8d6724
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:41:19 2013 -0300
+
+    Updated README.txt
+
+commit 957304a8dd0c668f4502d8ec49b94f81d24fe32d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:37:22 2013 -0300
+
+    Added readme
+    
+The last commit is HEAD    
+#************************************************************
+Check Status between Update Readme and Added Cool new feature    
+    
+mani@mani-ubu12x:~/Downloads/gitplay$ git diff HEAD~1
+diff --git a/file1.txt b/file1.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/file2.txt b/file2.txt
+new file mode 100644
+index 0000000..e69de29</pre>
+
+</div>
+<!-- EDIT4 SECTION "Viewing History and Diffs" [5185-8277] -->
+<h2 class="sectionedit5" id="staging_changes_as_multiple_commits">Staging Changes as multiple commits</h2>
+<div class="level2">
+
+<p>
+<strong>Statement
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git add file1.txt</div>
+</li>
+<li class="level1"><div class="li"> git commit -m “Fixed bug 1234”</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime file1.txt
+[sudo] password for mani: 
+mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#	modified:   file1.txt
+#
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;I want to stage these as two different commits&quot;
+I want to stage these as two different commits
+mani@mani-ubu12x:~/Downloads/gitplay$ git add file1.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	modified:   file1.txt
+#
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;file1 is staged but README not staged&quot;
+file1 is staged but README not staged
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Fixed bug 1234&quot;
+[master 272b13a] Fixed bug 1234
+ 1 file changed, 1 insertion(+)
+mani@mani-ubu12x:~/Downloads/gitplay$ git add README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Fixed typo in README.txt and added additional information about other features&quot;
+[master f58350e] Fixed typo in README.txt and added additional information about other features
+ 1 file changed, 2 insertions(+), 1 deletion(-)</pre>
+
+</div>
+<!-- EDIT5 SECTION "Staging Changes as multiple commits" [8278-10082] -->
+<h2 class="sectionedit6" id="deleting_and_renaming_files">Deleting and renaming files</h2>
+<div class="level2">
+
+<p>
+<strong>Statement
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> rm file2.txt</div>
+</li>
+<li class="level1"><div class="li"> git add -A</div>
+</li>
+</ul>
+<pre class="code">Remove a file or Delete
+ rm file2.txt
+
+mani@mani-ubu12x:~/Downloads$ cd gitplay
+mani@mani-ubu12x:~/Downloads/gitplay$ dir
+file1.txt  file3.txt  imagefield_prev_gen  README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	deleted:    file2.txt
+#
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	file3.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ mv file1.txt new_file.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	deleted:    file2.txt
+#
+# Changes not staged for commit:
+#   (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	deleted:    file1.txt
+#
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	file3.txt
+#	new_file.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git add -A
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	deleted:    file2.txt
+#	new file:   file3.txt
+#	renamed:    file1.txt -&gt; new_file.txt
+#
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Reorganized the feature&quot;
+[master ec7b206] Reorganized the feature
+ 2 files changed, 1 insertion(+)
+ delete mode 100644 file2.txt
+ create mode 100644 file3.txt
+ rename file1.txt =&gt; new_file.txt (100%)
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+nothing to commit (working directory clean)
+mani@mani-ubu12x:~/Downloads/gitplay$ git log
+commit ec7b206a06525f291621c04c0a87f7294e41ee82
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 11:52:22 2013 -0300
+
+    Reorganized the feature
+
+commit f58350e0195d26212444461265ec0ad8d1183eff
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 11:13:59 2013 -0300
+
+    Fixed typo in README.txt and added additional information about other features
+
+commit 272b13a22a37bde035ec56d4a773bf99836c4407
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 11:13:14 2013 -0300
+
+    Fixed bug 1234
+
+commit 82791bb0b624f7f6d3be355eb0d3b9806af98e35
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:55:59 2013 -0300
+
+    Added cool new feature
+
+commit ec750d224abf50db0031ffb03401c2e62a8d6724
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:41:19 2013 -0300
+
+    Updated README.txt
+
+commit 957304a8dd0c668f4502d8ec49b94f81d24fe32d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:37:22 2013 -0300
+
+    Added readme</pre>
+
+</div>
+<!-- EDIT6 SECTION "Deleting and renaming files" [10083-12894] -->
+<h2 class="sectionedit7" id="undoing_changes_to_the_working_copy">Undoing changes to the working copy</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git checkout README.txt</div>
+</li>
+<li class="level1"><div class="li"> git status</div>
+</li>
+<li class="level1"><div class="li"> git reset –hard</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime README.txt
+[sudo] password for mani: 
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Well I just realized I didn`t want to do what I just did&quot;
+&gt; 
+&gt; ^C
+mani@mani-ubu12x:~/Downloads/gitplay$ git checkout README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+nothing to commit (working directory clean)
+mani@mani-ubu12x:~/Downloads/gitplay$ cat README.txt
+Hello, Git
+Hello
+Updating README with new informationmani@mani-ubu12x:~/Downloads/gitplay$ 
+mani@mani-ubu12x:~/Downloads/gitplay$ sublime README.txt 
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;to revert changes - checkout&quot;
+to revert changes - checkout
+mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ rm new_file.txt 
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#	deleted:    new_file.txt
+#
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;I can stage these changes one at a time&quot;
+I can stage these changes one at a time
+
+*************************************************************************************
+
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;I can do a hard reset&quot;
+I can do a hard reset
+mani@mani-ubu12x:~/Downloads/gitplay$ git reset --hard
+HEAD is now at ec7b206 Reorganized the feature
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+nothing to commit (working directory clean)
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;I have removed all the changes&quot;
+I have removed all the changes</pre>
+
+</div>
+<!-- EDIT7 SECTION "Undoing changes to the working copy" [12895-15161] -->
+<h2 class="sectionedit8" id="undoing_and_redoing_changes">Undoing and redoing changes</h2>
+<div class="level2">
+
+<p>
+<strong>Statement
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git reset –hard</div>
+</li>
+<li class="level1"><div class="li"> git reset –hard HEAD~1</div>
+</li>
+<li class="level1"><div class="li"> git status</div>
+</li>
+<li class="level1"><div class="li"> git reset –soft HEAD~1</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git reset --hard
+HEAD is now at ec7b206 Reorganized the feature
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;so last commit has been taken out of the repository&quot;
+so last commit has been taken out of the repository
+mani@mani-ubu12x:~/Downloads/gitplay$ git reset --hard HEAD~1
+HEAD is now at f58350e Fixed typo in README.txt and added additional information about other features
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+nothing to commit (working directory clean)</pre>
+
+</div>
+<!-- EDIT8 SECTION "Undoing and redoing changes" [15162-15852] -->
+<h2 class="sectionedit9" id="reset_notes">Reset Notes</h2>
+<div class="level2">
+<pre class="code">git reset --hard HEAD~1</pre>
+
+<p>
+Delete last commit. 
+Move head back.
+Discard all changes.
+</p>
+<pre class="code">git reset --soft HEAD~1</pre>
+
+<p>
+I can make changes in the last commit. 
+Make fixes and re-commit. 
+</p>
+
+<p>
+<strong>Difference between soft and hard reset
+</strong>
+</p>
+
+<p>
+When you modify a file in your repository, the change is initially unstaged. In order to commit it, you must stage it—that is, add it to the index—using git add. When you make a commit, the changes that are committed are those that have been added to the index.
+</p>
+
+<p>
+git reset changes, at minimum, where your current branch is pointing. The difference between –mixed and –soft is whether or not your index is also modified. So, if we&#039;re on branch master with this series of commits:
+</p>
+
+<p>
+- A - B - C (master) HEADpoints to C and the index matches C.
+</p>
+
+<p>
+When we run git reset –soft B, master (and thus HEAD) now points to B, but the index still has the changes from C; git status will show them as staged. So if we run git commit at this point, we&#039;ll get a new commit with the same changes as C.
+</p>
+
+<p>
+Okay, so starting from here again:
+</p>
+
+<p>
+- A - B - C (master) Now let&#039;s do git reset –mixed B. Once again, master and HEAD point to B, but this time the index is also modified to match B. If we run git commit at this point, nothing will happen since the index matches HEAD. We still have the changes in the working directory, but since they&#039;re not in the index, git status shows them as unstaged. To commit them, you would git add and then commit as usual.
+</p>
+
+<p>
+And finally, –hard is the same as –mixed (it changes your HEAD and index), except that –hard also modifies your working directory. If we&#039;re at C and run git reset –hard B, then the changes added in C, as well as any uncommitted changes you have, will be removed, and the files in your working copy will match commit B. Since you can permanently lose changes this way, you should always run git status before doing a hard reset to make sure your working directory is clean or that you&#039;re okay with losing your uncommitted changes.
+</p>
+
+</div>
+<!-- EDIT9 SECTION "Reset Notes" [15853-17919] -->
+<h2 class="sectionedit10" id="clean_working_copy">Clean working copy</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git clean -n (<em>What to remove</em>)</div>
+</li>
+<li class="level1"><div class="li"> git clean -f (<em>Remove</em>)</div>
+</li>
+<li class="level1"><div class="li"> git status</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads$ cd gitplay
+mani@mani-ubu12x:~/Downloads/gitplay$ ls -la
+total 28
+drwxrwxr-x  5 mani mani 4096 Mar 18 13:25 .
+drwxr-xr-x 16 mani mani 4096 Mar 18 16:05 ..
+-rw-rw-r--  1 mani mani   21 Mar 18 13:25 file1.txt
+-rw-rw-r--  1 mani mani    0 Mar 18 13:25 file2.txt
+drwxrwxr-x  8 mani mani 4096 Mar 18 13:25 .git
+drwxrwxr-x  2 mani mani 4096 Mar 15 11:45 imagefield_prev_gen
+-rw-rw-r--  1 mani mani   53 Mar 18 12:13 README.txt
+drwxrwxr-x  2 mani mani 4096 Mar 18 13:24 status
+mani@mani-ubu12x:~/Downloads/gitplay$ touch temp1.txt temp2.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	temp1.txt
+#	temp2.txt
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+mani@mani-ubu12x:~/Downloads/gitplay$ git clean -n
+Would not remove status/
+Would remove temp1.txt
+Would remove temp2.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git clean -f
+Not removing status/
+Removing temp1.txt
+Removing temp2.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+nothing to commit (working directory clean)</pre>
+
+</div>
+<!-- EDIT10 SECTION "Clean working copy" [17920-19231] -->
+<h2 class="sectionedit11" id="git_ignore">Git Ignore</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git status</div>
+</li>
+<li class="level1"><div class="li"> sudo sublime .gitignore</div>
+</li>
+<li class="level1"><div class="li"> git status</div>
+</li>
+<li class="level1"><div class="li"> git add .gitignore</div>
+</li>
+<li class="level1"><div class="li"> git commit -m “Added gitignore”</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads$ cd gitplay
+mani@mani-ubu12x:~/Downloads/gitplay$ dir
+file1.txt  file2.txt  imagefield_prev_gen  README.txt  status
+mani@mani-ubu12x:~/Downloads/gitplay$ mkdir logs
+mani@mani-ubu12x:~/Downloads/gitplay$ touch logs/log.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	logs/
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime .gitignore
+[sudo] password for mani: 
+
+*****************************************************************************
+/logs/*.txt
+/logs/*.log
+/logs
+*****************************************************************************
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	.gitignore
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)
+mani@mani-ubu12x:~/Downloads/gitplay$ git add .gitignore
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -m &quot;Added gitignore&quot;
+[master 77676e2] Added gitignore
+ 1 file changed, 3 insertions(+)
+ create mode 100644 .gitignore
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+nothing to commit (working directory clean)
+mani@mani-ubu12x:~/Downloads/gitplay$ git log
+commit 77676e28270b92e8a29fa493e7077524ffbc293d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 16:43:49 2013 -0300
+
+    Added gitignore
+
+commit f58350e0195d26212444461265ec0ad8d1183eff
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 11:13:59 2013 -0300
+
+    Fixed typo in README.txt and added additional information about other features
+
+commit 272b13a22a37bde035ec56d4a773bf99836c4407
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 11:13:14 2013 -0300
+
+    Fixed bug 1234
+
+commit 82791bb0b624f7f6d3be355eb0d3b9806af98e35
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:55:59 2013 -0300
+
+    Added cool new feature
+
+commit ec750d224abf50db0031ffb03401c2e62a8d6724
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:41:19 2013 -0300
+
+    Updated README.txt
+
+commit 957304a8dd0c668f4502d8ec49b94f81d24fe32d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 10:37:22 2013 -0300
+
+    Added readme</pre>
+
+</div>
+<!-- EDIT11 SECTION "Git Ignore" [19232-21806] -->
+<h2 class="sectionedit12" id="cloning">Cloning</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git clone <a href="https://github.com/jquery/jquery.git" class="urlextern" title="https://github.com/jquery/jquery.git"  rel="nofollow">https://github.com/jquery/jquery.git</a></div>
+</li>
+<li class="level1"><div class="li"> git log</div>
+</li>
+<li class="level1"><div class="li"> git log –oneline</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/code$ git clone https://github.com/jquery/jquery.git
+Cloning into &#039;jquery&#039;...
+remote: Counting objects: 27693, done.
+remote: Compressing objects: 100% (7301/7301), done.
+remote: Total 27693 (delta 20378), reused 26929 (delta 19794)
+Receiving objects: 100% (27693/27693), 14.22 MiB | 677 KiB/s, done.
+Resolving deltas: 100% (20378/20378), done.
+mani@mani-ubu12x:~/Downloads/code$ cd jquery
+mani@mani-ubu12x:~/Downloads/code/jquery$ git log
+mani@mani-ubu12x:~/Downloads/code/jquery$ git log --oneline
+c5fc953 updated Grunt to 0.4.1 (needed for node 0.10.0 compatibility). Closes gh-1202
+92b2367 No ticket: Move property descriptor assignment to save a byte. Close gh-1188.
+e0416f2 Authors update for Michał Gołębiowski. Add .mailmap entry for my old commits too. Closes gh-1201.
+79992d7 Edited comments and minor adjustments. Fixes #13553. Closes gh-1195.
+ae35246 Update Sizzle: minor windows 8 issue
+91d5764 No ticket: compare_size returns! (remember to `npm install`)
+</pre>
+
+</div>
+<!-- EDIT12 SECTION "Cloning" [21807-22945] -->
+<h2 class="sectionedit13" id="repo_statistics">Repo Statistics</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git log –oneline | wc -l</div>
+</li>
+<li class="level1"><div class="li"> git log –oneline –graph</div>
+</li>
+<li class="level1"><div class="li"> git log –format=short</div>
+</li>
+<li class="level1"><div class="li"> git shortlog</div>
+</li>
+<li class="level1"><div class="li"> git shortlog -sne</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/code/jquery$ git log --oneline | wc -l
+5113
+mani@mani-ubu12x:~/Downloads/code/jquery$ git log --oneline --graph
+* c5fc953 updated Grunt to 0.4.1 (needed for node 0.10.0 compatibility). Closes gh-1202
+* 92b2367 No ticket: Move property descriptor assignment to save a byte. Close gh-1188.
+* e0416f2 Authors update for Michał Gołębiowski. Add .mailmap entry for my old commits too. Closes gh-1201.
+* 79992d7 Edited comments and minor adjustments. Fixes #13553. Closes gh-1195.
+mani@mani-ubu12x:~/Downloads/code/jquery$ git log --format=short
+commit c5fc953d19436cfa706c2477c7bdcdc8b6cdd1e2
+Author: Michał Gołębiowski &lt;m.goleb@gmail.com&gt;
+
+    updated Grunt to 0.4.1 (needed for node 0.10.0 compatibility). Closes gh-1202
+
+commit 92b23673e60569b74ac48304579866c839008e1a
+Author: stonelee &lt;istonelee@gmail.com&gt;
+
+    No ticket: Move property descriptor assignment to save a byte. Close gh-1188.
+mani@mani-ubu12x:~/Downloads/code/jquery$ git shortlog
+Akintayo Akinwunmi (1):
+      Moved attrFN to deprecated. Close gh-977.
+
+Alex Sexton (5):
+      Forces lower case comparison of protocol and host when determining whether the request is remote or local. Fixes #6908
+      Moved jQuery.props to attributes since it was only used in support. Fixes #6897 - suggestion by dmethvin
+      Changed the expando string to use a random number instead of the time, so collisions become less likely. Also added jQuery version to instantly different
+      Moved jQuery global leak to end of file so accidental gEBCN overrides in prototype don&#039;t get caught up in confusion. Fixed tests to reference jQuery vari
+      A temporary workaround for #8018 that avoids any chance of compatibility-breaking changes until a proper fix can be landed in 1.6.
+mani@mani-ubu12x:~/Downloads/code/jquery$ git shortlog -sne
+  1209  John Resig &lt;jeresig@gmail.com&gt;
+   503  jeresig &lt;jeresig@gmail.com&gt;
+   462  Dave Methvin &lt;dave.methvin@gmail.com&gt;
+   393  Timmy Willison &lt;timmywillisn@gmail.com&gt;
+   317  Jörn Zaefferer &lt;joern.zaefferer@gmail.com&gt;
+   278  jaubourg &lt;j@ubourg.net&gt;
+</pre>
+
+</div>
+<!-- EDIT13 SECTION "Repo Statistics" [22946-25209] -->
+<h2 class="sectionedit14" id="viewing_commits">Viewing Commits</h2>
+<div class="level2">
+
+<p>
+<strong>Statement
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git show HEAD (last commit made)</div>
+</li>
+<li class="level1"><div class="li"> git show HEAD~1</div>
+</li>
+<li class="level1"><div class="li"> git show HEAD~10</div>
+</li>
+<li class="level1"><div class="li"> git remote (if origin - default name of where the source came from)</div>
+</li>
+<li class="level1"><div class="li"> git remote -v (<em>verbose option</em>)</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/code/jquery$ git show HEAD
+commit c5fc953d19436cfa706c2477c7bdcdc8b6cdd1e2
+Author: Michał Gołębiowski &lt;m.goleb@gmail.com&gt;
+Date:   Mon Mar 18 12:51:04 2013 -0400
+
+    updated Grunt to 0.4.1 (needed for node 0.10.0 compatibility). Closes gh-1202
+
+diff --git a/package.json b/package.json
+index f07d353..115801a 100644
+--- a/package.json
++++ b/package.json
+@@ -24,12 +24,12 @@
+        &quot;dependencies&quot;: {},
+        &quot;devDependencies&quot;: {
+                &quot;grunt-compare-size&quot;: &quot;~0.4.0&quot;,
+-               &quot;grunt-git-authors&quot;: &quot;1.0.0&quot;,
++               &quot;grunt-git-authors&quot;: &quot;1.2.0&quot;,
+                &quot;grunt-update-submodules&quot;: &quot;0.2.0&quot;,
+-               &quot;grunt-contrib-watch&quot;: &quot;0.1.4&quot;,
++               &quot;grunt-contrib-watch&quot;: &quot;0.3.1&quot;,
+                &quot;grunt-contrib-jshint&quot;: &quot;0.1.1rc6&quot;,
+-               &quot;grunt-contrib-uglify&quot;: &quot;0.1.1rc6&quot;,
+-               &quot;grunt&quot;: &quot;0.4.0rc5&quot;,
++               &quot;grunt-contrib-uglify&quot;: &quot;0.1.2&quot;,
++               &quot;grunt&quot;: &quot;0.4.1&quot;,
+                &quot;testswarm&quot;: &quot;0.2.2&quot;
+        },
+        &quot;keywords&quot;: []
+mani@mani-ubu12x:~/Downloads/code/jquery$ git show HEAD~1
+commit 92b23673e60569b74ac48304579866c839008e1a
+Author: stonelee &lt;istonelee@gmail.com&gt;
+Date:   Fri Mar 1 12:33:37 2013 +0800
+
+    No ticket: Move property descriptor assignment to save a byte. Close gh-1188.
+
+diff --git a/src/data.js b/src/data.js
+index dfd8555..585d78b 100644
+--- a/src/data.js
++++ b/src/data.js
+@@ -29,10 +29,10 @@ Data.prototype = {
+                // If not, create one
+                if ( !unlock ) {
+                        unlock = Data.uid++;
+-                       descriptor[ this.expando ] = { value: unlock };
+ 
+                        // Secure it in a non-enumerable, non-writable property
+                        try {
++                               descriptor[ this.expando ] = { value: unlock };
+                                Object.defineProperties( owner, descriptor );
+ 
+                        // Support: Android&lt;4
+mani@mani-ubu12x:~/Downloads/code/jquery$ git show HEAD~10
+commit 91824bd2923b99b03fd1a9c4447b46fd7cc96615
+Author: Rick Waldron &lt;waldron.rick@gmail.com&gt;
+
+mani@mani-ubu12x:~/Downloads/code/jquery$ git remote
+origin
+mani@mani-ubu12x:~/Downloads/code/jquery$ git remote -v
+origin	https://github.com/jquery/jquery.git (fetch)
+origin	https://github.com/jquery/jquery.git (push)
+
+</pre>
+
+</div>
+<!-- EDIT14 SECTION "Viewing Commits" [25210-27796] -->
+<h2 class="sectionedit15" id="git_protocols">Git Protocols</h2>
+<div class="level2">
+<pre class="code">HTTPS
+
+http(s) uses port 80/443 
+https://github.com/jquery/jquery.git
+(Read-write, password for authorization, Firewall friendly)
+
+GIT
+
+git uses port __9418__
+git://github.com/jquery/jquery.git
+(Read-only, Anonymous only, not firewall friendly)
+
+
+SSH
+
+ssh uses port __22__
+git@github.com:jquery/jquery.git
+(Read-write, SSH keys for authorization)</pre>
+
+<p>
+<strong>
+cat .git/config</strong>
+</p>
+
+<p>
+Core
+</p>
+<pre class="code">repositoryformatversion = 0
+filemode = true
+bare = false
+logallrefupdates = true</pre>
+
+<p>
+Remote “origin”
+</p>
+<pre class="code">fetch = +refs/heads/*:refs/remotes/origin/*
+url = https://github.com/jquery/jquery.git</pre>
+
+<p>
+Branch “master”
+</p>
+<pre class="code">remote = origin
+merge = refs/heads/master</pre>
+<pre class="code">mani@mani-ubu12x:~/Downloads/code/jquery$ ls -a
+.   AUTHORS.txt  CONTRIBUTING.md  .git            .gitignore   Gruntfile.js  .mailmap         package.json  speed  test
+..  build        .editorconfig    .gitattributes  .gitmodules  .jshintrc     MIT-LICENSE.txt  README.md     src
+mani@mani-ubu12x:~/Downloads/code/jquery$ cat .git/config
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote &quot;origin&quot;]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = https://github.com/jquery/jquery.git
+[branch &quot;master&quot;]
+	remote = origin
+	merge = refs/heads/master
+</pre>
+
+</div>
+<!-- EDIT15 SECTION "Git Protocols" [27797-29081] -->
+<h2 class="sectionedit16" id="viewing_branches_and_tags">Viewing Branches and Tags</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+
+<p>
+git branch     (Show Local branch)<br/>
+
+git branch - r (Show Remote branch)<br/>
+
+git tag        (Show tag)<br/>
+
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/code/jquery$ git branch
+* master
+mani@mani-ubu12x:~/Downloads/code/jquery$ git branch -r
+  origin/#13388
+  origin/1.8-stable
+  origin/1.9-stable
+  origin/13471
+  origin/HEAD -&gt; origin/master
+  origin/ajax-script-2.0
+  origin/ajax-unit
+  origin/master
+mani@mani-ubu12x:~/Downloads/code/jquery$ git tag
+1.0
+1.0.1
+1.0.2
+1.0.3
+</pre>
+
+</div>
+<!-- EDIT16 SECTION "Viewing Branches and Tags" [29082-29608] -->
+<h2 class="sectionedit17" id="fetching_from_remote">Fetching from Remote</h2>
+<div class="level2">
+
+<p>
+<strong>Statement</strong>
+</p>
+
+<p>
+git remote -v <br/>
+
+git remote add origin <a href="https://github.com/vermuz/pdfimagefieldcapture.git" class="urlextern" title="https://github.com/vermuz/pdfimagefieldcapture.git"  rel="nofollow">https://github.com/vermuz/pdfimagefieldcapture.git</a> <br/>
+
+git fetch <br/>
+
+git fetch origin (Specific origin - specified by the user) <br/>
+
+git log origin/master <br/>
+
+git merge origin/master (merge remote master with my local master) <br/>
+
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git remote -v
+mani@mani-ubu12x:~/Downloads/gitplay$ git remote add origin https://github.com/vermuz/pdfimagefieldcapture.git
+mani@mani-ubu12x:~/Downloads/gitplay$ git remote -v
+origin	https://github.com/vermuz/pdfimagefieldcapture.git (fetch)
+origin	https://github.com/vermuz/pdfimagefieldcapture.git (push)
+mani@mani-ubu12x:~/Downloads/gitplay$ git fetch
+mani@mani-ubu12x:~/Downloads/gitplay$ git fetch origin
+mani@mani-ubu12x:~/Downloads/gitplay$ git log
+mani@mani-ubu12x:~/Downloads/gitplay$ git log origin/master
+commit 77676e28270b92e8a29fa493e7077524ffbc293d
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Mon Mar 18 16:43:49 2013 -0300
+
+    Added gitignore
+    
+mani@mani-ubu12x:~/Downloads/gitplay$ git merge origin/master
+Already up-to-date.
+</pre>
+
+<p>
+<strong>Simple Git Fast Forward</strong>
+</p>
+
+<p>
+<em>Move head pointer to the new location
+</em>
+</p>
+<pre class="code">Your branch is behind &#039;origin/master&#039; by 1 commit, and can be fast-forwarded
+git pull
+git pull origin master
+</pre>
+
+<p>
+You’ll notice the phrase “Fast forward” in that merge. Because the commit pointed to by the branch you merged in was directly upstream of the commit you’re on, Git moves the pointer forward. To phrase that another way, when you try to merge one commit with a commit that can be reached by following the first commit’s history, Git simplifies things by moving the pointer forward because there is no divergent work to merge together — this is called a “fast forward”.
+</p>
+
+</div>
+<!-- EDIT17 SECTION "Fetching from Remote" [29609-31411] -->
+<h2 class="sectionedit18" id="pulling_from_remote">Pulling from Remote</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+
+<p>
+git branch -r (Show remote branch)
+</p>
+
+<p>
+<strong>Git Pull</strong>
+</p>
+<pre class="code">git fetch; git merge origin/master;</pre>
+
+<p>
+<em><em class="u">So what is Pull?</em></em> <br/>
+
+</p>
+<ol>
+<li class="level1"><div class="li"> Fetch while checking differences and updates</div>
+</li>
+<li class="level1"><div class="li"> Merge the remote master with my local master</div>
+</li>
+</ol>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git branch -r
+  origin/master
+</pre>
+
+<p>
+If we haven`t set up a correspondence between my master branch and the origin(remote) master branch then git will be confused. Git will not know what to do. So, we have to set up an upstream tracking branch.
+</p>
+
+<p>
+<em class="u"><em>Upstream Tracking Branch</em></em>
+</p>
+
+<p>
+What branch remotely does my local branch mirror?
+</p>
+<pre class="code">*********Establish correspondence ***************
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git branch --set-upstream master origin/master
+Branch master set up to track remote branch master from origin.
+
+Pull any new changes down
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git pull
+Already up-to-date.</pre>
+
+<p>
+If we want to avoid establishing upstream
+</p>
+<pre class="code">git pull origin master (Specify remote name and branch that I want to pull in)</pre>
+
+<p>
+<em class="u"><strong>Differences between git pull origin master and git pull origin/master</strong>
+</em>
+</p>
+
+<p>
+<strong>git pull origin master</strong> will pull changes from the origin remote, master branch and merge them to the local checked-out branch.
+</p>
+
+<p>
+<strong>
+git pull origin/master</strong> will pull changes from the locally stored branch origin/master and merge that to the local checked-out branch. The origin/master branch is essentially a “cached copy” of what was last pulled from origin, which is why it&#039;s called a remote branch in git parlance. This might be somewhat confusing.
+</p>
+
+<p>
+You can see what branches are available with git branch and git branch -r to see the “remote branches”.
+</p>
+
+</div>
+<!-- EDIT18 SECTION "Pulling from Remote" [31412-33160] -->
+<h2 class="sectionedit19" id="pushing_to_a_remote">Pushing to a Remote</h2>
+<div class="level2">
+
+<p>
+git commit -am “Sharing is easy” - Add and commit at the same time.
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ sudo sublime README.txt 
+[sudo] password for mani: 
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+
+
+ADD and COMMIT
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -am &quot;Sharing is easy&quot;
+[master efdad19] Sharing is easy
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch master
+# Your branch is ahead of &#039;origin/master&#039; by 1 commit.
+#
+nothing to commit (working directory clean)
+
+PUSH
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git push 
+Username for &#039;https://github.com&#039;: vermuz
+Password for &#039;https://vermuz@github.com&#039;: 
+Counting objects: 5, done.
+Delta compression using up to 2 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 349 bytes, done.
+Total 3 (delta 1), reused 0 (delta 0)
+To https://github.com/vermuz/pdfimagefieldcapture.git
+   77676e2..efdad19  master -&gt; master
+
+</pre>
+
+<p>
+<strong>SICK OF PUSHING PASSWORDS?</strong>
+</p>
+<ol>
+<li class="level1"><div class="li"> git remote rm origin (Remove remote origin)</div>
+</li>
+<li class="level1"><div class="li"> git remote -v (Check Remotes)</div>
+</li>
+<li class="level1"><div class="li"> git remote add origin git@github.com:vermuz/pdfimagefieldcapture.git (Add SSH connection)</div>
+</li>
+<li class="level1"><div class="li"> git push (Push)</div>
+</li>
+</ol>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git remote rm origin
+mani@mani-ubu12x:~/Downloads/gitplay$ git remote -v
+mani@mani-ubu12x:~/Downloads/gitplay$ git remote add origin git@github.com:vermuz/pdfimagefieldcapture.git
+mani@mani-ubu12x:~/Downloads/gitplay$ git push
+Everything up-to-date</pre>
+
+</div>
+<!-- EDIT19 SECTION "Pushing to a Remote" [33161-35000] -->
+<h2 class="sectionedit20" id="creating_and_verifying_tags">Creating and Verifying Tags</h2>
+<div class="level2">
+
+<p>
+<strong>Statements</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git tag (show tags)</div>
+</li>
+<li class="level1"><div class="li"> git tag -l &#039;v1.4.2.*&#039; (Search tags)</div>
+</li>
+<li class="level1"><div class="li"> git tag -a v1.4 -m &#039;my version 1.4&#039; (Create an annotated tag)</div>
+</li>
+<li class="level1"><div class="li"> git tag -s v1.5 -m &#039;my signed 1.5 tag&#039; (Signed tag)</div>
+</li>
+<li class="level1"><div class="li"> git tag -v v1.4.2.1 (verify tag)</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT20 SECTION "Creating and Verifying Tags" [35001-35281] -->
+<h2 class="sectionedit21" id="pushing_tags_to_a_remote">Pushing Tags to a Remote</h2>
+<div class="level2">
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git push --tags
+Counting objects: 1, done.
+Writing objects: 100% (1/1), 180 bytes, done.
+Total 1 (delta 0), reused 0 (delta 0)
+To git@github.com:vermuz/pdfimagefieldcapture.git
+ * [new tag]         v1.0 -&gt; v1.0
+ * [new tag]         v1.0_with_message -&gt; v1.0_with_message
+</pre>
+
+</div>
+<!-- EDIT21 SECTION "Pushing Tags to a Remote" [35282-35645] -->
+<h2 class="sectionedit22" id="branching_merging_and_rebasing">Branching, Merging and Rebasing</h2>
+<div class="level2">
+
+<p>
+<strong>Statements
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git log –graph –oneline</div>
+</li>
+<li class="level1"><div class="li"> git log –graph –oneline –all –decorate</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git log --graph --oneline
+* efdad19 Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git log --graph --oneline --all --decorate
+* efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme</pre>
+
+<p>
+<strong>Create alias for a long command</strong>
+</p>
+
+<p>
+git config –global alias.lga “GIT Command”
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git config --global alias.lga &quot;log --graph --oneline --all --decorate&quot;
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+
+mani@mani-ubu12x:~/Downloads/gitplay$ cat ~/.gitconfig
+[user]
+	name = Chaudhry Usman Ali
+	email = maniali@gmail.com
+[core]
+	editor = sublime
+	autocrlf = input
+[help]
+	autocorrect = 1
+[colour]
+	ui = auto
+[alias]
+	lga = log --graph --oneline --all --decorate
+</pre>
+
+</div>
+<!-- EDIT22 SECTION "Branching, Merging and Rebasing" [35646-37341] -->
+<h2 class="sectionedit23" id="creating_local_branches">Creating local branches</h2>
+<div class="level2">
+
+<p>
+<em class="u">Branches are simply labels on SHA1 hashes of individual commits.</em>
+</p>
+
+<p>
+<strong>Statement
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> git branch feature1</div>
+</li>
+<li class="level1"><div class="li"> git checkout feature1</div>
+</li>
+<li class="level1"><div class="li"> git lga</div>
+</li>
+</ul>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git branch feature1
+mani@mani-ubu12x:~/Downloads/gitplay$ git checkout feature1
+Switched to branch &#039;feature1&#039;
+*********************************************************
+master and feature1 =&gt; are both pointing towards efdad19*
+*********************************************************
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master, feature1) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+
+<p>
+So, we can make some changes here and see the result.
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Feature1&quot; &gt;&gt; README.txt
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch feature1
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -am &quot;Added feature1&quot;
+[feature1 8748d29] Added feature1
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* 8748d29 (HEAD, feature1) Added feature1
+* efdad19 (tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+
+<p>
+<strong>Difference between branches and tags
+</strong>
+</p>
+
+<p>
+<em>Branch</em> (will follow commits, new commits will result in branches moving along)<br/>
+
+<em>Tags</em> (will stay with the commit where they were created) alias for the SHA1 commit
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout master
+Switched to branch &#039;master&#039;
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* 8748d29 (feature1) Added feature1
+* efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+
+<p>
+<strong>Create a new branch
+</strong>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git branch fix1 f58350e
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git checkout fix1
+Switched to branch &#039;fix1&#039;
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;fixing bug1234&quot; &gt;&gt; README.txt
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -am &quot;Fixed bug 1234&quot;
+[fix1 2ef3a3f] Fixed bug 1234
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* 2ef3a3f (HEAD, fix1) Fixed bug 1234
+| * 8748d29 (feature1) Added feature1
+| * efdad19 (tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+| * 77676e2 Added gitignore
+|/  
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+
+</div>
+<!-- EDIT23 SECTION "Creating local branches" [37342-40836] -->
+<h2 class="sectionedit24" id="renaming_and_deleting_branches">Renaming and deleting branches</h2>
+<div class="level2">
+
+<p>
+To rename branch in Git, we use <em class="u">move</em> option.
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout master
+Switched to branch &#039;master&#039;</pre>
+
+<p>
+<em>We want to call fix1 as bug1234</em>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git branch -m fix1 bug1234
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* 2ef3a3f (bug1234) Fixed bug 1234
+| * 8748d29 (feature1) Added feature1
+| * efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+| * 77676e2 Added gitignore
+|/  
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout master
+Switched to branch &#039;master&#039;
+mani@mani-ubu12x:~/Downloads/gitplay$ git branch -m fix1 bug1234
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* 2ef3a3f (bug1234) Fixed bug 1234
+| * 8748d29 (feature1) Added feature1
+| * efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+| * 77676e2 Added gitignore
+|/  
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+
+<p>
+<em>Let us try to delete that branch.
+</em>
+</p>
+
+<p>
+Option D forces deletion.
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git branch -d bug1234
+error: The branch &#039;bug1234&#039; is not fully merged.
+If you are sure you want to delete it, run &#039;git branch -D bug1234&#039;.
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git branch -D bug1234
+Deleted branch bug1234 (was 2ef3a3f).
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* 8748d29 (feature1) Added feature1
+* efdad19 (HEAD, tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme</pre>
+
+<p>
+<em>I can checkout another branch.
+</em><br/>
+
+<em>b option - create a branch.</em>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout -b feature2
+Switched to a new branch &#039;feature2&#039;
+
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Feature2&quot; &gt;&gt; &quot;Added feature2&quot;
+
+
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Feature2&quot; &gt;&gt; README.txt
+
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -am &quot;Added feature2&quot;
+[feature2 cdc130d] Added feature2
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+////////////////////////////////////////////////////////////////////////
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* cdc130d (HEAD, feature2) Added feature2
+| * 8748d29 (feature1) Added feature1
+|/  
+* efdad19 (tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* 77676e2 Added gitignore
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+</pre>
+
+</div>
+<!-- EDIT24 SECTION "Renaming and deleting branches" [40837-43966] -->
+<h2 class="sectionedit25" id="recover_deleted_commits">Recover deleted commits</h2>
+<div class="level2">
+
+<p>
+<em>Get a git log of head references.</em>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git reflog
+cdc130d HEAD@{0}: commit: Added feature2
+efdad19 HEAD@{1}: checkout: moving from master to feature2
+efdad19 HEAD@{2}: checkout: moving from fix1 to master
+2ef3a3f HEAD@{3}: commit: Fixed bug 1234
+f58350e HEAD@{4}: checkout: moving from master to fix1
+efdad19 HEAD@{5}: checkout: moving from feature1 to master
+8748d29 HEAD@{6}: commit: Added feature1
+efdad19 HEAD@{7}: checkout: moving from master to feature1
+efdad19 HEAD@{8}: commit: Sharing is easy
+77676e2 HEAD@{9}: commit: Added gitignore
+f58350e HEAD@{10}: reset: moving to HEAD~1
+38131a6 HEAD@{11}: commit: Reorganized
+f58350e HEAD@{12}: reset: moving to HEAD~1
+ec7b206 HEAD@{13}: commit: Reorganized the feature
+f58350e HEAD@{14}: commit: Fixed typo in README.txt and added additional information about other features
+272b13a HEAD@{15}: commit: Fixed bug 1234
+82791bb HEAD@{16}: commit: Added cool new feature
+ec750d2 HEAD@{17}: commit: Updated README.txt
+957304a HEAD@{18}: commit (initial): Added readme
+</pre>
+
+<p>
+<em>Git Branch to a specific commit
+</em>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git branch bug1234 2ef3a3f
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git lga
+* cdc130d (HEAD, feature2) Added feature2
+| * 2ef3a3f (bug1234) Fixed bug 1234
+| | * 8748d29 (feature1) Added feature1
+| |/  
+|/|   
+* | efdad19 (tag: v1.0_with_message, tag: v1.0, origin/master, master) Sharing is easy
+* | 77676e2 Added gitignore
+|/  
+* f58350e Fixed typo in README.txt and added additional information about other features
+* 272b13a Fixed bug 1234
+* 82791bb Added cool new feature
+* ec750d2 Updated README.txt
+* 957304a Added readme
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git checkout bug1234
+Switched to branch &#039;bug1234&#039;
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git show HEAD
+commit 2ef3a3fb8fad0176459717a7cb114bc052790b55
+Author: Chaudhry Usman Ali &lt;maniali@gmail.com&gt;
+Date:   Wed Mar 20 16:05:00 2013 -0300
+
+    Fixed bug 1234
+
+diff --git a/README.txt b/README.txt
+index c6e0786..56bfd9d 100644
+--- a/README.txt
++++ b/README.txt
+@@ -1,3 +1,3 @@
+ Hello, Git
+ Hello
+-Updating README with new information
+\ No newline at end of file
++Updating README with new informationfixing bug1234
+
+</pre>
+
+</div>
+<!-- EDIT25 SECTION "Recover deleted commits" [43967-46242] -->
+<h2 class="sectionedit26" id="stashing_changes">Stashing Changes</h2>
+<div class="level2">
+
+<p>
+Often, when you’ve been working on part of your project, things are in a messy state and you want to switch branches for a bit to work on something else. The problem is, you don’t want to do a commit of half-done work just so you can get back to this point later. The answer to this issue is the git stash command.
+</p>
+
+<p>
+Stashing takes the dirty state of your working directory — that is, your modified tracked files and staged changes — and saves it on a stack of unfinished changes that you can reapply at any time.
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout feature2
+Switched to branch &#039;feature2&#039;
+
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Feature2 changes&quot; &gt;&gt; README.txt
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git status
+# On branch feature2
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	Added feature2
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)</pre>
+
+<p>
+<em>These changes are not ready to be checked into feature2.</em>
+<em>I don`t want to lose them.</em><br/>
+
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git stash 
+Saved working directory and index state WIP on feature2: cdc130d Added feature2
+HEAD is now at cdc130d Added feature2</pre>
+
+<p>
+<em>Pending changes to the working copy have been rolled back.</em>
+</p>
+
+<p>
+ReadMe file does not contain the change, <em>echo “Feature2 changes”</em>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ cat README.txt
+Hello, Git
+Hello
+Updating README with new information
+Sharing remotely is fun and easyFeature2
+</pre>
+
+<p>
+<em>Those changes are in my git stash, a holding area for pending changes
+</em>
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git stash list
+stash@{0}: WIP on feature2: cdc130d Added feature2
+</pre>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout bug1234
+Switched to branch &#039;bug1234&#039;
+
+mani@mani-ubu12x:~/Downloads/gitplay$ echo &quot;Another fix to bug1234&quot; &gt;&gt; README.txt
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git commit -am &quot;Really fixing bug1234&quot;
+[bug1234 f2e8d5a] Really fixing bug1234
+ 1 file changed, 1 insertion(+)</pre>
+
+<p>
+Checkout feature2 and pull changes back
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git checkout feature2
+Switched to branch &#039;feature2&#039;
+
+mani@mani-ubu12x:~/Downloads/gitplay$ git stash apply
+# On branch feature2
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	Added feature2
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+
+mani@mani-ubu12x:~/Downloads/gitplay$ cat README.txt
+Hello, Git
+Hello
+Updating README with new information
+Sharing remotely is fun and easyFeature2
+Feature2 changes
+</pre>
+
+<p>
+<em>You see your changes reapplied.</em>
+</p>
+
+<p>
+Git stash list,
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git stash list
+stash@{0}: WIP on feature2: cdc130d Added feature2
+</pre>
+
+<p>
+To toss out changes
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git reset --hard HEAD
+HEAD is now at cdc130d Added feature2
+</pre>
+
+<p>
+We don`t have Feature2  changes now, 
+</p>
+<pre class="code">HEAD is now at cdc130d Added feature2
+mani@mani-ubu12x:~/Downloads/gitplay$ cat README.txt
+Hello, Git
+Hello
+Updating README with new information
+Sharing remotely is fun and easyFeature2
+</pre>
+
+<p>
+Pop an item from the stash and apply it to current working copy, yep use pop
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git stash pop
+# On branch feature2
+# Changes not staged for commit:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	modified:   README.txt
+#
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	Added feature2
+no changes added to commit (use &quot;git add&quot; and/or &quot;git commit -a&quot;)
+Dropped refs/stash@{0} (918816032acef183f4dd9e18e56abf2b740cc86b)
+</pre>
+
+<p>
+However, the above action despite applying the change from the stash list will remove it from the stash list.
+</p>
+<pre class="code">mani@mani-ubu12x:~/Downloads/gitplay$ git stash list
+</pre>
+
+</div>
+<!-- EDIT26 SECTION "Stashing Changes" [46243-50639] -->
+<h2 class="sectionedit27" id="remotes">Remotes</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> Ability to collaborate with others.</div>
+</li>
+<li class="level1"><div class="li"> Local changes.</div>
+</li>
+<li class="level1"><div class="li"> Pushed to remote server so others can see them.</div>
+</li>
+<li class="level1"><div class="li"> People can download those changes on their machines.</div>
+</li>
+<li class="level1"><div class="li"> We can download changes made by them on our machines.</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT27 SECTION "Remotes" [50640-] -->

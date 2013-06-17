@@ -1,0 +1,238 @@
+
+<h1 class="sectionedit1" id="creating_submitting_and_validating_a_simple_form">Creating, submitting and validating a simple form</h1>
+<div class="level1">
+
+<p>
+<a href="/manidocs/manidocs/lib/exe/detail.php?id=createval&amp;media=sdsd.png" class="media" title="sdsd.png"><img src="/manidocs/manidocs/lib/exe/fetch.php?media=sdsd.png" class="mediacenter" alt="" /></a>
+</p>
+
+</div>
+<!-- EDIT1 SECTION "Creating, submitting and validating a simple form" [1-84] -->
+<h2 class="sectionedit2" id="form_funcakeinc">form_fun.cake.inc</h2>
+<div class="level2">
+<pre class="code php"><span class="kw2">&lt;?php</span>
+&nbsp;
+<span class="co1">//drupal_get_form gateway to Drupal Form API</span>
+<span class="co1">//form_fun_cake - Unique ID of our form</span>
+<span class="kw2">function</span> form_fun_cake_page<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="kw1">return</span> drupal_get_form<span class="br0">&#40;</span><span class="st_h">'form_fun_cake'</span><span class="br0">&#41;</span><span class="sy0">;</span> 
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="co1">// Function to build the form API array</span>
+<span class="co1">// Form state variable is passed as reference &amp;$form_state</span>
+<span class="co1">// so that I can make changes to it while building the form</span>
+<span class="kw2">function</span> form_fun_cake<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form_state</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="re0">$form</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+<span class="co1">// Anything that doesn`t start with a pound or hash</span>
+<span class="co1">// is a new element.</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'choice'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'select'</span><span class="sy0">,</span> <span class="co1">// Adding properties</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Cake or pie?'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'#description'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Would you like cake or pie?'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'#options'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+      <span class="st_h">'cake'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Cake please'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+      <span class="st_h">'pie'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Pie I guess'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'#default_value'</span> <span class="sy0">=&gt;</span> <span class="st_h">'cake'</span><span class="sy0">,</span>
+    <span class="st_h">'#required'</span> <span class="sy0">=&gt;</span> <span class="kw4">TRUE</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="co1">// Submit button</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'buttons'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'submit'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'submit'</span><span class="sy0">,</span>
+    <span class="st_h">'#value'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Submit'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'buttons'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'unsure'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'submit'</span><span class="sy0">,</span>
+    <span class="st_h">'#value'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Equivocate'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'#submit'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'form_fun_cake_unsure'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'#validate'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="kw1">return</span> <span class="re0">$form</span><span class="sy0">;</span>
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="co1">// &amp;$form is the form we created up there</span>
+<span class="co1">// &amp;$form_state is the values submitted by the form</span>
+<span class="co1">// it keeps track of changes in values and form state</span>
+<span class="co1">// https://api.drupal.org/api/drupal/includes%21form.inc/function/form_set_error/7</span>
+&nbsp;
+<span class="kw2">function</span> form_fun_cake_validate<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form</span><span class="sy0">,</span> <span class="sy0">&amp;</span><span class="re0">$form_state</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="kw1">if</span> <span class="br0">&#40;</span><span class="re0">$form_state</span><span class="br0">&#91;</span><span class="st_h">'values'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'choice'</span><span class="br0">&#93;</span> <span class="sy0">==</span> <span class="st_h">'cake'</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+    <span class="co1">// dsm($form_state) - Check form state </span>
+    form_set_error<span class="br0">&#40;</span><span class="st_h">'choice'</span><span class="sy0">,</span> t<span class="br0">&#40;</span><span class="st_h">'We are out of cake.'</span><span class="br0">&#41;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="br0">&#125;</span>
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw2">function</span> form_fun_cake_submit<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form</span><span class="sy0">,</span> <span class="sy0">&amp;</span><span class="re0">$form_state</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  dsm<span class="br0">&#40;</span><span class="re0">$form_state</span><span class="br0">&#91;</span><span class="st_h">'values'</span><span class="br0">&#93;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$form_state</span><span class="br0">&#91;</span><span class="st_h">'redirect'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="st_h">''</span><span class="sy0">;</span>
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="co1">// Warning message - drupal set message</span>
+<span class="kw2">function</span> form_fun_cake_unsure<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form</span><span class="sy0">,</span> <span class="sy0">&amp;</span><span class="re0">$form_state</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  drupal_set_message<span class="br0">&#40;</span>t<span class="br0">&#40;</span><span class="st_h">'Make up your mind.'</span><span class="br0">&#41;</span><span class="sy0">,</span> <span class="st_h">'warning'</span><span class="br0">&#41;</span><span class="sy0">;</span>
+<span class="br0">&#125;</span></pre>
+
+</div>
+<!-- EDIT2 SECTION "form_fun.cake.inc" [85-1956] -->
+<h2 class="sectionedit3" id="reference">Reference</h2>
+<div class="level2">
+
+<p>
+<a href="https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7" class="urlextern" title="https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7"  rel="nofollow">https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7</a>
+<a href="https://api.drupal.org/api/drupal/includes!bootstrap.inc/function/drupal_set_message/7" class="urlextern" title="https://api.drupal.org/api/drupal/includes!bootstrap.inc/function/drupal_set_message/7"  rel="nofollow">https://api.drupal.org/api/drupal/includes!bootstrap.inc/function/drupal_set_message/7</a>
+<a href="https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7#select" class="urlextern" title="https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7#select"  rel="nofollow">https://api.drupal.org/api/drupal/developer!topics!forms_api_reference.html/7#select</a>
+</p>
+
+</div>
+<!-- EDIT3 SECTION "Reference" [1957-2228] -->
+<h2 class="sectionedit4" id="form_funinfo">form_fun.info</h2>
+<div class="level2">
+<pre class="code php">name <span class="sy0">=</span> FormAPI Fun
+description <span class="sy0">=</span> Crazy<span class="sy0">,</span> crazy form tricks<span class="sy0">.</span>
+core <span class="sy0">=</span> <span class="nu0">7</span><span class="sy0">.</span>x
+package <span class="sy0">=</span> Lullabot Examples
+dependencies<span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> devel</pre>
+
+</div>
+<!-- EDIT4 SECTION "form_fun.info" [2229-2394] -->
+<h2 class="sectionedit5" id="form_funmodule">form_fun.module</h2>
+<div class="level2">
+<pre class="code php"><span class="kw2">&lt;?php</span>
+&nbsp;
+<span class="kw2">function</span> form_fun_menu<span class="br0">&#40;</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="re0">$items</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$items</span><span class="br0">&#91;</span><span class="st_h">'form_fun/cake'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'title'</span> <span class="sy0">=&gt;</span> <span class="st_h">'Cake or Pie?'</span><span class="sy0">,</span>
+    <span class="st_h">'page callback'</span> <span class="sy0">=&gt;</span> <span class="st_h">'form_fun_cake_page'</span><span class="sy0">,</span>
+    <span class="st_h">'access arguments'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'access content'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'file'</span> <span class="sy0">=&gt;</span> <span class="st_h">'form_fun.cake.inc'</span><span class="sy0">,</span>
+    <span class="st_h">'weight'</span> <span class="sy0">=&gt;</span> <span class="nu0">1</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$items</span><span class="br0">&#91;</span><span class="st_h">'form_fun/tree'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'title'</span> <span class="sy0">=&gt;</span> <span class="st0">&quot;I'm lost!&quot;</span><span class="sy0">,</span>
+    <span class="st_h">'page callback'</span> <span class="sy0">=&gt;</span> <span class="st_h">'drupal_get_form'</span><span class="sy0">,</span>
+    <span class="st_h">'page arguments'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'form_fun_tree'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'access arguments'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'access content'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'file'</span> <span class="sy0">=&gt;</span> <span class="st_h">'form_fun.tree.inc'</span><span class="sy0">,</span>
+    <span class="st_h">'weight'</span> <span class="sy0">=&gt;</span> <span class="nu0">3</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$items</span><span class="br0">&#91;</span><span class="st_h">'form_fun/states'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'title'</span> <span class="sy0">=&gt;</span> <span class="st0">&quot;Partners!&quot;</span><span class="sy0">,</span>
+    <span class="st_h">'page callback'</span> <span class="sy0">=&gt;</span> <span class="st_h">'drupal_get_form'</span><span class="sy0">,</span>
+    <span class="st_h">'page arguments'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'form_fun_states_form'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'access arguments'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'access content'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'file'</span> <span class="sy0">=&gt;</span> <span class="st_h">'form_fun.states.inc'</span><span class="sy0">,</span>
+    <span class="st_h">'weight'</span> <span class="sy0">=&gt;</span> <span class="nu0">4</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="kw1">return</span> <span class="re0">$items</span><span class="sy0">;</span>
+<span class="br0">&#125;</span></pre>
+
+</div>
+<!-- EDIT5 SECTION "form_fun.module" [2395-3275] -->
+<h2 class="sectionedit6" id="form_funstatesinc">form_fun.states.inc</h2>
+<div class="level2">
+<pre class="code php"><span class="kw2">&lt;?php</span>
+&nbsp;
+<span class="kw2">function</span> form_fun_states_form<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="re0">$form</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'name'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'textfield'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'My name'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="co1">// Demonstrate the use of the new #states FAPI property. When a user clicks</span>
+  <span class="co1">// the status checkbox display an additional set of fields.</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'status'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'checkbox'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'I have a partner in crime'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="co1">// The 'Container' element type is handy for controlling multiple elements'</span>
+  <span class="co1">// states at once.</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'partner'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'container'</span><span class="sy0">,</span>
+    <span class="st_h">'#states'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+      <span class="st_h">'visible'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+        <span class="st_h">':input[name=&quot;status&quot;]'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="st_h">'checked'</span> <span class="sy0">=&gt;</span> <span class="kw4">TRUE</span><span class="br0">&#41;</span><span class="sy0">,</span>
+      <span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'partner'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'name'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'textfield'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'My partner\'s name'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'partner'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'modus_operandi'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'select'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'My partner\'s M.O.'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="st_h">'#options'</span> <span class="sy0">=&gt;</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+      <span class="nu0">1</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Lock picking'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+      <span class="nu0">2</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Barbed repartee'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+      <span class="nu0">3</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Super-villainy'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+      <span class="nu0">4</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Novelty modules'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+    <span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="kw1">return</span> <span class="re0">$form</span><span class="sy0">;</span>
+<span class="br0">&#125;</span></pre>
+
+</div>
+<!-- EDIT6 SECTION "form_fun.states.inc" [3276-4427] -->
+<h2 class="sectionedit7" id="form_funtreeinc">form_fun.tree.inc</h2>
+<div class="level2">
+<pre class="code php"><span class="kw2">&lt;?php</span>
+&nbsp;
+<span class="kw2">function</span> form_fun_tree<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form_state</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  <span class="re0">$form</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span><span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'#tree'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <span class="kw4">TRUE</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'home'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'fieldset'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Home address'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'home'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'street'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'textfield'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Street Address'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'home'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'city'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'textfield'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'City'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'work'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'fieldset'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Work address'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'work'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'street'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'textfield'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Street Address'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'work'</span><span class="br0">&#93;</span><span class="br0">&#91;</span><span class="st_h">'city'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'textfield'</span><span class="sy0">,</span>
+    <span class="st_h">'#title'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'City'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="re0">$form</span><span class="br0">&#91;</span><span class="st_h">'submit'</span><span class="br0">&#93;</span> <span class="sy0">=</span> <a href="http://www.php.net/array"><span class="kw3">array</span></a><span class="br0">&#40;</span>
+    <span class="st_h">'#type'</span> <span class="sy0">=&gt;</span> <span class="st_h">'submit'</span><span class="sy0">,</span>
+    <span class="st_h">'#value'</span> <span class="sy0">=&gt;</span> t<span class="br0">&#40;</span><span class="st_h">'Submit'</span><span class="br0">&#41;</span><span class="sy0">,</span>
+  <span class="br0">&#41;</span><span class="sy0">;</span>
+&nbsp;
+  <span class="kw1">return</span> <span class="re0">$form</span><span class="sy0">;</span>
+<span class="br0">&#125;</span>
+&nbsp;
+<span class="kw2">function</span> form_fun_tree_submit<span class="br0">&#40;</span><span class="sy0">&amp;</span><span class="re0">$form</span><span class="sy0">,</span> <span class="sy0">&amp;</span><span class="re0">$form_state</span><span class="br0">&#41;</span> <span class="br0">&#123;</span>
+  dsm<span class="br0">&#40;</span><span class="re0">$form_state</span><span class="br0">&#41;</span><span class="sy0">;</span>
+<span class="br0">&#125;</span></pre>
+
+</div>
+<!-- EDIT7 SECTION "form_fun.tree.inc" [4428-] -->

@@ -1,0 +1,463 @@
+
+<h1 class="sectionedit1" id="token_example">Token Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Token Example" [1-29] -->
+<h2 class="sectionedit2" id="token_exampleinfo">token_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Token example
+   2 description = An example module showing how to define and use tokens.
+   3 package = Example modules
+   4 core = 7.x
+   5 dependencies[] = token
+   6 files[] = token_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "token_example.info" [30-285] -->
+<h2 class="sectionedit3" id="token_examplemodule">token_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * An example module showing how to define and use tokens.
+   6  *
+   7  * The Token module provides an API for providing tokens to other modules.
+   8  * Tokens are small bits of text that can be placed into larger documents
+   9  * via simple placeholders, like %site-name or [user].
+  10  */
+  11 
+  12 /**
+  13  * @defgroup token_example Example: Token API
+  14  * @ingroup examples
+  15  * @{
+  16  * Examples using the Token API.
+  17  *
+  18  * The Token module provides an API for providing tokens to other modules.
+  19  * Tokens are small bits of text that can be placed into larger documents
+  20  * via simple placeholders, like %site-name or [user].
+  21  *
+  22  * Drupal 7 documentation on Token can be found here:
+  23  * http://drupal.org/documentation/modules/token
+  24  *
+  25  * A list of existing tokens can be found here:
+  26  * http://drupal.org/node/390482#drupal7tokenslist
+  27  *
+  28  * This example is part of the Examples for Developers Project which you can
+  29  * download and experiment with here: http://drupal.org/project/examples
+  30  */
+  31 
+  32 /**
+  33  * Implements hook_menu().
+  34  */
+  35 function token_example_menu() {
+  36   $items[&#039;examples/token&#039;] = array(
+  37     &#039;title&#039; =&gt; &#039;Token example&#039;,
+  38     &#039;description&#039; =&gt; &#039;Test replacement tokens in real time.&#039;,
+  39     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  40     &#039;page arguments&#039; =&gt; array(&#039;token_example_example_form&#039;),
+  41     &#039;access callback&#039; =&gt; TRUE,
+  42   );
+  43   return $items;
+  44 }
+  45 
+  46 /**
+  47  * Implements hook_entity_info_alter().
+  48  *
+  49  * @todo Remove this when the testbot can properly pick up dependencies
+  50  * for contrib modules.
+  51  */
+  52 function token_example_entity_info_alter(&amp;$info) {
+  53   if (isset($info[&#039;taxonomy_term&#039;])) {
+  54     $info[&#039;taxonomy_term&#039;][&#039;token type&#039;] = &#039;term&#039;;
+  55   }
+  56   if (isset($info[&#039;taxonomy_vocabulary&#039;])) {
+  57     $info[&#039;taxonomy_vocabulary&#039;][&#039;token type&#039;] = &#039;vocabulary&#039;;
+  58   }
+  59 }
+  60 
+  61 /**
+  62  * Form builder; display lists of supported token entities and text to tokenize.
+  63  */
+  64 function token_example_example_form($form, &amp;$form_state) {
+  65   $entities = entity_get_info();
+  66   $token_types = array();
+  67 
+  68   // Scan through the list of entities for supported token entities.
+  69   foreach ($entities as $entity =&gt; $info) {
+  70     $object_callback = &quot;_token_example_get_{$entity}&quot;;
+  71     if (function_exists($object_callback) &amp;&amp; $objects = $object_callback()) {
+  72       $form[$entity] = array(
+  73         &#039;#type&#039; =&gt; &#039;select&#039;,
+  74         &#039;#title&#039; =&gt; $info[&#039;label&#039;],
+  75         &#039;#options&#039; =&gt; array(0 =&gt; t(&#039;Not selected&#039;)) + $objects,
+  76         &#039;#default_value&#039; =&gt; isset($form_state[&#039;storage&#039;][$entity]) ? $form_state[&#039;storage&#039;][$entity] : 0,
+  77         &#039;#access&#039; =&gt; !empty($objects),
+  78       );
+  79 
+  80       // Build a list of supported token types based on the available entites.
+  81       if ($form[$entity][&#039;#access&#039;]) {
+  82         $token_types[$entity] = !empty($info[&#039;token type&#039;]) ? $info[&#039;token type&#039;] : $entity;
+  83       }
+  84     }
+  85   }
+  86 
+  87   $form[&#039;text&#039;] = array(
+  88     &#039;#type&#039; =&gt; &#039;textarea&#039;,
+  89     &#039;#title&#039; =&gt; t(&#039;Enter your text here&#039;),
+  90     &#039;#default_value&#039; =&gt; &#039;Hello [current-user:name]!&#039;
+  91   );
+  92 
+  93   // Display the results of tokenized text.
+  94   if (!empty($form_state[&#039;storage&#039;][&#039;text&#039;])) {
+  95     $form[&#039;text&#039;][&#039;#default_value&#039;] = $form_state[&#039;storage&#039;][&#039;text&#039;];
+  96 
+  97     $data = array();
+  98     foreach ($entities as $entity =&gt; $info) {
+  99       if (!empty($form_state[&#039;storage&#039;][$entity])) {
+ 100         $objects = entity_load($entity, array($form_state[&#039;storage&#039;][$entity]));
+ 101         if ($objects) {
+ 102           $data[$token_types[$entity]] = reset($objects);
+ 103         }
+ 104       }
+ 105     }
+ 106 
+ 107     // Display the tokenized text.
+ 108     $form[&#039;text_tokenized&#039;] = array(
+ 109       &#039;#type&#039; =&gt; &#039;item&#039;,
+ 110       &#039;#title&#039; =&gt; t(&#039;Result&#039;),
+ 111       &#039;#markup&#039; =&gt; token_replace($form_state[&#039;storage&#039;][&#039;text&#039;], $data),
+ 112     );
+ 113   }
+ 114 
+ 115   $form[&#039;submit&#039;] = array(
+ 116     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 117     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 118   );
+ 119 
+ 120   if (module_exists(&#039;token&#039;)) {
+ 121     $form[&#039;token_tree&#039;] = array(
+ 122       &#039;#theme&#039; =&gt; &#039;token_tree&#039;,
+ 123       &#039;#token_types&#039; =&gt; $token_types,
+ 124     );
+ 125   }
+ 126   else {
+ 127     $form[&#039;token_tree&#039;] = array(
+ 128       &#039;#markup&#039; =&gt; &#039;&lt;p&gt;&#039; . t(&#039;Enable the &lt;a href=&quot;@drupal-token&quot;&gt;Token module&lt;/a&gt; to view the available token browser.&#039;, array(&#039;@drupal-token&#039; =&gt; &#039;http://drupal.org/project/token&#039;)) . &#039;&lt;/p&gt;&#039;,
+ 129     );
+ 130   }
+ 131 
+ 132   return $form;
+ 133 }
+ 134 
+ 135 /**
+ 136  * Submit callback; store the submitted values into storage.
+ 137  */
+ 138 function token_example_example_form_submit($form, &amp;$form_state) {
+ 139   $form_state[&#039;storage&#039;] = $form_state[&#039;values&#039;];
+ 140   $form_state[&#039;rebuild&#039;] = TRUE;
+ 141 }
+ 142 
+ 143 /**
+ 144  * Builds a list of available content.
+ 145  */
+ 146 function _token_example_get_node() {
+ 147   if (!user_access(&#039;access content&#039;) &amp;&amp; !user_access(&#039;bypass node access&#039;)) {
+ 148     return array();
+ 149   }
+ 150 
+ 151   $node_query = db_select(&#039;node&#039;, &#039;n&#039;);
+ 152   $node_query-&gt;fields(&#039;n&#039;, array(&#039;nid&#039;, &#039;title&#039;));
+ 153   $node_query-&gt;condition(&#039;n.status&#039;, NODE_PUBLISHED);
+ 154   $node_query-&gt;orderBy(&#039;n.created&#039;, &#039;DESC&#039;);
+ 155   $node_query-&gt;range(0, 10);
+ 156   $node_query-&gt;addTag(&#039;node_access&#039;);
+ 157   $nodes = $node_query-&gt;execute()-&gt;fetchAllKeyed();
+ 158   $nodes = array_map(&#039;check_plain&#039;, $nodes);
+ 159   return $nodes;
+ 160 }
+ 161 
+ 162 /**
+ 163  * Builds a list of available comments.
+ 164  */
+ 165 function _token_example_get_comment() {
+ 166   if (!module_exists(&#039;comment&#039;) || (!user_access(&#039;access comments&#039;) &amp;&amp; !user_access(&#039;administer comments&#039;))) {
+ 167     return array();
+ 168   }
+ 169 
+ 170   $comment_query = db_select(&#039;comment&#039;, &#039;c&#039;);
+ 171   $comment_query-&gt;innerJoin(&#039;node&#039;, &#039;n&#039;, &#039;n.nid = c.nid&#039;);
+ 172   $comment_query-&gt;fields(&#039;c&#039;, array(&#039;cid&#039;, &#039;subject&#039;));
+ 173   $comment_query-&gt;condition(&#039;n.status&#039;, NODE_PUBLISHED);
+ 174   $comment_query-&gt;condition(&#039;c.status&#039;, COMMENT_PUBLISHED);
+ 175   $comment_query-&gt;orderBy(&#039;c.created&#039;, &#039;DESC&#039;);
+ 176   $comment_query-&gt;range(0, 10);
+ 177   $comment_query-&gt;addTag(&#039;node_access&#039;);
+ 178   $comments = $comment_query-&gt;execute()-&gt;fetchAllKeyed();
+ 179   $comments = array_map(&#039;check_plain&#039;, $comments);
+ 180   return $comments;
+ 181 }
+ 182 
+ 183 /**
+ 184  * Builds a list of available user accounts.
+ 185  */
+ 186 function _token_example_get_user() {
+ 187   if (!user_access(&#039;access user profiles&#039;) &amp;&amp;
+ 188       !user_access(&#039;administer users&#039;)) {
+ 189     return array();
+ 190   }
+ 191 
+ 192   $account_query = db_select(&#039;users&#039;, &#039;u&#039;);
+ 193   $account_query-&gt;fields(&#039;u&#039;, array(&#039;uid&#039;, &#039;name&#039;));
+ 194   $account_query-&gt;condition(&#039;u.uid&#039;, 0, &#039;&gt;&#039;);
+ 195   $account_query-&gt;condition(&#039;u.status&#039;, 1);
+ 196   $account_query-&gt;range(0, 10);
+ 197   $accounts = $account_query-&gt;execute()-&gt;fetchAllKeyed();
+ 198   $accounts = array_map(&#039;check_plain&#039;, $accounts);
+ 199   return $accounts;
+ 200 }
+ 201 
+ 202 /**
+ 203  * Builds a list of available taxonomy terms.
+ 204  */
+ 205 function _token_example_get_taxonomy_term() {
+ 206   $term_query = db_select(&#039;taxonomy_term_data&#039;, &#039;ttd&#039;);
+ 207   $term_query-&gt;fields(&#039;ttd&#039;, array(&#039;tid&#039;, &#039;name&#039;));
+ 208   $term_query-&gt;range(0, 10);
+ 209   $term_query-&gt;addTag(&#039;term_access&#039;);
+ 210   $terms = $term_query-&gt;execute()-&gt;fetchAllKeyed();
+ 211   $terms = array_map(&#039;check_plain&#039;, $terms);
+ 212   return $terms;
+ 213 }
+ 214 
+ 215 /**
+ 216  * Builds a list of available files.
+ 217  */
+ 218 function _token_example_get_file() {
+ 219   $file_query = db_select(&#039;file_managed&#039;, &#039;f&#039;);
+ 220   $file_query-&gt;fields(&#039;f&#039;, array(&#039;fid&#039;, &#039;filename&#039;));
+ 221   $file_query-&gt;range(0, 10);
+ 222   $files = $file_query-&gt;execute()-&gt;fetchAllKeyed();
+ 223   $files = array_map(&#039;check_plain&#039;, $files);
+ 224   return $files;
+ 225 }
+ 226 /**
+ 227  * @} End of &quot;defgroup token_example&quot;.
+ 228  */</pre>
+
+</div>
+<!-- EDIT3 SECTION "token_example.module" [286-8403] -->
+<h2 class="sectionedit4" id="token_exampletest">token_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Test cases for Testing the token example module.
+   6  */
+   7 
+   8 class TokenExampleTestCase extends DrupalWebTestCase {
+   9 
+  10   protected $web_user;
+  11 
+  12   public static function getInfo() {
+  13     return array(
+  14       &#039;name&#039; =&gt; &#039;Token example functionality&#039;,
+  15       &#039;description&#039; =&gt; &#039;Verify the token example interface.&#039;,
+  16       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  17     );
+  18   }
+  19 
+  20   function setUp() {
+  21     parent::setUp(&#039;token_example&#039;);
+  22     $this-&gt;web_user = $this-&gt;drupalCreateUser();
+  23     $this-&gt;drupalLogin($this-&gt;web_user);
+  24   }
+  25 
+  26   function testInterface() {
+  27     $filtered_id = db_query(&quot;SELECT format FROM {filter_format} WHERE name = &#039;Filtered HTML&#039;&quot;)-&gt;fetchField();
+  28     $default_format_id = filter_default_format($this-&gt;web_user);
+  29 
+  30     $this-&gt;drupalGet(&#039;examples/token&#039;);
+  31     $this-&gt;assertNoFieldByName(&#039;node&#039;);
+  32     $this-&gt;assertNoFieldByName(&#039;user&#039;);
+  33 
+  34     $edit = array(
+  35       &#039;text&#039; =&gt; &#039;User [current-user:name] is trying the token example!&#039;,
+  36     );
+  37     $this-&gt;drupalPost(NULL, $edit, t(&#039;Submit&#039;));
+  38     $this-&gt;assertText(&#039;User &#039; . $this-&gt;web_user-&gt;name . &#039; is trying the token example!&#039;);
+  39 
+  40     // Create a node and then make the &#039;Plain text&#039; text format the default.
+  41     $node = $this-&gt;drupalCreateNode(array(&#039;title&#039; =&gt; &#039;Example node&#039;, &#039;status&#039; =&gt; NODE_PUBLISHED));
+  42     db_update(&#039;filter_format&#039;)
+  43       -&gt;fields(array(&#039;weight&#039; =&gt; -10))
+  44       -&gt;condition(&#039;name&#039;, &#039;Plain text&#039;)
+  45       -&gt;execute();
+  46 
+  47     $this-&gt;drupalGet(&#039;examples/token&#039;);
+  48 
+  49     $edit = array(
+  50       &#039;text&#039; =&gt; &#039;Would you like to view the [node:type-name] [node:title] with text format [node:body-format] (ID [node:body-format:id])?&#039;,
+  51       &#039;node&#039; =&gt; $node-&gt;nid,
+  52     );
+  53     $this-&gt;drupalPost(NULL, $edit, t(&#039;Submit&#039;));
+  54     $this-&gt;assertText(&#039;Would you like to view the Basic page Example node with text format Filtered HTML (ID &#039; . $filtered_id . &#039;)?&#039;);
+  55 
+  56     $edit = array(
+  57       &#039;text&#039; =&gt; &#039;Your default text format is [default-format:name] (ID [default-format:id]).&#039;,
+  58     );
+  59     $this-&gt;drupalPost(NULL, $edit, t(&#039;Submit&#039;));
+  60     $this-&gt;assertText(&#039;Your default text format is Filtered HTML (ID &#039; . $default_format_id . &#039;)&#039;);
+  61   }
+  62 }</pre>
+
+</div>
+<!-- EDIT4 SECTION "token_example.test" [8404-10840] -->
+<h2 class="sectionedit5" id="token_exampletokensinc">token_example.tokens.inc</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Token callbacks for the token_example module.
+   6  */
+   7 
+   8 /**
+   9  * Implements hook_token_info().
+  10  *
+  11  * @ingroup token_example
+  12  */
+  13 function token_example_token_info() {
+  14   // Add two different token types. The first is the generic text format. The
+  15   // second is the user&#039;s default text format, which is itself a &#039;format&#039; token
+  16   // type so it can be used directly.
+  17   $info[&#039;types&#039;][&#039;format&#039;] = array(
+  18     &#039;name&#039; =&gt; t(&#039;Text formats&#039;),
+  19     &#039;description&#039; =&gt; t(&#039;Tokens related to text formats.&#039;),
+  20     &#039;needs-data&#039; =&gt; &#039;format&#039;,
+  21   );
+  22   $info[&#039;types&#039;][&#039;default-format&#039;] = array(
+  23     &#039;name&#039; =&gt; t(&#039;Default text format&#039;),
+  24     &#039;description&#039; =&gt; t(&quot;Tokens related to the currently logged in user&#039;s default text format.&quot;),
+  25     &#039;type&#039; =&gt; &#039;format&#039;,
+  26   );
+  27 
+  28   // Tokens for the text format token type.
+  29   $info[&#039;tokens&#039;][&#039;format&#039;][&#039;id&#039;] = array(
+  30     &#039;name&#039; =&gt; t(&#039;ID&#039;),
+  31     &#039;description&#039; =&gt; t(&quot;The unique ID of the text format.&quot;),
+  32   );
+  33   $info[&#039;tokens&#039;][&#039;format&#039;][&#039;name&#039;] = array(
+  34     &#039;name&#039; =&gt; t(&#039;Name&#039;),
+  35     &#039;description&#039; =&gt; t(&quot;The name of the text format.&quot;),
+  36   );
+  37 
+  38   // Node tokens.
+  39   $info[&#039;tokens&#039;][&#039;node&#039;][&#039;body-format&#039;] = array(
+  40     &#039;name&#039; =&gt; t(&#039;Body text format&#039;),
+  41     &#039;description&#039; =&gt; t(&quot;The name of the text format used on the node&#039;s body field.&quot;),
+  42     &#039;type&#039; =&gt; &#039;format&#039;,
+  43   );
+  44 
+  45   // Comment tokens.
+  46   if (module_exists(&#039;comment&#039;)) {
+  47     $info[&#039;tokens&#039;][&#039;comment&#039;][&#039;body-format&#039;] = array(
+  48       &#039;name&#039; =&gt; t(&#039;Body text format&#039;),
+  49       &#039;description&#039; =&gt; t(&quot;The name of the text format used on the comment&#039;s body field.&quot;),
+  50       &#039;type&#039; =&gt; &#039;format&#039;,
+  51     );
+  52   }
+  53 
+  54   return $info;
+  55 }
+  56 
+  57 /**
+  58  * Implements hook_tokens().
+  59  *
+  60  * @ingroup token_example
+  61  */
+  62 function token_example_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  63   $replacements = array();
+  64   $sanitize = !empty($options[&#039;sanitize&#039;]);
+  65 
+  66   // Text format tokens.
+  67   if ($type == &#039;format&#039; &amp;&amp; !empty($data[&#039;format&#039;])) {
+  68     $format = $data[&#039;format&#039;];
+  69 
+  70     foreach ($tokens as $name =&gt; $original) {
+  71       switch ($name) {
+  72         case &#039;id&#039;:
+  73           // Since {filter_format}.format is an integer and not user-entered
+  74           // text, it does not need to ever be sanitized.
+  75           $replacements[$original] = $format-&gt;format;
+  76           break;
+  77         case &#039;name&#039;:
+  78           // Since the format name is user-entered text, santize when requested.
+  79           $replacements[$original] = $sanitize ? filter_xss($format-&gt;name) : $format-&gt;name;
+  80           break;
+  81       }
+  82     }
+  83   }
+  84 
+  85   // Default format tokens.
+  86   if ($type == &#039;default-format&#039;) {
+  87     $default_id = filter_default_format();
+  88     $default_format = filter_format_load($default_id);
+  89     $replacements += token_generate(&#039;format&#039;, $tokens, array(&#039;format&#039; =&gt; $default_format), $options);
+  90   }
+  91 
+  92   // Node tokens.
+  93   if ($type == &#039;node&#039; &amp;&amp; !empty($data[&#039;node&#039;])) {
+  94     $node = $data[&#039;node&#039;];
+  95 
+  96     foreach ($tokens as $name =&gt; $original) {
+  97       switch ($name) {
+  98         case &#039;body-format&#039;:
+  99           if ($items = field_get_items(&#039;node&#039;, $node, &#039;body&#039;)) {
+ 100             $format = filter_format_load($items[0][&#039;format&#039;]);
+ 101             $replacements[$original] = $sanitize ? filter_xss($format-&gt;name) : $format-&gt;name;
+ 102           }
+ 103           break;
+ 104       }
+ 105     }
+ 106 
+ 107     // Chained token relationships.
+ 108     if ($format_tokens = token_find_with_prefix($tokens, &#039;body-format&#039;)) {
+ 109       if ($items = field_get_items(&#039;node&#039;, $node, &#039;body&#039;)) {
+ 110         $body_format = filter_format_load($items[0][&#039;format&#039;]);
+ 111         $replacements += token_generate(&#039;format&#039;, $format_tokens, array(&#039;format&#039; =&gt; $body_format), $options);
+ 112       }
+ 113     }
+ 114   }
+ 115 
+ 116   // Comment tokens.
+ 117   if ($type == &#039;comment&#039; &amp;&amp; !empty($data[&#039;comment&#039;])) {
+ 118     $comment = $data[&#039;comment&#039;];
+ 119 
+ 120     foreach ($tokens as $name =&gt; $original) {
+ 121       switch ($name) {
+ 122         case &#039;body-format&#039;:
+ 123           if ($items = field_get_items(&#039;comment&#039;, $comment, &#039;comment_body&#039;)) {
+ 124             $format = filter_format_load($items[0][&#039;format&#039;]);
+ 125             $replacements[$original] = $sanitize ? filter_xss($format-&gt;name) : $format-&gt;name;
+ 126           }
+ 127           break;
+ 128       }
+ 129     }
+ 130 
+ 131     // Chained token relationships.
+ 132     if ($format_tokens = token_find_with_prefix($tokens, &#039;body-format&#039;)) {
+ 133       if ($items = field_get_items(&#039;comment&#039;, $comment, &#039;comment_body&#039;)) {
+ 134         $body_format = filter_format_load($items[0][&#039;format&#039;]);
+ 135         $replacements += token_generate(&#039;format&#039;, $format_tokens, array(&#039;format&#039; =&gt; $body_format), $options);
+ 136       }
+ 137     }
+ 138   }
+ 139 
+ 140   return $replacements;
+ 141 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "token_example.tokens.inc" [10841-] -->

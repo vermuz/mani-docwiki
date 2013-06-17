@@ -1,0 +1,340 @@
+
+<h1 class="sectionedit1" id="drupal_module_development">Drupal Module Development</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Drupal Module Development" [1-41] -->
+<h1 class="sectionedit2" id="drupal_request_processing">Drupal Request Processing</h1>
+<div class="level1">
+
+<p>
+request a SERVER
+htaccess rewrites rules, for incoming request to something like index.php
+</p>
+<pre class="code">                                               -    bootstrap.inc        
+                                               -    menu.inc
+           Index.php --------------------------&gt;    random.inc
+           - loads core functionality          -    mysql
+           - figure out what site to load      -    user cookies
+           ||||||||||||||||
+           TALK TO MODULES
+</pre>
+
+</div>
+<!-- EDIT2 SECTION "Drupal Request Processing" [42-567] -->
+<h1 class="sectionedit3" id="devel">Devel</h1>
+<div class="level1">
+
+<p>
+Enable devel module and blocks. In the execute php block type,
+</p>
+<pre class="code">global $user;
+print_r($user);</pre>
+<pre class="code">print_r means print recursively.
+Drupal7 equivalent is debug($user).
+Drupal set message (dsm) - dsm($user) - uses kromo library.
+Assign variables         - dsm($user,&#039;variable1&#039;)
+Assign variable          - dsm($user, &#039;My String&#039;)
+Kromo print recursive    - kpr($user) - same as print recursive (print_r)</pre>
+
+</div>
+<!-- EDIT3 SECTION "Devel" [568-1018] -->
+<h1 class="sectionedit4" id="site_structure">Site Structure</h1>
+<div class="level1">
+<pre class="code">                                              Site
+                                        ------ |----------
+                                       |                 |
+                                      all             default
+                                  ---  | ----
+                                  |         |
+                             - modules -   themes
+                            |           |
+                           contrib    custom
+                                        |
+                                     -demo-
+                                   |       |
+                               demo.info   demo.module       </pre>
+
+</div>
+<!-- EDIT4 SECTION "Site Structure" [1019-1717] -->
+<h1 class="sectionedit5" id="hook_api">Hook API</h1>
+<div class="level1">
+
+<p>
+Drupal modules interact by responding to events. Modules should not touch core, rather they should manipulate triggered events.
+</p>
+
+</div>
+<!-- EDIT5 SECTION "Hook API" [1718-1870] -->
+<h2 class="sectionedit6" id="hook_permission">Hook Permission</h2>
+<div class="level2">
+
+<p>
+Define user permissions.
+</p>
+
+<p>
+This hook can supply permissions that the module defines, so that they can be selected on the user permissions page and used to grant or restrict access to actions the module performs.
+</p>
+<pre class="code">function MODULE-NAME_permission(--parameters--)
+{
+
+}</pre>
+
+</div>
+<!-- EDIT6 SECTION "Hook Permission" [1871-2180] -->
+<h2 class="sectionedit7" id="hook_form_alter">Hook Form Alter</h2>
+<div class="level2">
+
+<p>
+hook_form_alter deals with alterations before a form is rendered.  
+</p>
+
+</div>
+<!-- EDIT7 SECTION "Hook Form Alter" [2181-2281] -->
+<h2 class="sectionedit8" id="hook_node_view">Hook Node View</h2>
+<div class="level2">
+
+<p>
+Act on a node that is being assembled before rendering. node_view is run when node is being viewed.
+Check for associated information.
+</p>
+<pre class="code">krumo($node);</pre>
+
+</div>
+<!-- EDIT8 SECTION "Hook Node View" [2282-2475] -->
+<h2 class="sectionedit9" id="module_invoke_all">Module Invoke All</h2>
+<div class="level2">
+
+<p>
+When modules with APIs (views) want data to be amended while it is still being processed. So module_invoke_all asks, before my containing function should be considered done, is there any other module that wants to participate with this data?
+</p>
+<pre class="code">
+                                                           ---  Module 1
+                                    module_invoke_all      ---  Module 2
+                                                           ---  Module 3</pre>
+
+</div>
+<!-- EDIT9 SECTION "Module Invoke All" [2476-2985] -->
+<h2 class="sectionedit10" id="return_array">Return Array</h2>
+<div class="level2">
+<pre class="code">return array(
+              &#039;key&#039; =&gt; t(&#039;value&#039;),
+            );</pre>
+
+<p>
+Return array can contain arrays with in it containing key values.
+In the above code t means translatable.
+</p>
+
+</div>
+<!-- EDIT10 SECTION "Return Array" [2986-3198] -->
+<h2 class="sectionedit11" id="add_content">Add Content</h2>
+<div class="level2">
+
+<p>
+Fields are renderable arrays. We can add content. So, when we make a field, we have to make it an array and define its properties.
+</p>
+<pre class="code">$node -&gt; content[&#039;demo_field&#039;] = array(
+                &#039;#type&#039;   =&gt; &#039;markup&#039;,
+                &#039;#markup&#039; =&gt; &#039;&lt;p&gt;.t(&#039;this is done&#039;).&lt;/p&gt;&#039;,
+                &#039;#weight&#039; =&gt; -10,
+                );
+krumo($node);</pre>
+<ul>
+<li class="level1"><div class="li"> markup means text</div>
+</li>
+<li class="level1"><div class="li"> weight shows order to show in form</div>
+</li>
+<li class="level1"><div class="li"> krumo shows values that we assigned.</div>
+</li>
+<li class="level1"><div class="li"> This field shows up at the top and displays this is done.</div>
+</li>
+</ul>
+
+<p>
+Let us now add a list to our site,
+</p>
+<pre class="code">$node -&gt; content[&#039;demo-list&#039;] = array(
+                &#039;#items&#039;  =&gt; array(&#039;green&#039;,&#039;red&#039;,&#039;blue&#039;),
+                &#039;#theme&#039;  =&gt; &#039;item_list&#039;,
+                &#039;#weight&#039; =&gt; -9,
+                );</pre>
+<ul>
+<li class="level1"><div class="li"> This comes after -10</div>
+</li>
+<li class="level1"><div class="li"> displays the list in a list like </div>
+</li>
+<li class="level1"><div class="li"> theme is style</div>
+</li>
+</ul>
+<pre class="code">         - green
+         - red
+         - blue</pre>
+
+</div>
+<!-- EDIT11 SECTION "Add Content" [3199-4130] -->
+<h1 class="sectionedit12" id="drupal_menu_system">Drupal Menu System</h1>
+<div class="level1">
+
+<p>
+Integrating into Drupal menu system via hook_menu. 
+</p>
+<ul>
+<li class="level1"><div class="li"> We can add a new navigation item. </div>
+</li>
+<li class="level1"><div class="li"> Drupal uses $items (Associative Array). </div>
+</li>
+<li class="level1"><div class="li"> When Drupal finds the requested page and after checking user permissions</div>
+</li>
+<li class="level1"><div class="li"> Drupal uses page callback to call the relevant function to produce output.</div>
+</li>
+</ul>
+<pre class="code">function mymodule_menu() {
+        $item[&#039;about&#039;] =&gt; array(
+               &#039;title&#039;         =&gt; &#039;About Us&#039;,
+               &#039;description&#039;   =&gt; &#039;A Description&#039;,
+               &#039;page callback&#039; =&gt; &#039;mymodule_about&#039;,
+              access callback&#039; =&gt; array(&#039;access content&#039;),
+              );
+        return $item;
+}</pre>
+
+<p>
+So, lets build a menu item to show in the Navigation bar,
+</p>
+<pre class="code">function mymodule_menu()
+{
+   $items = array();
+   $items[&#039;magic&#039;] = array(
+               &#039;title&#039; =&gt; &#039;little magic&#039;,
+       &#039;page callback&#039; =&gt; &#039;menu_magic_basic&#039;,
+     &#039;access callback&#039; =&gt; &#039;user_access&#039;,
+   
+   );
+   
+}
+
+function menu_magic_basic()
+{
+  $content = array();
+  $content[&#039;raw_markup&#039;] = array(
+        &#039;#type&#039;   =&gt; &#039;markup&#039;,
+        &#039;#markup&#039; =&gt; &#039;&lt;p&gt;True Magic&lt;/p&gt;&#039;,
+  );
+  return $content;
+}</pre>
+
+<p>
+Note:
+</p>
+<ul>
+<li class="level1"><div class="li"> You don`t need a translate t() for meny</div>
+</li>
+<li class="level1"><div class="li"> <abbr title="Uniform Resource Locator">URL</abbr> –&gt; $items[&#039;magic&#039;] – <a href="http://www.example.com/magic" class="urlextern" title="http://www.example.com/magic"  rel="nofollow">www.example.com/magic</a></div>
+</li>
+<li class="level1"><div class="li"> access callback can return true or false</div>
+</li>
+<li class="level1"><div class="li"> Drupal decides if user viewing has permission to view page</div>
+</li>
+<li class="level1"><div class="li"> page callback is the function to call when someone navigates to <a href="http://www.example.com/magic" class="urlextern" title="http://www.example.com/magic"  rel="nofollow">www.example.com/magic</a></div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT12 SECTION "Drupal Menu System" [4131-5566] -->
+<h2 class="sectionedit13" id="page_callback">Page Callback</h2>
+<div class="level2">
+
+<p>
+It maps <abbr title="Uniform Resource Locator">URL</abbr> to the PHP function, which is defined in the module. 
+</p>
+<pre class="code">function mymodule_menu()
+{
+    $items[&#039;about&#039;] = array(
+         &#039;title&#039;            =&gt; &#039;About us&#039;,
+         &#039;description&#039;      =&gt; &#039;description&#039;,
+         &#039;page callback&#039;    =&gt;  module_about,
+         &#039;access arguments&#039; =&gt;  array(&#039;access content&#039;), 
+    );
+  return $items;
+}
+
+//****************************************************************************
+access callback  - Check if user is allowed to be here.
+access arguments - List of args that we want to pass to the callback function
+which means, 
+            user_access(&#039;access content&#039;) is access content checked under 
+            this logged in user.
+Note: Drupal will call user_access automatically so it is optional
+//****************************************************************************
+
+
+function module_about()
+{
+}</pre>
+
+<p>
+We use callback to call a function to build contents of a page when you click an item in the menu. 
+</p>
+<ul>
+<li class="level1"><div class="li"> If there is no content - 404 is served.</div>
+</li>
+<li class="level1"><div class="li"> If there is content    - Drupal wraps it in DRUPAL Theme.</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT13 SECTION "Page Callback" [5567-6671] -->
+<h2 class="sectionedit14" id="using_url_arguments_in_page_callback_functions">Using URL Arguments in Page Callback Functions</h2>
+<div class="level2">
+
+<p>
+If we want to give the user the ability to pass something in the query string to change the output from the callback, for example - 
+</p>
+<ul>
+<li class="level1"><div class="li"> <a href="http://localhost/mani-drupal/magic/anything" class="urlextern" title="http://localhost/mani-drupal/magic/anything"  rel="nofollow">http://localhost/mani-drupal/magic/anything</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://localhost/mani-drupal/magic/joe" class="urlextern" title="http://localhost/mani-drupal/magic/joe"  rel="nofollow">http://localhost/mani-drupal/magic/joe</a>. </div>
+</li>
+</ul>
+
+<p>
+These values decide the response of the system.
+</p>
+
+<p>
+<em>We can also change the ability of our menu link to show up as a tab rather than a link in the navigation.</em>
+</p>
+<pre class="code">function menu_magic_menu() {
+       $items = array();
+       
+       $items[&#039;magic&#039;] = array(
+      &#039;title&#039;            =&gt; &#039;A little magic&#039;,
+      &#039;page callback&#039;    =&gt; &#039;menu_magic_basic&#039;,
+      &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+      );
+      //*******************************************************************
+      // So now lets give the URL a wildcard character and let them
+      // enter anything they want here. This value can be passed
+      // to our callback function to display an appropriate response.
+      
+      // Whatever is in page arguments gets passed to the page callback function
+      // so when the user types magic/joe , argument joe is at position 1 and hence
+      // page arguments - array(1)
+      //*******************************************************************
+      $items[&#039;magic/%&#039;] = array(
+      &#039;title&#039;           =&gt; &#039;Even more magical&#039;,
+      &#039;page callback&#039;   =&gt; &#039;menu_magic_extra&#039;,
+      &#039;page arguments&#039;  =&gt;  array(1),
+      &#039;access arguments&#039;=&gt; array(&#039;access content&#039;),
+      );
+     return $items;
+}</pre>
+
+<p>
+Now if I am thinking what the user will enter in the address bar, i.e. magic/joe or magic/123. Drupal provides a special character called the wildcard ”%”.
+</p>
+
+</div>
+<!-- EDIT14 SECTION "Using URL Arguments in Page Callback Functions" [6672-] -->

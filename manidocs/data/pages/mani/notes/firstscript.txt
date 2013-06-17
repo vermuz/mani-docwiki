@@ -1,0 +1,26 @@
+
+
+**First Python Script - nugget3.py ** 
+<code>
+# Input function will always have string
+ui = input("Enter a number: ")
+# Separate string literal
+print("The data type is originally", (type(ui)))
+uconv = int(ui)
+print("Now the data type is" , (type(uconv)))
+power = uconv ** 8
+print(ui, "raised to the 8th power is: ", power)
+</code>
+
+
+**Execution ** 
+<code>
+mani@mani-ubuntu:~$ cd pydev
+mani@mani-ubuntu:~/pydev$ dir
+nugget3.py
+mani@mani-ubuntu:~/pydev$ python3 nugget3.py 
+Enter a number: 12
+The data type is originally <class 'str'>
+Now the data type is <class 'int'>
+12 raised to the 8th power is:  429981696
+</code>

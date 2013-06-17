@@ -1,0 +1,331 @@
+a:17:{i:0;a:3:{i:0;s:14:"document_start";i:1;a:0:{}i:2;i:0;}i:1;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:12:"Page Example";i:1;i:1;i:2;i:1;}i:2;i:1;}i:2;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:1;}i:2;i:1;}i:3;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:29;}i:4;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:17:"page_example.info";i:1;i:2;i:2;i:29;}i:2;i:29;}i:5;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:29;}i:6;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:216:"
+   1 name = Page example
+   2 description = An example module showing how to define a page to be displayed to the user at a given URL.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = page_example.test
+";i:1;N;i:2;N;}i:2;i:64;}i:7;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:289;}i:8;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:19:"page_example.module";i:1;i:2;i:2;i:289;}i:2;i:289;}i:9;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:289;}i:10;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:9067:"
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Module file for page_example_module.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup page_example Example: Page
+  10  * @ingroup examples
+  11  * @{
+  12  * This example demonstrates how a module can display a page at a given URL.
+  13  *
+  14  * It's important to understand how the menu system works in order to
+  15  * implement your own pages. See the Menu Example module for some insight.
+  16  *
+  17  * @see menu_example
+  18  */
+  19 
+  20 /**
+  21  * Implements hook_help().
+  22  *
+  23  * Through hook_help(), a module can make documentation available to the user
+  24  * for the module as a whole or for specific paths. Where the help appears
+  25  * depends on the $path specified.
+  26  *
+  27  * In the first example below, the help text will appear on the simple page
+  28  * defined in hook_menu below in the region designated for help text.
+  29  *
+  30  * In the second example, the text will be available through the module page as
+  31  * a link beside the module or on the admin help page (admin/help) in the list
+  32  * of help topics using the name of the module. To specify help in the admin
+  33  * section use the module name in the path as in the second case below.
+  34  *
+  35  * @see hook_help()
+  36  */
+  37 function page_example_help($path, $arg) {
+  38   switch ($path) {
+  39     case 'examples/page_example/simple':
+  40       // Help text for the simple page registered for this path.
+  41       return t('This is help text for the simple page.');
+  42 
+  43     case 'admin/help#page_example':
+  44       // Help text for the admin section, using the module name in the path.
+  45       return t('This is help text created in the page example\'s second case.');
+  46   }
+  47 }
+  48 
+  49 /**
+  50  * Implements hook_permission().
+  51  *
+  52  * Since the access to our new custom pages will be granted based on
+  53  * special permissions, we need to define what those permissions are here.
+  54  * This ensures that they are available to enable on the user role
+  55  * administration pages.
+  56  */
+  57 function page_example_permission() {
+  58   return array(
+  59     'access simple page' => array(
+  60       'title' => t('Access simple page'),
+  61       'description' => t('Allow users to access simple page'),
+  62     ),
+  63     'access arguments page' => array(
+  64       'title' => t('Access page with arguments'),
+  65       'description' => t('Allow users to access page with arguments'),
+  66     ),
+  67   );
+  68 }
+  69 
+  70 /**
+  71  * Implements hook_menu().
+  72  *
+  73  * Because hook_menu() registers URL paths for items defined by the function, it
+  74  * is necessary for modules that create pages. Each item can also specify a
+  75  * callback function for a given URL. The menu items returned here provide this
+  76  * information to the menu system.
+  77  *
+  78  * We will define some menus, and their paths will be interpreted as follows:
+  79  *
+  80  * If the user accesses http://example.com/?q=examples/page_example/simple,
+  81  * the menu system will first look for a menu item with that path. In this case
+  82  * it will find a match, and execute page_example_simple().
+  83  *
+  84  * If the user accesses http://example.com/?q=examples/page_example/arguments,
+  85  * the menu system will find no explicit match, and will fall back to the
+  86  * closest match, 'examples/page_example', executing page_example_description().
+  87  *
+  88  * If the user accesses
+  89  * http://example.com/?q=examples/page_example/arguments/1/2, the menu
+  90  * system will first look for examples/page_example/arguments/1/2. Not finding
+  91  * a match, it will look for examples/page_example/arguments/1/%. Again not
+  92  * finding a match, it will look for examples/page_example/arguments/%/2.
+  93  * Yet again not finding a match, it will look for
+  94  * examples/page_example/arguments/%/%. This time it finds a match, and so will
+  95  * execute page_example_arguments(1, 2). Since the parameters are passed to
+  96  * the function after the match, the function can do additional checking or
+  97  * make use of them before executing the callback function.
+  98  *
+  99  * @see hook_menu()
+ 100  * @see menu_example
+ 101  */
+ 102 function page_example_menu() {
+ 103 
+ 104   // This is the minimum information you can provide for a menu item. This menu
+ 105   // item will be created in the default menu, usually Navigation.
+ 106   $items['examples/page_example'] = array(
+ 107     'title' => 'Page Example',
+ 108     'page callback' => 'page_example_description',
+ 109     'access callback' => TRUE,
+ 110     'expanded' => TRUE,
+ 111   );
+ 112 
+ 113   $items['examples/page_example/simple'] = array(
+ 114     'title' => 'Simple - no arguments',
+ 115     'page callback' => 'page_example_simple',
+ 116     'access arguments' => array('access simple page'),
+ 117   );
+ 118 
+ 119   // By using the MENU_CALLBACK type, we can register the callback for this
+ 120   // path without the item appearing in the menu; the admin cannot enable the
+ 121   // item in the menu, either.
+ 122   //
+ 123   // Notice that 'page arguments' is an array of numbers. These will be
+ 124   // replaced with the corresponding parts of the menu path. In this case a 0
+ 125   // would be replaced by 'example', a 1 by 'page_example', and a 2 by
+ 126   // 'arguments.' 3 and 4 will be replaced by whatever the user provides.
+ 127   // These will be passed as arguments to the page_example_arguments() function.
+ 128   $items['examples/page_example/arguments/%/%'] = array(
+ 129     'page callback' => 'page_example_arguments',
+ 130     'page arguments' => array(3, 4),
+ 131     'access arguments' => array('access arguments page'),
+ 132     'type' => MENU_CALLBACK,
+ 133   );
+ 134 
+ 135   return $items;
+ 136 }
+ 137 
+ 138 /**
+ 139  * Constructs a descriptive page.
+ 140  *
+ 141  * Our menu maps this function to the path 'examples/page_example'.
+ 142  *
+ 143  */
+ 144 function page_example_description() {
+ 145   return array('#markup' => t('<p>The page_example provides two pages, "simple" and "arguments".</p><p>The <a href="@simple_link">simple page</a> just returns a renderable array for display.</p><p>The <a href="@arguments_link">arguments page</a> takes two arguments and displays them, as in @arguments_link</p>', array('@simple_link' => url('examples/page_example/simple', array('absolute' => TRUE)), '@arguments_link' => url('examples/page_example/arguments/23/56', array('absolute' => TRUE)))));
+ 146 }
+ 147 
+ 148 /**
+ 149  * Constructs a simple page.
+ 150  *
+ 151  * The simple page callback, mapped to the path 'examples/page_example/simple'.
+ 152  *
+ 153  * Page callbacks return a renderable array with the content area of the page.
+ 154  * The theme system will later render and surround the content in the
+ 155  * appropriate blocks, navigation, and styling.
+ 156  *
+ 157  * If you do not want to use the theme system (for example for outputting an
+ 158  * image or XML), you should print the content yourself and not return anything.
+ 159  */
+ 160 function page_example_simple() {
+ 161   return array('#markup' => '<p>' . t('Simple page: The quick brown fox jumps over the lazy dog.') . '</p>');
+ 162 }
+ 163 
+ 164 /**
+ 165  * A more complex page callback that takes arguments.
+ 166  *
+ 167  * This callback is mapped to the path 'examples/page_example/arguments/%/%'.
+ 168  *
+ 169  * The % arguments are passed in from the page URL. In our hook_menu
+ 170  * implementation we instructed the menu system to extract the last two
+ 171  * parameters of the path and pass them to this function as arguments.
+ 172  *
+ 173  * This function also demonstrates a more complex render array in the returned
+ 174  * values. Instead of just rendering the HTML with a theme('item_list'), the
+ 175  * list is left unrendered, and a #theme attached to it so that it can be
+ 176  * rendered as late as possible, giving more parts of the system a chance to
+ 177  * change it if necessary.
+ 178  *
+ 179  * Consult @link http://drupal.org/node/930760 Render Arrays documentation
+ 180  * @endlink for details.
+ 181  */
+ 182 function page_example_arguments($first, $second) {
+ 183   // Make sure you don't trust the URL to be safe! Always check for exploits.
+ 184   if (!is_numeric($first) || !is_numeric($second)) {
+ 185     // We will just show a standard "access denied" page in this case.
+ 186     drupal_access_denied();
+ 187     return;  // We actually don't get here.
+ 188   }
+ 189 
+ 190   $list[] = t("First number was @number.", array('@number' => $first));
+ 191   $list[] = t("Second number was @number.", array('@number' => $second));
+ 192   $list[] = t('The total was @number.', array('@number' => $first + $second));
+ 193 
+ 194   $render_array['page_example_arguments'] = array(
+ 195     '#theme' => 'item_list',  // The theme function to apply to the #items
+ 196     '#items' => $list,  // The list itself.
+ 197     '#title' => t('Argument Information'),
+ 198   );
+ 199   return $render_array;
+ 200 }
+ 201 /**
+ 202  * @} End of "defgroup page_example".
+ 203  */
+";i:1;N;i:2;N;}i:2;i:326;}i:11;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:9402;}i:12;a:3:{i:0;s:6:"header";i:1;a:3:{i:0;s:17:"page_example.test";i:1;i:2;i:2;i:9402;}i:2;i:9402;}i:13;a:3:{i:0;s:12:"section_open";i:1;a:1:{i:0;i:2;}i:2;i:9402;}i:14;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:4967:"
+   1 <?php
+   2 
+   3 /**
+   4  * @file
+   5  * Test case for Testing the page example module.
+   6  *
+   7  * This file contains the test cases to check if module is performing as
+   8  * expected.
+   9  *
+  10  */
+  11 class PageExampleTestCase extends DrupalWebTestCase {
+  12   protected $web_user;
+  13 
+  14   public static function getInfo() {
+  15     return array(
+  16       'name' => 'Page example functionality',
+  17       'description' => 'Creates page and render the content based on the arguments passed in the URL.',
+  18       'group' => 'Examples',
+  19     );
+  20   }
+  21 
+  22   /**
+  23    * Enable modules and create user with specific permissions.
+  24    */
+  25   function setUp() {
+  26     parent::setUp('page_example');
+  27   }
+  28 
+  29   /**
+  30    * Generates a random string of ASCII numeric characters (values 48 to 57).
+  31    *
+  32    * @param $length
+  33    *   Length of random string to generate .
+  34    * @return
+  35    *   Randomly generated string.
+  36    */
+  37   private static function randomNumber($length = 8) {
+  38     $str = '';
+  39     for ($i = 0; $i < $length; $i++) {
+  40       $str .= chr(mt_rand(48, 57));
+  41     }
+  42     return $str;
+  43   }
+  44 
+  45   /**
+  46    * Verify that current user has no access to page.
+  47    *
+  48    * @param $url
+  49    *   URL to verify.
+  50    */
+  51   function pageExampleVerifyNoAccess($url) {
+  52     // Test that page returns 403 Access Denied
+  53     $this->drupalGet($url);
+  54     $this->assertResponse(403);
+  55   }
+  56 
+  57   /**
+  58    * Login user, create an example node, and test blog functionality through the admin and user interfaces.
+  59    */
+  60   function testPageExampleBasic() {
+  61 
+  62     // Verify that anonymous user can't access the pages created by
+  63     // page_example module
+  64     $this->pageExampleVerifyNoAccess('examples/page_example/simple');
+  65     $this->pageExampleVerifyNoAccess('examples/page_example/arguments/1/2');
+  66 
+  67     // Create a regular user and login.
+  68     $this->web_user = $this->drupalCreateUser();
+  69     $this->drupalLogin($this->web_user);
+  70 
+  71     // Verify that regular user can't access the pages created by
+  72     // page_example module
+  73     $this->pageExampleVerifyNoAccess('examples/page_example/simple');
+  74     $this->pageExampleVerifyNoAccess('examples/page_example/arguments/1/2');
+  75 
+  76     // Create a user with permissions to access 'simple' page and login.
+  77     $this->web_user = $this->drupalCreateUser(array('access simple page'));
+  78     $this->drupalLogin($this->web_user);
+  79 
+  80     // Verify that user can access simple content
+  81     $this->drupalGet('examples/page_example/simple');
+  82     $this->assertResponse(200, 'simple content successfully accessed.');
+  83     $this->assertText(t('The quick brown fox jumps over the lazy dog.'), 'Simple content successfully verified.');
+  84 
+  85     // Check if user can't access arguments page
+  86     $this->pageExampleVerifyNoAccess('examples/page_example/arguments/1/2');
+  87 
+  88 
+  89 
+  90     // Create a user with permissions to access 'simple' page and login.
+  91     $this->web_user = $this->drupalCreateUser(array('access arguments page'));
+  92     $this->drupalLogin($this->web_user);
+  93 
+  94     // Verify that user can access simple content
+  95     $first = $this->randomNumber(3);
+  96     $second = $this->randomNumber(3);
+  97     $this->drupalGet('examples/page_example/arguments/' . $first . '/' . $second);
+  98     $this->assertResponse(200, 'arguments content successfully accessed.');
+  99     // Verify argument usage
+ 100     $this->assertRaw(t("First number was @number.", array('@number' => $first)), 'arguments first argument successfully verified.');
+ 101     $this->assertRaw(t("Second number was @number.", array('@number' => $second)), 'arguments second argument successfully verified.');
+ 102     $this->assertRaw(t('The total was @number.', array('@number' => $first + $second)), 'arguments content successfully verified.');
+ 103 
+ 104     // Verify incomplete argument call to arguments content
+ 105     $this->drupalGet('examples/page_example/arguments/' . $first . '/');
+ 106     $this->assertText("provides two pages");
+ 107 
+ 108     // Verify invalid argument call to arguments content
+ 109     $this->drupalGet('examples/page_example/arguments/' . $first . '/' . $this->randomString());
+ 110     $this->assertResponse(403, 'Invalid argument for arguments content successfully verified');
+ 111 
+ 112     // Verify invalid argument call to arguments content
+ 113     $this->drupalGet('examples/page_example/arguments/' . $this->randomString() . '/' . $second);
+ 114     $this->assertResponse(403, 'Invalid argument for arguments content successfully verified');
+ 115 
+ 116     // Check if user can't access simple page
+ 117     $this->pageExampleVerifyNoAccess('examples/page_example/simple');
+ 118   }
+ 119 }
+";i:1;N;i:2;N;}i:2;i:9437;}i:15;a:3:{i:0;s:13:"section_close";i:1;a:0:{}i:2;i:14412;}i:16;a:3:{i:0;s:12:"document_end";i:1;a:0:{}i:2;i:14412;}}

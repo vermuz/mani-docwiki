@@ -1,0 +1,26 @@
+a:2:{s:7:"current";a:8:{s:4:"date";a:2:{s:7:"created";i:1371262383;s:8:"modified";i:1371262383;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371262383;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"C";s:2:"id";s:13:"block-example";s:4:"user";s:5:"admin";s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}s:5:"title";s:13:"Block Example";s:11:"description";a:2:{s:15:"tableofcontents";a:5:{i:0;a:4:{s:3:"hid";s:13:"block_example";s:5:"title";s:13:"Block Example";s:4:"type";s:2:"ul";s:5:"level";i:1;}i:1;a:4:{s:3:"hid";s:17:"block_exampleinfo";s:5:"title";s:18:"block_example.info";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:2;a:4:{s:3:"hid";s:20:"block_exampleinstall";s:5:"title";s:21:"block_example.install";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:3;a:4:{s:3:"hid";s:19:"block_examplemodule";s:5:"title";s:20:"block_example.module";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:4;a:4:{s:3:"hid";s:17:"block_exampletest";s:5:"title";s:18:"block_example.test";s:4:"type";s:2:"ul";s:5:"level";i:2;}}s:8:"abstract";s:503:"block_example.info
+
+
+   1 name = Block Example
+   2 description = An example outlining how a module can define blocks.
+   3 package = Example modules
+   4 core = 7.x
+   5 dependencies[] = block
+   6 files[] = block_example.test
+
+
+block_example.install
+
+
+   1 <?php
+   2 /**
+   3  * @file
+   4  * Install, update and uninstall functions for the block_example module.
+   5  */
+   6 
+   7 /**
+   8  * Implements hook_uninstall().
+   9  *
+  10  * @ingroup block_example
+  11  */
+  12 function block_examp…";}s:8:"internal";a:2:{s:5:"cache";b:1;s:3:"toc";b:1;}s:8:"relation";a:1:{s:10:"firstimage";s:0:"";}}s:10:"persistent";a:4:{s:4:"date";a:1:{s:7:"created";i:1371262383;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371262383;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"C";s:2:"id";s:13:"block-example";s:4:"user";s:5:"admin";s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}}}

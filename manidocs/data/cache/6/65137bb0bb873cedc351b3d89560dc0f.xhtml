@@ -1,0 +1,258 @@
+
+<h1 class="sectionedit1" id="table_sort_example">Table Sort Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Table Sort Example" [1-34] -->
+<h2 class="sectionedit2" id="tablesort_exampleinfo">tablesort_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Table Sort example
+   2 description = Demonstrates how to create sortable output in a table.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = tablesort_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "tablesort_example.info" [35-274] -->
+<h2 class="sectionedit3" id="tablesort_exampleinstall">tablesort_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Install and uninstall functions for the tablesort example module.
+   6  *
+   7  * This file contains the functions required to perform install and
+   8  * uninstall operations.
+   9  *
+  10  */
+  11 
+  12 /**
+  13  * Implements hook_install().
+  14  *
+  15  * @ingroup tablesort_example
+  16  */
+  17 function tablesort_example_install() {
+  18   // let&#039;s fill the database with some values for sorting
+  19   $rows = array(
+  20     array(&#039;numbers&#039; =&gt; 1, &#039;alpha&#039; =&gt; &#039;e&#039;, &#039;random&#039; =&gt; &#039;912cv21&#039;),
+  21     array(&#039;numbers&#039; =&gt; 2, &#039;alpha&#039; =&gt; &#039;a&#039;, &#039;random&#039; =&gt; &#039;0kuykuh&#039;),
+  22     array(&#039;numbers&#039; =&gt; 3, &#039;alpha&#039; =&gt; &#039;m&#039;, &#039;random&#039; =&gt; &#039;fuye8734h&#039;),
+  23     array(&#039;numbers&#039; =&gt; 4, &#039;alpha&#039; =&gt; &#039;w&#039;, &#039;random&#039; =&gt; &#039;80jsv772&#039;),
+  24     array(&#039;numbers&#039; =&gt; 5, &#039;alpha&#039; =&gt; &#039;o&#039;, &#039;random&#039; =&gt; &#039;d82sf-csj&#039;),
+  25     array(&#039;numbers&#039; =&gt; 6, &#039;alpha&#039; =&gt; &#039;s&#039;, &#039;random&#039; =&gt; &#039;au832&#039;),
+  26     array(&#039;numbers&#039; =&gt; 7, &#039;alpha&#039; =&gt; &#039;e&#039;, &#039;random&#039; =&gt; &#039;t982hkv&#039;),
+  27   );
+  28 
+  29   if (db_table_exists(&#039;tablesort_example&#039;)) {
+  30     foreach ($rows as $row) {
+  31       db_insert(&#039;tablesort_example&#039;)-&gt;fields($row)-&gt;execute();
+  32     }
+  33   }
+  34 }
+  35 
+  36 /**
+  37  * Implements hook_uninstall().
+  38  *
+  39  * It&#039;s good to clean up after ourselves
+  40  *
+  41  * @ingroup tablesort_example
+  42  */
+  43 function tablesort_example_uninstall() {
+  44   db_drop_table(&#039;tablesort_example&#039;);
+  45 }
+  46 
+  47 /**
+  48  * Implements hook_schema().
+  49  *
+  50  * @ingroup tablesort_example
+  51  */
+  52 function tablesort_example_schema() {
+  53   $schema[&#039;tablesort_example&#039;] = array(
+  54     &#039;description&#039; =&gt; &#039;Stores some values for sorting fun.&#039;,
+  55     &#039;fields&#039; =&gt; array(
+  56       &#039;numbers&#039;    =&gt; array(
+  57         &#039;description&#039; =&gt; &#039;This column simply holds numbers values&#039;,
+  58         &#039;type&#039; =&gt; &#039;varchar&#039;,
+  59         &#039;length&#039; =&gt; 2,
+  60         &#039;not null&#039; =&gt; TRUE,
+  61       ),
+  62       &#039;alpha&#039;    =&gt; array(
+  63         &#039;description&#039; =&gt; &#039;This column simply holds alpha values&#039;,
+  64         &#039;type&#039; =&gt; &#039;varchar&#039;,
+  65         &#039;length&#039; =&gt; 2,
+  66         &#039;not null&#039; =&gt; TRUE,
+  67       ),
+  68       &#039;random&#039; =&gt; array(
+  69         &#039;description&#039; =&gt; &#039;This column simply holds random values&#039;,
+  70         &#039;type&#039; =&gt; &#039;varchar&#039;,
+  71         &#039;length&#039; =&gt; 12,
+  72         &#039;not null&#039; =&gt; TRUE,
+  73       ),
+  74     ),
+  75     &#039;primary key&#039; =&gt; array(&#039;numbers&#039;),
+  76   );
+  77 
+  78   return $schema;
+  79 }</pre>
+
+</div>
+<!-- EDIT3 SECTION "tablesort_example.install" [275-2775] -->
+<h2 class="sectionedit4" id="tablesort_examplemodule">tablesort_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * This is an example describing how a module can display data in a sortable
+   5  * table
+   6  *
+   7  * See:
+   8  * @link http://drupal.org/node/508796 Extenders @endlink
+   9  * @link http://drupal.org/developing/api/database Database API @endlink
+  10  */
+  11 
+  12 /**
+  13  * @defgroup tablesort_example Example: Tablesort
+  14  * @ingroup examples
+  15  * @{
+  16  * Example of a sortable table display.
+  17  */
+  18 
+  19 /**
+  20  * Implements hook_help().
+  21  *
+  22  * Show a bit of information about this module on the example page
+  23  */
+  24 function tablesort_example_help($path, $arg) {
+  25   switch ($path) {
+  26     case &#039;examples/tablesort_example&#039;:
+  27       return &#039;&lt;p&gt;&#039; . t(&#039;The layout here is a themed as a table that is sortable by clicking the header name.&#039;) . &#039;&lt;/p&gt;&#039;;
+  28   }
+  29 }
+  30 
+  31 /**
+  32  * Implements hook_menu().
+  33  */
+  34 function tablesort_example_menu() {
+  35   $items[&#039;examples/tablesort_example&#039;] = array(
+  36     &#039;title&#039; =&gt; &#039;TableSort example&#039;,
+  37     &#039;description&#039; =&gt; &#039;Show a page with a sortable table&#039;,
+  38     &#039;page callback&#039; =&gt; &#039;tablesort_example_page&#039;,
+  39     &#039;access callback&#039; =&gt; TRUE,
+  40   );
+  41   return $items;
+  42 }
+  43 
+  44 /**
+  45  * Build the table render array.
+  46  *
+  47  * @return
+  48  *   A render array set for theming by theme_table().
+  49  */
+  50 function tablesort_example_page() {
+  51   // We are going to output the results in a table with a nice header.
+  52   $header = array(
+  53     // The header gives the table the information it needs in order to make
+  54     // the query calls for ordering. TableSort uses the field information
+  55     // to know what database column to sort by.
+  56     array(&#039;data&#039; =&gt; t(&#039;Numbers&#039;), &#039;field&#039; =&gt; &#039;t.numbers&#039;),
+  57     array(&#039;data&#039; =&gt; t(&#039;Letters&#039;), &#039;field&#039; =&gt; &#039;t.alpha&#039;),
+  58     array(&#039;data&#039; =&gt; t(&#039;Mixture&#039;), &#039;field&#039; =&gt; &#039;t.random&#039;),
+  59   );
+  60 
+  61   $query = db_select(&#039;tablesort_example&#039;, &#039;t&#039;)
+  62     -&gt;extend(&#039;TableSort&#039;); // Using the TableSort Extender is what tells the
+  63                            // the query object that we are sorting.
+  64   $query-&gt;fields(&#039;t&#039;);
+  65 
+  66   $result = $query
+  67     -&gt;orderByHeader($header) // Don&#039;t forget to tell the query object how to
+  68                              // find the header information.
+  69     -&gt;execute();
+  70 
+  71   $rows = array();
+  72   foreach ($result as $row) {
+  73     // normally we would add some nice formatting to our rows
+  74     // but for our purpose we are simply going to add our row
+  75     // to the array.
+  76     $rows[] = array(&#039;data&#039; =&gt; (array) $row);
+  77   }
+  78 
+  79   // build the table for the nice output.
+  80   $build[&#039;tablesort_table&#039;] = array(
+  81     &#039;#theme&#039; =&gt; &#039;table&#039;,
+  82     &#039;#header&#039; =&gt; $header,
+  83     &#039;#rows&#039; =&gt; $rows,
+  84   );
+  85 
+  86   return $build;
+  87 }
+  88 /**
+  89  * @} End of &quot;defgroup tablesort_example&quot;.
+  90  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "tablesort_example.module" [2776-5787] -->
+<h2 class="sectionedit5" id="tablesort_exampletest">tablesort_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Simpletest case for tablesort_example module.
+   5  */
+   6 
+   7 /**
+   8  * Functionality tests for the tablesort example module.
+   9  *
+  10  * @ingroup tablesort_example
+  11  */
+  12 class TableSortExampleTestCase extends DrupalWebTestCase {
+  13 
+  14   public static function getInfo() {
+  15     return array(
+  16       &#039;name&#039; =&gt; &#039;TableSort Example&#039;,
+  17       &#039;description&#039; =&gt; &#039;Verify the tablesort functionality&#039;,
+  18       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  19     );
+  20   }
+  21 
+  22   function setUp() {
+  23     // Enable the module.
+  24     parent::setUp(&#039;tablesort_example&#039;);
+  25   }
+  26 
+  27   /**
+  28    * Verify the functionality of the example module.
+  29    */
+  30   function testTableSortPage() {
+  31     // no need to login for this test
+  32     $this-&gt;drupalGet(&#039;examples/tablesort_example&#039;, array(&#039;query&#039; =&gt; array(&#039;sort&#039; =&gt; &#039;desc&#039;, &#039;order&#039; =&gt; &#039;Numbers&#039;)));
+  33     $this-&gt;assertRaw(&#039;&lt;tbody&gt;
+  34  &lt;tr class=&quot;odd&quot;&gt;&lt;td class=&quot;active&quot;&gt;7&lt;/td&gt;&lt;td&gt;e&lt;/td&gt;&lt;td&gt;t982hkv&lt;/td&gt; &lt;/tr&gt;&#039;, &#039;Ordered by Number decending&#039;);
+  35 
+  36     $this-&gt;drupalGet(&#039;examples/tablesort_example&#039;, array(&#039;query&#039; =&gt; array(&#039;sort&#039; =&gt; &#039;asc&#039;, &#039;order&#039; =&gt; &#039;Numbers&#039;)));
+  37     $this-&gt;assertRaw(&#039;&lt;tbody&gt;
+  38  &lt;tr class=&quot;odd&quot;&gt;&lt;td class=&quot;active&quot;&gt;1&lt;/td&gt;&lt;td&gt;e&lt;/td&gt;&lt;td&gt;912cv21&lt;/td&gt; &lt;/tr&gt;&#039;, &#039;Ordered by Number ascending&#039;);
+  39 
+  40     //Sort by Letters
+  41     $this-&gt;drupalGet(&#039;examples/tablesort_example&#039;, array(&#039;query&#039; =&gt; array(&#039;sort&#039; =&gt; &#039;desc&#039;, &#039;order&#039; =&gt; &#039;Letters&#039;)));
+  42     $this-&gt;assertRaw(&#039;&lt;tbody&gt;
+  43  &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;4&lt;/td&gt;&lt;td class=&quot;active&quot;&gt;w&lt;/td&gt;&lt;td&gt;80jsv772&lt;/td&gt; &lt;/tr&gt;&#039;, &#039;Ordered by Letters decending&#039;);
+  44 
+  45     $this-&gt;drupalGet(&#039;examples/tablesort_example&#039;, array(&#039;query&#039; =&gt; array(&#039;sort&#039; =&gt; &#039;asc&#039;, &#039;order&#039; =&gt; &#039;Letters&#039;)));
+  46     $this-&gt;assertRaw(&#039;&lt;tbody&gt;
+  47  &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;2&lt;/td&gt;&lt;td class=&quot;active&quot;&gt;a&lt;/td&gt;&lt;td&gt;0kuykuh&lt;/td&gt; &lt;/tr&gt;&#039;, &#039;Ordered by Letters ascending&#039;);
+  48 
+  49     //Sort by Mixture
+  50     $this-&gt;drupalGet(&#039;examples/tablesort_example&#039;, array(&#039;query&#039; =&gt; array(&#039;sort&#039; =&gt; &#039;desc&#039;, &#039;order&#039; =&gt; &#039;Mixture&#039;)));
+  51     $this-&gt;assertRaw(&#039;&lt;tbody&gt;
+  52  &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;7&lt;/td&gt;&lt;td&gt;e&lt;/td&gt;&lt;td class=&quot;active&quot;&gt;t982hkv&lt;/td&gt; &lt;/tr&gt;&#039;, &#039;Ordered by Mixture decending&#039;);
+  53 
+  54     $this-&gt;drupalGet(&#039;examples/tablesort_example&#039;, array(&#039;query&#039; =&gt; array(&#039;sort&#039; =&gt; &#039;asc&#039;, &#039;order&#039; =&gt; &#039;Mixture&#039;)));
+  55     $this-&gt;assertRaw(&#039;&lt;tbody&gt;
+  56  &lt;tr class=&quot;odd&quot;&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;a&lt;/td&gt;&lt;td class=&quot;active&quot;&gt;0kuykuh&lt;/td&gt; &lt;/tr&gt;&#039;, &#039;Ordered by Mixture ascending&#039;);
+  57   }
+  58 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "tablesort_example.test" [5788-] -->

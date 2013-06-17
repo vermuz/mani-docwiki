@@ -1,0 +1,143 @@
+====== Adding a table to the database ======
+
+====== moddev-addingtables-files-start ======
+
+===== demo2.info =====
+<code>
+name = Demo 2
+description = Just a Demo module.
+core = 7.x
+</code>
+===== demo2.module =====
+<code>
+<?php
+
+/**
+ * Implements hook_node_view().
+ */
+function demo2_node_view($node, $view_mode = 'full') {
+  //only when looking at the full version, NOT the teaser
+  if ($view_mode == 'full') {
+
+    // Everytime a node is viewed, increment the node_views count
+    // in the user's session by one and include the result in the node content
+
+    //make sure there is a record in the session
+    if (empty($_SESSION['node_views'][$node->nid])) {
+      $_SESSION['node_views'][$node->nid] = 0;
+    }
+    
+    #krumo('Before: '.$_SESSION['node_views'][$node->nid]);
+
+    //add another to the session
+    $_SESSION['node_views'][$node->nid]++;
+
+    #krumo('After: '.$_SESSION['node_views'][$node->nid]);
+
+
+    // Set up an array of placeholders to pass to t().
+    $t_args = array(
+      '%num' => $_SESSION['node_views'][$node->nid],
+    );
+
+    $node->content['node_views'] = array(
+      '#markup' => t('You have viewed this page %num times.', $t_args),
+      '#weight' => 10,
+    );
+  }
+}
+</code>
+====== moddev-addingtables-files-end ======
+
+===== demo2.info =====
+<code>
+name = Demo 2
+description = Just a Demo module.
+core = 7.x
+</code>
+===== demo2.install =====
+<code>
+<?php
+
+/*
+ *Implement hook_schema().
+ */
+function demo2_schema() {
+  $schema = array();
+  $schema['demo2'] = array(
+    'description' => 'Information about node views.',
+    'fields' => array(
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => "The node's {node}.nid.",
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => "The user's {uid}.uid.",
+      ),
+      'view_count' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Simple node view counter per user.',
+      ),
+    ),
+    'primary key' => array('nid', 'uid'),
+  );
+
+  return $schema;
+}
+
+/*
+ *Implements hook_update_N().
+ */
+function demo2_update_7000() {
+  drupal_install_schema('demo2');
+}
+</code>
+===== demo2.module =====
+<code>
+<?php
+
+/**
+ * Implements hook_node_view().
+ */
+function demo2_node_view($node, $view_mode = 'full') {
+  //only when looking at the full version, NOT the teaser
+  if ($view_mode == 'full') {
+
+    // Everytime a node is viewed, increment the node_views count
+    // in the user's session by one and include the result in the node content
+
+    //make sure there is a record in the session
+    if (empty($_SESSION['node_views'][$node->nid])) {
+      $_SESSION['node_views'][$node->nid] = 0;
+    }
+    
+    #krumo('Before: '.$_SESSION['node_views'][$node->nid]);
+
+    //add another to the session
+    $_SESSION['node_views'][$node->nid]++;
+
+    #krumo('After: '.$_SESSION['node_views'][$node->nid]);
+
+
+    // Set up an array of placeholders to pass to t().
+    $t_args = array(
+      '%num' => $_SESSION['node_views'][$node->nid],
+    );
+
+    $node->content['node_views'] = array(
+      '#markup' => t('You have viewed this page %num times.', $t_args),
+      '#weight' => 10,
+    );
+  }
+}
+</code>

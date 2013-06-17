@@ -1,0 +1,16 @@
+**Porting Python Code
+**
+
+<code>
+Python 2                  Python 3
+Print Statement           Print function
+xrange()                  range()
+long                      int
+1/2 = 0                   1/2 = 0.5
+ASCII Strings             Unicode Strings
+String form %             {} String form format method
+raw_input()               input()
+except Ex, e              except Ex as e
+</code>
+
+http://getpython3.com/diveintopython3/

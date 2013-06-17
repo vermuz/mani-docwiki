@@ -1,0 +1,312 @@
+**Object Oriented Programming**
+
+**Inheritance
+**
+
+MS Word Analogy:
+
+Templates: Classes \\
+When you save as a template after some changes : Instance
+
+Both instances are copies of the main class.
+
+<code>
+               Class
+                 pBouyancy = 20
+                 pColor = red
+                 pSize = 18
+                 mProcedure1()
+                 mProcedure2()
+                 |    
+     ***************************  
+     |                         | 
+Instance01               Instance02
+  pBouyancy = 20           pBouyancy = 20 
+  pColor = red             pColor = red
+  pSize = 18               pSize = 18
+  mProcedure1()            mProcedure1()
+  mProcedure2()            mProcedure2() 
+
+</code>
+
+{{:mani:notes:oop_polymorphismcirclecylinder.gif|}}
+
+  * Class statement creates a named class object.
+  * Class is like a template and shouldn`t be operated on directly.
+  * Class has intra-class assignments i.e attributes
+  * Class has functions - available to others using the class as an object as methods
+  * We call the class object to create an instance of the class.
+  * Calling class objects makes an instance
+  * Each instance gets inheritance attributes
+  * Each instance gets own namespace.
+
+**Defining a class
+**
+
+<code>
+keyword class 
+ OurClass (Name of our class in Camel Case)
+ object (Name of class from which we are inheriting)
+ object - blank state
+ docstring - help
+
+constructor - starter parameters for the instances
+
+self 
+    
+    self is an invisible argument
+    always the first parameter
+    refers to the instance being created
+    So, if we have an instance oc = OurClass(ARGUMENTS)
+    An internal that tells Python that we are referring to this instance which in our case is oc.
+    self.arg1 = arg1 assigned attributes become objects (arg1)
+    In Live code:
+              So self.arg1 => oc.arg1
+                 self.arg2 => oc.arg2
+                 
+    Method is a function definition which occurs in a class definition.
+</code>
+
+<code>
+
+class OurClass(object): # BASE CLASS
+    """Class docstring."""
+
+    def __init__(self, arg1, arg2): # CONSTRUCTOR
+        """Method docstring."""
+        self.arg1 = arg1
+        self.arg2 = arg2
+
+    def printargs(self): # METHOD
+        """Method docstring."""
+        print self.arg1
+        print self.arg2
+        
+//*******************************
+so if we have oc2 instance
+oc2 = OurClass(1,2)
+oc2.printargs()
+
+self means ()
+where def printargs(self) is same as def printargs()
+print(self.arg1) -> will print 1
+print(self.arg2) -> will print 2
+//*******************************
+</code>
+
+**Demo Car Example
+**
+
+<code>
+# This is our superclass or a parent class
+class Car(object):
+    # Class level
+    '''This is the class docstring.'''
+    def __init__(self, year, make, model):
+        self.year = str(year)
+        self.make = make
+        self.model = model
+        self.static = 'constant car data'
+    # Magic methods to format data in a class
+    # We can do same with floats, numbers.
+    def __str__(self):
+    # Method level
+        '''Formats a nice string.'''
+        return 'String representation: %s %s %s' % (self.year, self.make, self.model)
+
+    def printcar(self):
+        '''Echoes back the full name of the vehicle'''
+        # Calling the format method on a string
+        print('{0} {1} {2}'.format(self.year, self.make, self.model))
+        # We can invoke static/constant data
+        print(self.static) # Just to show off an attribute fetch
+
+# Instantiate an object of type car
+ns = Car('1990', 'Nissan', 'Sentra')
+# ns will come back as a class object not as a string
+# The issue with converting the class object into a string is
+# We don`t really know what will happen as a consequence of this
+# change. Will we end up causing damage?
+# So we use def __str__(self) to do this job.
+
+str(ns)
+
+print(ns)
+
+print(ns.static)
+
+ns.printcar()     
+</code>
+
+**Execution
+**
+
+<code>
+>>> ================================ RESTART ================================
+>>> 
+String representation: 1990 Nissan Sentra
+constant car data
+1990 Nissan Sentra
+constant car data
+</code>
+
+**Execution in a Shell
+**
+
+Note: In shell environment an import will lead Python to read every line in the code.
+
+<code>
+>>> import classes
+String representation: 1990 Nissan Sentra
+constant car data
+1990 Nissan Sentra
+constant car data
+</code>
+
+So, we comment out the lines,
+
+<code>
+class Car(object):
+    # Class level
+    '''This is the class docstring.'''
+    def __init__(self, year, make, model):
+        self.year = str(year)
+        self.make = make
+        self.model = model
+        self.static = 'constant car data'
+    # Magic methods to format data in a class
+    # We can do same with floats, numbers.
+    def __str__(self):
+    # Method level
+        '''Formats a nice string.'''
+        return 'String representation: %s %s %s' % (self.year, self.make, self.model)
+
+    def printcar(self):
+        '''Echoes back the full name of the vehicle'''
+        # Calling the format method on a string
+        print('{0} {1} {2}'.format(self.year, self.make, self.model))
+        # We can invoke static/constant data
+        print(self.static) # Just to show off an attribute fetch
+
+# Instantiate an object of type car
+# ns = Car('1990', 'Nissan', 'Sentra')
+# ns will come back as a class object not as a string
+# The issue with converting the class object into a string is
+# We don`t really know what will happen as a consequence of this
+# change. Will we end up causing damage?
+# So we use def __str__(self) to do this job.
+# str(ns)
+# print(ns)
+# print(ns.static)
+# ns.printcar()
+
+</code>
+
+__Execution
+__
+<code>
+mani@mani-ubuntu:~/pydev$ python3
+Python 3.2.3 (default, Oct 19 2012, 20:13:42) 
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import classes
+String representation: 1990 Nissan Sentra
+constant car data
+1990 Nissan Sentra
+constant car data
+>>> import classes
+>>> dir(classes)
+['Car', '__builtins__', '__cached__', '__doc__', '__file__', '__name__', '__package__', 'ns']
+>>> classes.Car.__doc__
+'This is the class docstring.'
+>>> help(classes.Car)
+
+>>> ns2 = classes.Car('2004', 'Honda', 'Element')
+>>> type(ns2)
+<class 'classes.Car'>
+>>> str(ns2)
+'String representation: 2004 Honda Element'
+>>> ns2.year
+'2004'
+>>> ns2.make
+'Honda'
+>>> ns2.model
+'Element'
+>>> ns2.year = 2010
+>>> ns2.year
+2010
+>>> ns2.static
+'constant car data'
+>>> ns2.printcar()
+2010 Honda Element
+constant car data
+>>> 
+
+</code>
+
+**Python Special Methods
+**
+
+http://docs.python.org/release/2.5.2/ref/specialnames.html
+
+
+
+<code>
+class bar:
+	def __init__(self, a):
+		self.a = a
+	def __add__(self, b):
+		s = self.a + b.a # self.a - a, b.a - b
+		return s
+
+x = bar(10)
+y = bar(20)
+z = x + y
+print(z)
+</code>
+
+**Subclasses**
+
+<code>
+# This is our superclass or a parent class
+class Car(object):
+    # Class level
+    '''This is the class docstring.'''
+    def __init__(self, year, make, model):
+        self.year = str(year)
+        self.make = make
+        self.model = model
+        self.static = 'constant car data'
+    # Magic methods to format data in a class
+    # We can do same with floats, numbers.
+    def __str__(self):
+    # Method level
+        '''Formats a nice string.'''
+        return 'String representation: %s %s %s' % (self.year, self.make, self.model)
+
+    def printcar(self):
+        '''Echoes back the full name of the vehicle'''
+        # Calling the format method on a string
+        print('{0} {1} {2}'.format(self.year, self.make, self.model))
+        # We can invoke static/constant data
+        print(self.static) # Just to show off an attribute fetch
+
+# This is our subclass; inherits from Car
+class Motorcycle(Car):
+    pass
+
+hs = Motorcycle('2008','Honda','Shadow')
+
+hs.printcar()
+hs.static = 'constant MC data'
+print(hs.static)
+</code>
+
+Execution
+
+<code>
+>>> mc = classes.Motorcycle('2008','Honda','Shadow')
+>>> mc.printcar()
+2008 Honda Shadow
+constant car data
+</code>

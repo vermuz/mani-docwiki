@@ -1,0 +1,135 @@
+
+<h1 class="sectionedit1" id="querying_the_database_with_db_select">Querying the database with db_select()</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Querying the database with db_select()" [1-54] -->
+<h1 class="sectionedit2" id="moddev-selects-files-start">moddev-selects-files-start</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT2 SECTION "moddev-selects-files-start" [55-96] -->
+<h2 class="sectionedit3" id="demoinfo">demo.info</h2>
+<div class="level2">
+<pre class="code">name = Demo
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT3 SECTION "demo.info" [97-190] -->
+<h2 class="sectionedit4" id="demomodule">demo.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/*
+ * Implements hook_menu().
+ */
+function demo_menu() {
+  $items = array();
+
+  $items[&#039;admin/reports/node-list&#039;] = array(
+    &#039;title&#039; =&gt; &#039;List of Nodes&#039;,
+    &#039;description&#039; =&gt; t(&#039;A list of nodes with published status.&#039;),
+    &#039;page callback&#039; =&gt; &#039;demo_node_list&#039;,
+    &#039;access arguments&#039; =&gt; array(&#039;administer content&#039;),
+  );
+
+  return $items;
+}
+
+/*
+ * Custom page callback for admin/reports/node-list
+ */
+function demo_node_list(){
+  return &#039;It Works!&#039;;
+}</pre>
+
+</div>
+<!-- EDIT4 SECTION "demo.module" [191-689] -->
+<h1 class="sectionedit5" id="moddev-selects-files-end">moddev-selects-files-end</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT5 SECTION "moddev-selects-files-end" [690-729] -->
+<h2 class="sectionedit6" id="demoinfo1">demo.info</h2>
+<div class="level2">
+<pre class="code">name = Demo
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT6 SECTION "demo.info" [730-823] -->
+<h2 class="sectionedit7" id="demomodule1">demo.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/*
+ * Implements hook_menu().
+ */
+function demo_menu() {
+  $items = array();
+
+  $items[&#039;admin/reports/node-list&#039;] = array(
+    &#039;title&#039; =&gt; &#039;List of Nodes&#039;,
+    &#039;description&#039; =&gt; t(&#039;A list of nodes with published status.&#039;),
+    &#039;page callback&#039; =&gt; &#039;demo_node_list&#039;,
+    &#039;access arguments&#039; =&gt; array(&#039;administer content&#039;),
+  );
+
+  return $items;
+}
+
+/*
+ * Custom page callback for admin/reports/node-list
+ */
+function demo_node_list(){
+  
+  //define variants
+  $node_types = node_type_get_types();
+  #krumo($node_types);
+  $stati = array(0, 1); //0 = unpublished, 1 = published
+
+  
+  //loop through variants
+  foreach($node_types as $type) {
+    #krumo($type);
+    $typename = $type-&gt;type;
+    foreach($stati as $status) {
+      #krumo($status);
+
+      //SELECT COUNT FROM node WHERE type = $typename AND status = $status
+      $query = db_select(&#039;node&#039;, &#039;n&#039;)
+        -&gt;condition(&#039;type&#039;, $typename)
+        -&gt;condition(&#039;status&#039;, $status);
+      $query-&gt;addExpression(&#039;COUNT (nid)&#039;, &#039;node_count&#039;);
+      $results = $query-&gt;execute();
+      $data = $results-&gt;fetchObject();
+      #krumo($data);
+
+      //assign vars for printing
+      if ($status == 0) {
+        $status = &#039;unpusblished&#039;;
+      }
+      else {
+        $status = &#039;published&#039;;
+      }
+
+      //assemble strings for output
+      $items[] = t(&#039;The %type content type has %num %status nodes.&#039;, array(&#039;%type&#039;=&gt;$typename, &#039;%num&#039;=&gt;$data-&gt;node_count, &#039;%status&#039;=&gt;$status ));
+      
+    }  //end status loop
+  }  //end node type loop
+
+  #krumo($items);
+
+  $content[&#039;node-list&#039;] = array(
+    &#039;#items&#039; =&gt; $items,
+    &#039;#theme&#039; =&gt; &#039;item_list&#039;,
+  );
+
+  return render($content);
+
+}</pre>
+
+</div>
+<!-- EDIT7 SECTION "demo.module" [824-] -->

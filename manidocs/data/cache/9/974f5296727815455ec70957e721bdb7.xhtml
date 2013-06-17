@@ -1,0 +1,709 @@
+
+<h1 class="sectionedit1" id="php">PHP</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "PHP" [1-18] -->
+<h2 class="sectionedit2" id="php_configuration">PHP Configuration</h2>
+<div class="level2">
+
+<p>
+Default Settings: php.ini (we can put php.ini in the folder of webpage that applies to that folder).
+php.ini can load extensions i.e. mysql
+</p>
+
+<p>
+<strong>PHP settings
+</strong>
+</p>
+<pre class="code">&lt;?php
+phpinfo();
+?&gt;</pre>
+
+<p>
+Other settings include max_execution_time and memory_limit. <br/>
+
+We can also set configuration options using ini_set() and ini_get() functions.
+</p>
+<pre class="code">ini_set(&#039;display_errors&#039;, &#039;On&#039;);</pre>
+
+<p>
+<strong>Enable Debugging</strong>
+</p>
+
+<p>
+debugging and warning messages
+</p>
+<pre class="code">error_reporting(E_ALL);;
+ini_set(&#039;display_errors&#039;,&#039;On&#039;);</pre>
+
+</div>
+<!-- EDIT2 SECTION "PHP Configuration" [19-564] -->
+<h2 class="sectionedit3" id="variables">Variables</h2>
+<div class="level2">
+
+<p>
+Note (Do not need to declare variables before using them)<br/>
+
+Variables can hold different types at different times,
+</p>
+<pre class="code">$var = 4;
+$var = &#039;This text&#039;;</pre>
+
+<p>
+<strong>Assignment</strong>
+</p>
+<pre class="code">// Strings
+$yummy = &quot;potato&quot;;
+
+// Number Variables
+$c = 3;
+print &quot;&lt;p&gt;&quot;. $c/2 . &quot;&lt;/p&gt;&quot;;</pre>
+<ul>
+<li class="level1"><div class="li"> Variables used within a function are local only to that function.</div>
+</li>
+<li class="level1"><div class="li"> They cannot be accessed outside the function.</div>
+</li>
+<li class="level1"><div class="li"> If you want a variable to be available to every function, make it global.</div>
+</li>
+</ul>
+<pre class="code">// Global Variables
+$global_var = 4;
+function foo()
+{
+  global $global_var;
+  print $globalvar;
+}</pre>
+
+<p>
+<strong>PHP Magic Variables
+</strong>
+</p>
+
+<p>
+Super global arrays created by PHP when you view a site. <br/>
+
+All of these arrays contain useful information that you can use in making your website. <br/>
+
+</p>
+<ul>
+<li class="level1"><div class="li"> $_GET</div>
+</li>
+<li class="level1"><div class="li"> $_POST</div>
+</li>
+<li class="level1"><div class="li"> $_REQUEST</div>
+</li>
+<li class="level1"><div class="li"> $_SERVER</div>
+</li>
+<li class="level1"><div class="li"> $_COOKIE</div>
+</li>
+<li class="level1"><div class="li"> $_SESSION</div>
+</li>
+</ul>
+
+<p>
+<strong>$_GET
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> contains parameters passed to your script from the browser</div>
+</li>
+<li class="level1"><div class="li"> GET parameters are visible in your <abbr title="Uniform Resource Locator">URL</abbr> bar, unlike POST parameter</div>
+</li>
+</ul>
+<pre class="code">    http://example.com/index.php?key1=value1&amp;key2=value2&amp;
+    $_GET[&#039;key1&#039;] == &#039;value1&quot;
+    $_GET[&#039;key2&#039;] == &#039;value2&quot;</pre>
+
+<p>
+<strong>$_POST</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> works like $_GET except that parameters aren`t passed in the <abbr title="Uniform Resource Locator">URL</abbr>.</div>
+</li>
+<li class="level1"><div class="li"> Recommended way to pass form data - so it won`t be easily visible and changeable.</div>
+</li>
+</ul>
+
+<p>
+<strong>$_REQUEST
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Union of $_GET, $_SET and $_COOKIE</div>
+</li>
+<li class="level1"><div class="li"> used in situations where you don`t really care where the input comes from</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT3 SECTION "Variables" [565-2017] -->
+<h2 class="sectionedit4" id="comments">Comments</h2>
+<div class="level2">
+<pre class="code">//This is a comment.
+/* This is also a comment.
+*/</pre>
+
+</div>
+<!-- EDIT4 SECTION "Comments" [2018-2106] -->
+<h2 class="sectionedit5" id="expressions">Expressions</h2>
+<div class="level2">
+<pre class="code">$c = 3.141592653;
+$c + 1; //4.141592653
+2*($c + 1); //8.283185306
+// Assignments to evaluate
+$c = 5; //5</pre>
+
+</div>
+<!-- EDIT5 SECTION "Expressions" [2107-2252] -->
+<h2 class="sectionedit6" id="operators">Operators</h2>
+<div class="level2">
+
+<p>
+The ones to remember,
+</p>
+<pre class="code">.  String Concatenation
+-&gt; Member Field/function</pre>
+
+</div>
+<!-- EDIT6 SECTION "Operators" [2253-2361] -->
+<h2 class="sectionedit7" id="string_quoting">String Quoting</h2>
+<div class="level2">
+
+<p>
+Double Quote (can have values embedded in them, not interpreted literally).<br/>
+
+Single Quote (interpreted literally).
+</p>
+<pre class="code">$food = &quot;potatoes&quot;;
+$double_quoted = &quot;I like to eat $food.&quot;;
+$single_quoted = &quot;I like to eat $food.&quot;;
+
+print &quot;&lt;p&gt;$double_quoted&lt;/p&gt;&quot;; // Prints I like to eat potatoes 
+print &quot;&lt;p&gt;$single_quoted&lt;/p&gt;&quot;;// Prints I like to eat $food</pre>
+
+</div>
+<!-- EDIT7 SECTION "String Quoting" [2362-2750] -->
+<h2 class="sectionedit8" id="arrays">Arrays</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> Arrays are collections of values.</div>
+</li>
+<li class="level1"><div class="li"> PHP arrays are sort of like Python dictionaries.</div>
+</li>
+<li class="level1"><div class="li"> Accessed via a key.</div>
+</li>
+<li class="level1"><div class="li"> Each key is associated with exactly one value.</div>
+</li>
+<li class="level1"><div class="li"> A key may be integer, string or other type.</div>
+</li>
+</ul>
+
+<p>
+<strong>Arrays Indexing</strong>
+</p>
+<pre class="code">$languages = array(&#039;PHP&#039;,&#039;Java&#039;,&#039;C++&#039;,&#039;Python&#039;);
+//******************************************************************
+print &quot;&lt;p&gt;The first language is &quot; . $languages[0] . &quot;!&lt;/p&gt;&quot;; // PHP
+print &quot;&lt;p&gt;The first language is &quot; . $languages[1] . &quot;!&lt;/p&gt;&quot;; // Java</pre>
+
+<p>
+<strong>Add value to Array</strong>
+</p>
+<pre class="code">$languages[] = &quot;Perl&quot;;</pre>
+
+</div>
+<!-- EDIT8 SECTION "Arrays" [2751-3339] -->
+<h2 class="sectionedit9" id="conditional">Conditional</h2>
+<div class="level2">
+
+<p>
+Whatever you supply as condition is converted to a boolean. <br/>
+
+False (boolean value false, number 0, zero length strings, null, zero length errors)
+</p>
+<pre class="code">if($favorite_color == &quot;blue&quot;)
+{
+   // Code
+}
+else if ($favorite_color == &quot;red&quot;)
+{
+  // Code
+}
+else
+{
+  // Code
+}</pre>
+
+</div>
+<!-- EDIT9 SECTION "Conditional" [3340-3641] -->
+<h2 class="sectionedit10" id="loops">Loops</h2>
+<div class="level2">
+
+<p>
+<strong>For</strong>
+</p>
+<pre class="code">$languages = array(&#039;PHP&#039;, &#039;Java&#039;, &#039;C++&#039;, &#039;Python&#039;);
+
+for($c = 0; $c &lt; count($languages); $c++)
+{
+  $lang = $languages[$c];
+  print &quot;&lt;p&gt;The language at index $c is $lang.&lt;/p&gt;&quot;;
+}</pre>
+
+<p>
+<strong>Foreach</strong>
+</p>
+<pre class="code">//Array using non integer keys
+
+$languages = array(&#039;best&#039; =&gt; &#039;PHP&#039;, &#039;tastiest&#039; =&gt; &#039;Java&#039;, &#039;funkiest&#039; =&gt; &#039;Scheme&#039;);
+
+// with keys
+foreach($languages as $adjective =&gt; $lang)
+{
+  print &quot;&lt;p&gt;The $adjective language is $lang.&lt;/p&gt;&quot;;
+}
+
+// without keys
+foreach($languages as $lang)
+{
+  print &quot;&lt;p&gt;$lang is a programming language.&lt;/p&gt;&quot;;
+}</pre>
+
+<p>
+<strong>Functions</strong>
+</p>
+
+<p>
+Functions can return values. <br/>
+
+</p>
+<pre class="code">$num = count($arr); // count returns size of array $arr
+return $num</pre>
+<pre class="code">function hereIsAFunction()
+{
+  print &quot;This is a function.&quot;;
+  print &quot;It doesn`t really do very much.&quot;;
+}</pre>
+<pre class="code">function countDown($start)
+{
+  while($start &gt;= 0)
+  {
+    print &quot;&lt;p&gt;$start...&lt;/p&gt;&quot;;
+    $start--;
+  }
+}
+
+function squareNumber($x)
+{
+  return $x * $x;
+}</pre>
+
+<p>
+<strong>Useful functions
+</strong>
+</p>
+
+<p>
+<strong>isset($var) and some useful functions</strong>
+</p>
+<ol>
+<li class="level1"><div class="li"> Returns true if $var has been set.</div>
+</li>
+<li class="level1"><div class="li"> isset($favorite_color)</div>
+</li>
+<li class="level1"><div class="li"> isset($_GET[&#039;name&#039;]) will return true if $_GET[&#039;name&#039;] has a value</div>
+</li>
+<li class="level1"><div class="li"> explode($delimiter, $string) breaks up $string into an array of substrings, separating using $delimiter</div>
+</li>
+<li class="level1"><div class="li"> count()</div>
+</li>
+<li class="level1"><div class="li"> print_r($array) prints an array, useful for debugging</div>
+</li>
+<li class="level1"><div class="li"> require_once($filename) includes another file</div>
+</li>
+<li class="level1"><div class="li"> ini_set($setting, value) - configuration settings</div>
+</li>
+<li class="level1"><div class="li"> header($data) - if at the beginning, outputs HTTP header data, can be used for redirects i.e. to secure HTTPS pages.</div>
+</li>
+</ol>
+
+</div>
+<!-- EDIT10 SECTION "Loops" [3642-5251] -->
+<h2 class="sectionedit11" id="classes">Classes</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> Classes are bundles of variables and functions that should be grouped together.</div>
+</li>
+<li class="level1"><div class="li"> :: Scoping resolution operator - to access super-class and call its functions.</div>
+</li>
+<li class="level1"><div class="li"> → operator to access functions/fields of classes</div>
+</li>
+<li class="level1"><div class="li"> Fields and functions can be public and private</div>
+</li>
+</ul>
+<pre class="code">class user
+{
+   public $ID;
+   public $first_name;
+   public $last_name;
+   
+  // Constructor  
+  function __construct($first, $last, $id)
+  {
+    $this-&gt;ID = $id;
+    $this-&gt;first_name = $first;
+    $this-&gt;last_name = $last;
+  }
+  function getName()
+  {
+    return $this-&gt;first_name . &quot; &quot; . $this-&gt;last_name;
+  }
+  function toString()
+  {
+    return $this-&gt;getName() . &quot;(&quot; . $this-&gt;ID . &quot;)&quot;;
+  }
+}
+</pre>
+
+<p>
+<strong>Extend classes
+</strong>
+</p>
+<pre class="code">class facebook_user extends user
+{
+  public $network;
+  // Construction
+  function __construct($first, $last, $id, $net)
+  {
+    // Use old constructor
+    parent::__construct($first, $last, $id);
+    $this-&gt;network = $net;
+  }
+  
+  //Override
+  function toString()
+  {
+    return $this-&gt;getName() . &quot;(&quot;. $this-&gt;network . &quot;)&quot;;
+  }
+}</pre>
+
+<p>
+Now, we will use the class,
+</p>
+<pre class="code">$some_user = new user(&quot;Steve&quot;, &quot;Levine&quot;, &quot;123&quot;);
+
+print &quot;&lt;p&gt;&quot;.$some_user-&gt;toString().&quot;&lt;/p&gt;&quot;;
+
+$another_user = new facebook_user(&quot;Steve&quot;,&quot;Levine&quot;,&quot;123&quot;,&quot;MIT&quot;);
+
+print &quot;&lt;p&gt;&quot;.$another_user-&gt;toString().&quot;&lt;/p&gt;&quot;;</pre>
+
+</div>
+<!-- EDIT11 SECTION "Classes" [5252-6581] -->
+<h2 class="sectionedit12" id="php_cookies_and_sessions">PHP Cookies and Sessions</h2>
+<div class="level2">
+
+<p>
+<strong>Cookies</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Cookies are little data files that websites can store on your system.</div>
+</li>
+<li class="level1"><div class="li"> Cookies are used to store information about the user, or the website state on the computer.</div>
+</li>
+<li class="level1"><div class="li"> Cookie information exchange happens at the beginning of the HTTP protocol.</div>
+</li>
+</ul>
+
+<p>
+Commonly used form,
+</p>
+<pre class="code">// Keep it at the top of your code
+bool setcookie($name, $value, $expire)</pre>
+
+<p>
+<strong>Cookies Example</strong>
+</p>
+<pre class="code">&lt;?php
+// Cookies happen at the beginning
+
+// See if we have stored a cookie yet.
+if (isset($_COOKIE[&#039;username&#039;]))
+{
+  // The cookie is set. This means there is a non expired cookie, so the user was already here.
+  $username = $_COOKIE[&#039;username&#039;];
+  print &quot;&lt;h1&gt;Welcome Back&lt;/h1&gt;&quot;;
+  print &quot;&lt;p&gt;I see you have been here before, $username!&lt;/p&gt;&quot;;
+}
+else
+{
+  // The cookie is not set, so assume that the user has not been there
+  // Check and see if user just submitted.
+  if (isset($_POST[&#039;username&#039;]))
+  {
+    // The user just submitted, Store a cookie
+    $username = $_POST[&#039;username&#039;];
+    setcookie(&#039;username&#039;, $username, time() + 120);
+    print &quot;&lt;h1&gt;Nice to meet you!&lt;/h1&gt;&quot;;
+    print &quot;&lt;p&gt;It is nice to meet you, $username!&lt;/p&gt;&quot;;
+  }
+  else
+  {
+    //The user didn`t submit, and we don`t have a cookie.
+    // Display a form
+    print &quot;&lt;h1&gt;Hello Stranger!&lt;/h1&gt;&quot;;
+    print &quot;&lt;p&gt;What is your name?&lt;/p&gt;&quot;
+    print &quot;&lt;form method =\ &quot;POST\&quot; action=\ &quot;cookie.php\&quot;&gt;&quot;;
+    print &quot;Username: &lt;input type =\ &quot;text\&quot; name=\ &quot;username\&quot; /&gt;;
+    print &quot;&lt;input type=\&quot; submit\&quot; value=\ &quot;Hello!\&quot; /&gt;;
+    print &quot;&lt;form&gt;&quot;;
+  }
+}
+
+?&gt;</pre>
+
+<p>
+<strong>Sessions
+</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Sessions are another way to store information about your websites users, kind of like cookies.</div>
+</li>
+<li class="level1"><div class="li"> Unlike cookies, sessions are stored on the server, not on client computer.</div>
+</li>
+<li class="level1"><div class="li"> Less chances out there of this data being tampered or altered as you have control of it on the server.</div>
+</li>
+<li class="level1"><div class="li"> Data stored in sessions can be accessed across different pages in your website.</div>
+</li>
+<li class="level1"><div class="li"> There is a magic, super global array called $_SESSION. It acts like $_GET, $_POST, and $_REQUEST.</div>
+</li>
+<li class="level1"><div class="li"> To save information, you get a string valued key of $_SESSION to the data you want.</div>
+</li>
+<li class="level1"><div class="li"> After you get a session variable, it is visible to all other pages on your website.</div>
+</li>
+<li class="level1"><div class="li"> You can use sessions to implement a login system, shopping carts.</div>
+</li>
+</ul>
+<pre class="code">$_SESSION[&#039;name&#039;] = &#039;William B.Rogers&#039;;</pre>
+
+<p>
+<strong>Session Example</strong>
+</p>
+<pre class="code">&lt;?php
+// Sessions also must happen at the beginning of HTTP
+session_start();
+
+if(isset($_SESSION[&#039;username&#039;]))
+{
+  // The cookie is set, this means that there is a non expired cookie, so the user was already here
+  $username = $_SESSION[&#039;username&#039;];
+  print &quot;&lt;h1&gt;Welcome back!&lt;/h1&gt;&quot;;
+  print &quot;&lt;p&gt;I see you have been here before, $username!&lt;/p&gt;&quot;;
+}
+else
+{
+  // has not been here yet.
+  
+  // Check and see if the user just submitted.
+  if (isset($_POST[&#039;username&#039;]))
+  {
+     $username = $_POST[&#039;username&#039;];
+     $_SESSION[&#039;username&#039;] = $username;
+     print &quot;&lt;h1&gt;Nice to meet you!&lt;/h1&gt;&quot;;
+     print &quot;&lt;p&gt;It is nice to meet you, $username!&lt;/p&gt;&quot; 
+  }
+  else
+  {
+    // The user did not submit, we don`t have a cookie,
+    // Display a form
+    print &quot;&lt;h1&gt;Hello, stranger!&lt;/h1&gt;&quot;;
+    print &quot;&lt;p&gt;What is your name?&lt;/p&gt;&quot;;
+    print &quot;&lt;form method=\ &quot;POST\&quot; action=\ &quot;session.php\ &quot;&gt;&quot;;
+    print &quot;Username: &lt;input type=\ &quot;text\&quot; name=\ &quot;username\&quot; /&gt;&quot;;
+    print &quot;&lt;input type=\ &quot;submit\&quot; value=\ &quot;Hello!\&quot; /&gt;&quot;;
+    print &quot;&lt;form&gt;&quot;;
+  }
+}
+?&gt;</pre>
+
+</div>
+<!-- EDIT12 SECTION "PHP Cookies and Sessions" [6582-10006] -->
+<h2 class="sectionedit13" id="database_connectivity">Database Connectivity</h2>
+<div class="level2">
+
+<p>
+Access MySQL db is via the MySQLi extension for PHP.
+</p>
+
+<p>
+<strong>Using MySQLi</strong>
+</p>
+
+<p>
+MySQLi represents a connection
+MySQLi_STMT represents a query
+MySQLi_Result represents the result of a query
+</p>
+<pre class="code">&lt;?php
+//For debugging, turn on error output
+ini_set(&#039;display errors&#039;,&#039;On&#039;);
+error_reporting(E_ALL);
+
+// CONNECT
+//************************************************************************
+//If DB username and password are in a separate file, lets import them.
+require_once(&#039;private/mysql_info.php&#039;);
+
+// Make an MySQLi class, representing a connection to the MySQL database.
+$conn = new mysqli(&#039;MYSQL HOST&#039;, MYSQL_USER,MYSQL_PASSWORD, &#039;DATABASE-NAME&#039;);
+
+// See if connection was successful
+if(mysqli_connect_errno())
+{
+  print &quot;&lt;p&gt;Couldn`t connect to the mysql server, Bummer!&lt;/p&gt;&quot;;
+  exit();
+}
+//*************************************************************************
+// Prepare the query
+// bind_params: Fill in all of the ? in the query string with the values.
+// First argument is the type, s for string, i for int etc.
+//*************************************************************************
+// If we get here, it means the connection has been made
+// Prepare a query
+$query = $conn-&gt;prepare(&quot;SELECT * FROM people WHERE gender=?&quot;);
+
+// Bind parameters, corresponding to ?s
+$gender = &#039;Male&#039;;
+$query-&gt;bind_param(&#039;s&#039;,$gender);
+//*************************************************************************
+//Execute query
+$query-&gt;execute();
+//*************************************************************************
+// Now process the results.
+// First bind variables corresponding to columns in our results:
+$query-&gt;bind_result($name, $course, $gender, $fav_prog_lang);
+print &quot;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;Course&lt;/td&gt;&lt;td&gt;Gender&lt;/td&gt;&lt;td&gt;Favorite Programming Language&lt;/td&gt;&lt;/tr&gt;&quot;;
+
+// Continually fetch new results.
+// Put answers in the bound variables.
+// Keep going until no more results to fetch.
+
+while($query-&gt;fetch())
+{
+  print &quot;&lt;tr&gt;&lt;td&gt;$name&lt;/td&gt;&lt;td&gt;$course&lt;/td&gt;&lt;td&gt;gender&lt;/td&gt;&lt;td&gt;$fav_prog_lang&lt;/td&gt;&lt;/tr&gt;&quot;;
+}
+
+print &quot;&lt;/table&gt;&quot;;
+//***************************************************************************************
+// Close the connection
+$conn-&gt;close();
+?&gt;</pre>
+
+<p>
+<strong>Output</strong>
+</p>
+<pre class="code">Name   Course Gender Favorite Programming Language
+Steve  6      Male   PHP   
+Bob    8      Male   C++</pre>
+
+</div>
+<!-- EDIT13 SECTION "Database Connectivity" [10007-12342] -->
+<h2 class="sectionedit14" id="security">Security</h2>
+<div class="level2">
+
+<p>
+MySQL security is very important.
+</p>
+
+<p>
+Opening the doors of injection attacks? this code will do,
+</p>
+<pre class="code">$result = $conn-&gt;query(&quot;SELECT * FROM people WHERE name=\ &quot;$name\ &quot;&quot;);</pre>
+
+<p>
+Assume that $name is retrieved directly from form data (i.e., $name = $_POST[&#039;name&#039;];)
+</p>
+
+<p>
+It works just fine if $name is Mani.
+</p>
+
+<p>
+Malicious user types this instead of Mani: 
+</p>
+<pre class="code">&quot;; DROP people; SELECT * FROM foo WHERE name=&quot;</pre>
+
+<p>
+so MySQL query string becomes,
+</p>
+<pre class="code">SELECT * FROM people WHERE name=&quot;&quot;; DROP people;
+SELECT * FROM foo WHERE name = &quot;&quot;;</pre>
+
+<p>
+Someone has just deleted our MySQL table.
+</p>
+
+<p>
+<strong>Solution</strong>
+</p>
+
+<p>
+Escape any text used in a MySQL query.<br/>
+
+bind_param in MySQLi does that automatically.
+</p>
+
+<p>
+<strong>XSS Attacks</strong>
+</p>
+
+<p>
+<em>Cross Site Scripting.
+</em>
+</p>
+<ul>
+<li class="level1"><div class="li"> Data entered by one user is visible to another but what if a malicious user wants to enter <abbr title="HyperText Markup Language">HTML</abbr> or Javascript into the database in a forum post. </div>
+</li>
+<li class="level1"><div class="li"> If PHP outputs this data as is, it will be interpreted by the browser as <abbr title="HyperText Markup Language">HTML</abbr>. The hacker`s entry will close off the <abbr title="HyperText Markup Language">HTML</abbr> and start executing JavaScript. </div>
+</li>
+<li class="level1"><div class="li"> A hacker could potentially read and send off your cookies (perhaps via HTTPRequests/AJAX). </div>
+</li>
+<li class="level1"><div class="li"> PHP Sessions are implemented by storing a session ID cookie on the computer. If this is stolen, someone else can impersonate you on the websites. This is Session hijacking.</div>
+</li>
+</ul>
+
+<p>
+<strong>Solution</strong>
+</p>
+
+<p>
+<strong>use htmlspecialchars()
+</strong>
+</p>
+
+<p>
+Takes as input a string, encodes it in a way that the content remains the same but it will not be interpreted as <abbr title="HyperText Markup Language">HTML</abbr>.
+</p>
+<pre class="code">htmlspecialchars(&#039;&lt;script&gt;alert(&quot;XSS!&quot;);&lt;/script&gt;&#039;,
+ENT_QUOTES) will output:
+
+&amp;lt;script&amp;gt;alert(&amp;quot;XSS!&amp;quot;);&amp;lt;/script&amp;gt;</pre>
+
+</div>
+<!-- EDIT14 SECTION "Security" [12343-13996] -->
+<h2 class="sectionedit15" id="cool_stuff">Cool Stuff</h2>
+<div class="level2">
+<ul>
+<li class="level1"><div class="li"> Send emails using email() function.</div>
+</li>
+<li class="level1"><div class="li"> Download other webpages using cURL (nifty for getting price quotes or directions)</div>
+</li>
+<li class="level1"><div class="li"> Generate images using GD usesful for creating CAPTCHA systems</div>
+</li>
+<li class="level1"><div class="li"> Encryption through mcrypt</div>
+</li>
+</ul>
+
+</div>
+<!-- EDIT15 SECTION "Cool Stuff" [13997-] -->

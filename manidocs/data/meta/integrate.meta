@@ -1,0 +1,28 @@
+a:2:{s:7:"current";a:8:{s:4:"date";a:2:{s:7:"created";i:1371317315;s:8:"modified";i:1371317315;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371317315;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"C";s:2:"id";s:9:"integrate";s:4:"user";s:5:"admin";s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}s:5:"title";s:33:"Integrating with the theme system";s:11:"description";a:2:{s:15:"tableofcontents";a:4:{i:0;a:4:{s:3:"hid";s:33:"integrating_with_the_theme_system";s:5:"title";s:33:"Integrating with the theme system";s:4:"type";s:2:"ul";s:5:"level";i:1;}i:1;a:4:{s:3:"hid";s:13:"spy_glassinfo";s:5:"title";s:14:"spy_glass.info";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:2;a:4:{s:3:"hid";s:15:"spy_glassmodule";s:5:"title";s:16:"spy_glass.module";s:4:"type";s:2:"ul";s:5:"level";i:2;}i:3;a:4:{s:3:"hid";s:20:"spy-glass-itemtplphp";s:5:"title";s:22:"spy-glass-item.tpl.php";s:4:"type";s:2:"ul";s:5:"level";i:2;}}s:8:"abstract";s:503:"spy_glass.info
+
+
+name = Spy Glass
+description = Serious spy business
+core = 7.x
+
+
+spy_glass.module
+
+
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function spy_glass_menu() {
+  $items = array();
+  $items['node/%node/spy_glass'] = array(
+    'title' => 'Spy Glass',
+    'description' => 'Take a closer look',
+    'page callback' => 'spy_glass_page',
+    'page arguments' => array(1),
+    'access callback' => 'node_access',
+    'access arguments' => array('view', 1),
+    'type' => MENU_LOCAL_TASK,
+  );
+ …";}s:8:"internal";a:2:{s:5:"cache";b:1;s:3:"toc";b:1;}s:8:"relation";a:1:{s:10:"firstimage";s:0:"";}}s:10:"persistent";a:4:{s:4:"date";a:1:{s:7:"created";i:1371317315;}s:7:"creator";s:4:"mani";s:4:"user";s:5:"admin";s:11:"last_change";a:7:{s:4:"date";i:1371317315;s:2:"ip";s:9:"127.0.0.1";s:4:"type";s:1:"C";s:2:"id";s:9:"integrate";s:4:"user";s:5:"admin";s:3:"sum";s:7:"created";s:5:"extra";s:0:"";}}}

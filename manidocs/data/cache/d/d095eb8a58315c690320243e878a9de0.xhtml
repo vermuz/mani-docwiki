@@ -1,0 +1,2536 @@
+
+<h1 class="sectionedit1" id="ajax_example">Ajax Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Ajax Example" [1-28] -->
+<h2 class="sectionedit2" id="ajax_examplecss">ajax_example.css</h2>
+<div class="level2">
+<pre class="code">   1 /*
+   2  * @file
+   3  * CSS for ajax_example.
+   4  *
+   5  * See @link ajax_example_dependent_dropdown_degrades @endlink for
+   6  * details on what this file does. It is not used in any other example.
+   7  */
+   8  
+   9 /* Hides the next button when not degrading to non-javascript browser */
+  10 html.js .next-button { 
+  11   display: none; 
+  12 }
+  13 
+  14 /* Makes the next/choose button align to the right of the select control */
+  15 .form-item-dropdown-first, .form-item-question-type-select {
+  16   display: inline-block;
+  17 }</pre>
+
+</div>
+<!-- EDIT2 SECTION "ajax_example.css" [29-625] -->
+<h2 class="sectionedit3" id="ajax_exampleinfo">ajax_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = AJAX Example
+   2 description = An example module showing how to use Drupal AJAX forms
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = ajax_example.test</pre>
+
+</div>
+<!-- EDIT3 SECTION "ajax_example.info" [626-850] -->
+<h2 class="sectionedit4" id="ajax_exampleinstall">ajax_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * AJAX Examples install file schema for ajax_example_form_node_form_alter()
+   6  */
+   7 
+   8 /**
+   9  * Implements hook_schema().
+  10  */
+  11 function ajax_example_schema() {
+  12   $schema[&#039;ajax_example_node_form_alter&#039;] = array(
+  13     &#039;description&#039; =&gt; &#039;Stores example settings for nodes.&#039;,
+  14     &#039;fields&#039; =&gt; array(
+  15       &#039;nid&#039; =&gt; array(
+  16         &#039;type&#039; =&gt; &#039;int&#039;,
+  17         &#039;unsigned&#039; =&gt; TRUE,
+  18         &#039;not null&#039; =&gt; TRUE,
+  19         &#039;default&#039; =&gt; 0,
+  20         &#039;description&#039; =&gt; &#039;The {node}.nid to store settings.&#039;,
+  21       ),
+  22       &#039;example_1&#039; =&gt; array(
+  23         &#039;type&#039; =&gt; &#039;int&#039;,
+  24         &#039;not null&#039; =&gt; TRUE,
+  25         &#039;default&#039; =&gt; 0,
+  26         &#039;description&#039; =&gt; &#039;Node Form Example 1 checkbox&#039;,
+  27       ),
+  28       &#039;example_2&#039; =&gt; array(
+  29         &#039;type&#039; =&gt; &#039;varchar&#039;,
+  30         &#039;length&#039; =&gt; 256,
+  31         &#039;not null&#039; =&gt; FALSE,
+  32         &#039;default&#039; =&gt; &#039;&#039;,
+  33         &#039;description&#039; =&gt; &#039;Node Form Example 2 textfield&#039;,
+  34       ),
+  35     ),
+  36     &#039;primary key&#039; =&gt; array(&#039;nid&#039;),
+  37     &#039;foreign keys&#039; =&gt; array(
+  38       &#039;dnv_node&#039; =&gt; array(
+  39         &#039;table&#039; =&gt; &#039;node&#039;,
+  40         &#039;columns&#039; =&gt; array(&#039;nid&#039; =&gt; &#039;nid&#039;),
+  41       ),
+  42     ),
+  43   );
+  44   return $schema;
+  45 }
+  46 
+  47 /**
+  48  * Add the new ajax_example_node_form_alter table.
+  49  */
+  50 function ajax_example_update_7100() {
+  51   if (!db_table_exists(&#039;ajax_example_node_form_alter&#039;)) {
+  52     $schema = ajax_example_schema();
+  53     db_create_table(&#039;ajax_example_node_form_alter&#039;, $schema[&#039;ajax_example_node_form_alter&#039;]);
+  54     return st(&#039;Created table ajax_example_node_form_alter&#039;);
+  55   }
+  56 }</pre>
+
+</div>
+<!-- EDIT4 SECTION "ajax_example.install" [851-2619] -->
+<h2 class="sectionedit5" id="ajax_examplejs">ajax_example.js</h2>
+<div class="level2">
+<pre class="code">   1 /*
+   2  * @file
+   3  * JavaScript for ajax_example.
+   4  *
+   5  * See @link ajax_example_dependent_dropdown_degrades @endlink for
+   6  * details on what this file does. It is not used in any other example.
+   7  */
+   8 
+   9 (function($) {
+  10 
+  11   // Re-enable form elements that are disabled for non-ajax situations.
+  12   Drupal.behaviors.enableFormItemsForAjaxForms = {
+  13     attach: function() {
+  14     // If ajax is enabled.
+  15     if (Drupal.ajax) {
+  16       $(&#039;.enabled-for-ajax&#039;).removeAttr(&#039;disabled&#039;);
+  17     }
+  18 
+  19     // Below is only for the demo case of showing with js turned off.
+  20     // It overrides the behavior of the CSS that would normally turn off
+  21     // the &#039;ok&#039; button when JS is enabled. Here, for demonstration purposes,
+  22     // we have AJAX disabled but JS turned on, so use this to simulate.
+  23     if (!Drupal.ajax) {
+  24       $(&#039;html.js .next-button&#039;).show();
+  25     }
+  26   }
+  27   };
+  28 
+  29 })(jQuery);</pre>
+
+</div>
+<!-- EDIT5 SECTION "ajax_example.js" [2620-3657] -->
+<h2 class="sectionedit6" id="ajax_examplemodule">ajax_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * AJAX Examples module file with basic examples.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup ajax_example Example: AJAX
+  10  * @ingroup examples
+  11  * @{
+  12  * These examples show basic AJAX concepts.
+  13  *
+  14  * General documentation is available at
+  15  * @link ajax AJAX Framework documentation @endlink and at the
+  16  * @link http://drupal.org/node/752056 AJAX Forms handbook page @endlink.
+  17  *
+  18  * The several examples here demonstrate basic AJAX usage.
+  19  */
+  20 
+  21 // The Node Form Alter example needs to be in another file.
+  22 module_load_include(&#039;inc&#039;, &#039;ajax_example&#039;, &#039;ajax_example_node_form_alter&#039;);
+  23 
+  24 /**
+  25  * Implements hook_menu().
+  26  *
+  27  * Sets up calls to drupal_get_form() for all our example cases.
+  28  *
+  29  * @see menu_example.module
+  30  * @see menu_example_menu()
+  31  */
+  32 function ajax_example_menu() {
+  33   $items = array();
+  34 
+  35   $items[&#039;examples/ajax_example&#039;] = array(
+  36     &#039;title&#039; =&gt; &#039;AJAX Example&#039;,
+  37     &#039;page callback&#039; =&gt; &#039;ajax_example_intro&#039;,
+  38     &#039;access callback&#039; =&gt; TRUE,
+  39     &#039;expanded&#039; =&gt; TRUE,
+  40   );
+  41 
+  42   // Change the description of a form element.
+  43   $items[&#039;examples/ajax_example/simplest&#039;] = array(
+  44     &#039;title&#039; =&gt; &#039;Simplest AJAX Example&#039;,
+  45     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  46     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_simplest&#039;),
+  47     &#039;access callback&#039; =&gt; TRUE,
+  48     &#039;weight&#039; =&gt; 0,
+  49   );
+  50   // Generate a changing number of checkboxes.
+  51   $items[&#039;examples/ajax_example/autocheckboxes&#039;] = array(
+  52     &#039;title&#039; =&gt; &#039;Generate checkboxes&#039;,
+  53     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  54     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_autocheckboxes&#039;),
+  55     &#039;access callback&#039; =&gt; TRUE,
+  56     &#039;weight&#039; =&gt; 1,
+  57   );
+  58   // Generate different textfields based on form state.
+  59   $items[&#039;examples/ajax_example/autotextfields&#039;] = array(
+  60     &#039;title&#039; =&gt; &#039;Generate textfields&#039;,
+  61     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  62     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_autotextfields&#039;),
+  63     &#039;access callback&#039; =&gt; TRUE,
+  64     &#039;weight&#039; =&gt; 2,
+  65   );
+  66 
+  67   // Submit a form without a page reload.
+  68   $items[&#039;examples/ajax_example/submit_driven_ajax&#039;] = array(
+  69     &#039;title&#039; =&gt; &#039;Submit-driven AJAX&#039;,
+  70     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  71     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_submit_driven_ajax&#039;),
+  72     &#039;access callback&#039; =&gt; TRUE,
+  73     &#039;weight&#039; =&gt; 3,
+  74   );
+  75 
+  76   // Repopulate a dropdown based on form state.
+  77   $items[&#039;examples/ajax_example/dependent_dropdown&#039;] = array(
+  78     &#039;title&#039; =&gt; &#039;Dependent dropdown&#039;,
+  79     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  80     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_dependent_dropdown&#039;),
+  81     &#039;access callback&#039; =&gt; TRUE,
+  82     &#039;weight&#039; =&gt; 4,
+  83   );
+  84   // Repopulate a dropdown, but this time with graceful degredation.
+  85   // See ajax_example_graceful_degradation.inc.
+  86   $items[&#039;examples/ajax_example/dependent_dropdown_degrades&#039;] = array(
+  87     &#039;title&#039; =&gt; &#039;Dependent dropdown (with graceful degradation)&#039;,
+  88     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  89     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_dependent_dropdown_degrades&#039;),
+  90     &#039;access callback&#039; =&gt; TRUE,
+  91     &#039;weight&#039; =&gt; 5,
+  92     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+  93   );
+  94   // The above example as it appears to users with no javascript.
+  95   $items[&#039;examples/ajax_example/dependent_dropdown_degrades_no_js&#039;] = array(
+  96     &#039;title&#039; =&gt; &#039;Dependent dropdown with javascript off&#039;,
+  97     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  98     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_dependent_dropdown_degrades&#039;, TRUE),
+  99     &#039;access callback&#039; =&gt; TRUE,
+ 100     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 101     &#039;weight&#039; =&gt; 5,
+ 102   );
+ 103 
+ 104   // Populate a form section based on input in another element.
+ 105   $items[&#039;examples/ajax_example/dynamic_sections&#039;] = array(
+ 106     &#039;title&#039; =&gt; &#039;Dynamic Sections (with graceful degradation)&#039;,
+ 107     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 108     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_dynamic_sections&#039;),
+ 109     &#039;access callback&#039; =&gt; TRUE,
+ 110     &#039;weight&#039; =&gt; 6,
+ 111     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 112   );
+ 113   // The  above example as it appears to users with no javascript.
+ 114   $items[&#039;examples/ajax_example/dynamic_sections_no_js&#039;] = array(
+ 115     &#039;title&#039; =&gt; &#039;Dynamic Sections w/JS turned off&#039;,
+ 116     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 117     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_dynamic_sections&#039;, TRUE),
+ 118     &#039;access callback&#039; =&gt; TRUE,
+ 119     &#039;weight&#039; =&gt; 6,
+ 120     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 121   );
+ 122 
+ 123   // A classic multi-step wizard, but with no page reloads.
+ 124   // See ajax_example_graceful_degradation.inc.
+ 125   $items[&#039;examples/ajax_example/wizard&#039;] = array(
+ 126     &#039;title&#039; =&gt; &#039;Wizard (with graceful degradation)&#039;,
+ 127     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 128     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_wizard&#039;),
+ 129     &#039;access callback&#039; =&gt; TRUE,
+ 130     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 131     &#039;weight&#039; =&gt; 7,
+ 132   );
+ 133   // The above example as it appears to users with no javascript.
+ 134   $items[&#039;examples/ajax_example/wizard_no_js&#039;] = array(
+ 135     &#039;title&#039; =&gt; &#039;Wizard w/JS turned off&#039;,
+ 136     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 137     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_wizard&#039;, TRUE),
+ 138     &#039;access callback&#039; =&gt; TRUE,
+ 139     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 140     &#039;weight&#039; =&gt; 7,
+ 141   );
+ 142 
+ 143   // Add-more button that creates additional form elements.
+ 144   // See ajax_example_graceful_degradation.inc.
+ 145   $items[&#039;examples/ajax_example/add_more&#039;] = array(
+ 146     &#039;title&#039; =&gt; &#039;Add-more button (with graceful degradation)&#039;,
+ 147     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 148     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_add_more&#039;),
+ 149     &#039;access callback&#039; =&gt; TRUE,
+ 150     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 151     &#039;weight&#039; =&gt; 8,
+ 152   );
+ 153   // The above example as it appears to users with no javascript.
+ 154   $items[&#039;examples/ajax_example/add_more_no_js&#039;] = array(
+ 155     &#039;title&#039; =&gt; &#039;Add-more button w/JS turned off&#039;,
+ 156     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 157     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_add_more&#039;, TRUE),
+ 158     &#039;access callback&#039; =&gt; TRUE,
+ 159     &#039;file&#039; =&gt; &#039;ajax_example_graceful_degradation.inc&#039;,
+ 160     &#039;weight&#039; =&gt; 8,
+ 161   );
+ 162 
+ 163   // Use the AJAX framework outside the context of a form using the use-ajax
+ 164   // class. See ajax_example_misc.inc.
+ 165   $items[&#039;examples/ajax_example/ajax_link&#039;] = array(
+ 166     &#039;title&#039; =&gt; &#039;Ajax Link (&quot;use-ajax&quot; class)&#039;,
+ 167     &#039;page callback&#039; =&gt; &#039;ajax_example_render_link&#039;,
+ 168     &#039;access callback&#039; =&gt; TRUE,
+ 169     &#039;file&#039; =&gt; &#039;ajax_example_misc.inc&#039;,
+ 170     &#039;weight&#039; =&gt; 9,
+ 171   );
+ 172   // Use the AJAX framework outside the context of a form using a renderable
+ 173   // array of type link with the #ajax property. See ajax_example_misc.inc.
+ 174   $items[&#039;examples/ajax_example/ajax_link_renderable&#039;] = array(
+ 175     &#039;title&#039; =&gt; &#039;Ajax Link (Renderable Array)&#039;,
+ 176     &#039;page callback&#039; =&gt; &#039;ajax_example_render_link_ra&#039;,
+ 177     &#039;access callback&#039; =&gt; TRUE,
+ 178     &#039;file&#039; =&gt; &#039;ajax_example_misc.inc&#039;,
+ 179     &#039;weight&#039; =&gt; 9,
+ 180   );
+ 181   // A menu callback is required when using ajax outside of the Form API.
+ 182   $items[&#039;ajax_link_callback&#039;] = array(
+ 183     &#039;page callback&#039; =&gt; &#039;ajax_link_response&#039;,
+ 184     &#039;access callback&#039; =&gt; &#039;user_access&#039;,
+ 185     &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+ 186     &#039;type&#039; =&gt; MENU_CALLBACK,
+ 187     &#039;file&#039; =&gt; &#039;ajax_example_misc.inc&#039;,
+ 188   );
+ 189 
+ 190   // Use AJAX framework commands outside of the #ajax form property.
+ 191   // See ajax_example_advanced.inc.
+ 192   $items[&#039;examples/ajax_example/advanced_commands&#039;] = array(
+ 193     &#039;title&#039; =&gt; &#039;AJAX framework commands&#039;,
+ 194     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 195     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_advanced_commands&#039;),
+ 196     &#039;access callback&#039; =&gt; TRUE,
+ 197     &#039;file&#039; =&gt; &#039;ajax_example_advanced.inc&#039;,
+ 198     &#039;weight&#039; =&gt; 100,
+ 199   );
+ 200 
+ 201   // Autocomplete examples.
+ 202   $items[&#039;examples/ajax_example/simple_autocomplete&#039;] = array(
+ 203     &#039;title&#039; =&gt; &#039;Autocomplete (simple)&#039;,
+ 204     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 205     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_simple_autocomplete&#039;),
+ 206     &#039;access arguments&#039; =&gt; array(&#039;access user profiles&#039;),
+ 207     &#039;file&#039; =&gt; &#039;ajax_example_autocomplete.inc&#039;,
+ 208     &#039;weight&#039; =&gt; 10,
+ 209   );
+ 210   $items[&#039;examples/ajax_example/simple_user_autocomplete_callback&#039;] = array(
+ 211     &#039;page callback&#039; =&gt; &#039;ajax_example_simple_user_autocomplete_callback&#039;,
+ 212     &#039;file&#039; =&gt; &#039;ajax_example_autocomplete.inc&#039;,
+ 213     &#039;type&#039; =&gt; MENU_CALLBACK,
+ 214     &#039;access arguments&#039; =&gt; array(&#039;access user profiles&#039;),
+ 215   );
+ 216   $items[&#039;examples/ajax_example/node_autocomplete&#039;] = array(
+ 217     &#039;title&#039; =&gt; &#039;Autocomplete (node with nid)&#039;,
+ 218     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 219     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_unique_autocomplete&#039;),
+ 220     &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+ 221     &#039;file&#039; =&gt; &#039;ajax_example_autocomplete.inc&#039;,
+ 222     &#039;weight&#039; =&gt; 11,
+ 223   );
+ 224   $items[&#039;examples/ajax_example/unique_node_autocomplete_callback&#039;] = array(
+ 225     &#039;page callback&#039; =&gt; &#039;ajax_example_unique_node_autocomplete_callback&#039;,
+ 226     &#039;file&#039; =&gt; &#039;ajax_example_autocomplete.inc&#039;,
+ 227     &#039;type&#039; =&gt; MENU_CALLBACK,
+ 228     &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+ 229   );
+ 230   $items[&#039;examples/ajax_example/node_by_author&#039;] = array(
+ 231     &#039;title&#039; =&gt; &#039;Autocomplete (node limited by author)&#039;,
+ 232     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 233     &#039;page arguments&#039; =&gt; array(&#039;ajax_example_node_by_author_autocomplete&#039;),
+ 234     &#039;access callback&#039; =&gt; TRUE,
+ 235     &#039;file&#039; =&gt; &#039;ajax_example_autocomplete.inc&#039;,
+ 236     &#039;weight&#039; =&gt; 12,
+ 237   );
+ 238   $items[&#039;examples/ajax_example/node_by_author_autocomplete&#039;] = array(
+ 239     &#039;page callback&#039; =&gt; &#039;ajax_example_node_by_author_node_autocomplete_callback&#039;,
+ 240     &#039;file&#039; =&gt; &#039;ajax_example_autocomplete.inc&#039;,
+ 241     &#039;type&#039; =&gt; MENU_CALLBACK,
+ 242     &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+ 243   );
+ 244 
+ 245   return $items;
+ 246 }
+ 247 
+ 248 function ajax_example_intro() {
+ 249   $markup = t(&#039;The AJAX example module provides many examples of AJAX including forms, links, and AJAX commands.&#039;);
+ 250 
+ 251   $list[] = l(t(&#039;Simplest AJAX Example&#039;), &#039;examples/ajax_example/simplest&#039;);
+ 252   $list[] = l(t(&#039;Generate checkboxes&#039;), &#039;examples/ajax_example/autocheckboxes&#039;);
+ 253   $list[] = l(t(&#039;Generate textfields&#039;), &#039;examples/ajax_example/autotextfields&#039;);
+ 254   $list[] = l(t(&#039;Submit-driven AJAX&#039;), &#039;examples/ajax_example/submit_driven_ajax&#039;);
+ 255   $list[] = l(t(&#039;Dependent dropdown&#039;), &#039;examples/ajax_example/dependent_dropdown&#039;);
+ 256   $list[] = l(t(&#039;Dependent dropdown (with graceful degradation)&#039;), &#039;examples/ajax_example/dependent_dropdown_degrades&#039;);
+ 257   $list[] = l(t(&#039;Dynamic Sections w/JS turned off&#039;), &#039;examples/ajax_example/dependent_dropdown_degrades_no_js&#039;);
+ 258   $list[] = l(t(&#039;Wizard (with graceful degradation)&#039;), &#039;examples/ajax_example/wizard&#039;);
+ 259   $list[] = l(t(&#039;Wizard w/JS turned off&#039;), &#039;examples/ajax_example/wizard_no_js&#039;);
+ 260   $list[] = l(t(&#039;Add-more button (with graceful degradation)&#039;), &#039;examples/ajax_example/add_more&#039;);
+ 261   $list[] = l(t(&#039;Add-more button w/JS turned off&#039;), &#039;examples/ajax_example/add_more_no_js&#039;);
+ 262   $list[] = l(t(&#039;Ajax Link (&quot;use-ajax&quot; class)&#039;), &#039;examples/ajax_example/ajax_link&#039;);
+ 263   $list[] = l(t(&#039;Ajax Link (Renderable Array)&#039;), &#039;examples/ajax_example/ajax_link_renderable&#039;);
+ 264   $list[] = l(t(&#039;AJAX framework commands&#039;), &#039;examples/ajax_example/advanced_commands&#039;);
+ 265   $list[] = l(t(&#039;Autocomplete (simple)&#039;), &#039;examples/ajax_example/simple_autocomplete&#039;);
+ 266   $list[] = l(t(&#039;Autocomplete (node with nid)&#039;), &#039;examples/ajax_example/node_autocomplete&#039;);
+ 267   $list[] = l(t(&#039;Autocomplete (node limited by author)&#039;), &#039;examples/ajax_example/node_by_author&#039;);
+ 268 
+ 269   $variables[&#039;items&#039;] = $list;
+ 270   $variables[&#039;type&#039;] = &#039;ul&#039;;
+ 271   $markup .= theme(&#039;item_list&#039;, $variables);
+ 272 
+ 273   return $markup;
+ 274 }
+ 275 
+ 276 /**
+ 277  * Simple form whose ajax-enabled &#039;changethis&#039; member causes a text change
+ 278  * in the description of the &#039;replace_textfield&#039; member.
+ 279  * See @link http://drupal.org/node/262422 Form API Tutorial @endlink
+ 280  */
+ 281 function ajax_example_simplest($form, &amp;$form_state) {
+ 282   $form = array();
+ 283   $form[&#039;changethis&#039;] = array(
+ 284     &#039;#title&#039; =&gt; t(&quot;Choose something and explain why&quot;),
+ 285     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 286     &#039;#options&#039; =&gt; array(
+ 287       &#039;one&#039; =&gt; &#039;one&#039;,
+ 288       &#039;two&#039; =&gt; &#039;two&#039;,
+ 289       &#039;three&#039; =&gt; &#039;three&#039;,
+ 290     ),
+ 291     &#039;#ajax&#039; =&gt; array(
+ 292       // #ajax has two required keys: callback and wrapper.
+ 293       // &#039;callback&#039; is a function that will be called when this element changes.
+ 294       &#039;callback&#039; =&gt; &#039;ajax_example_simplest_callback&#039;,
+ 295       // &#039;wrapper&#039; is the HTML id of the page element that will be replaced.
+ 296       &#039;wrapper&#039; =&gt; &#039;replace_textfield_div&#039;,
+ 297       // There are also several optional keys - see ajax_example_autocheckboxes
+ 298       // below for details on &#039;method&#039;, &#039;effect&#039; and &#039;speed&#039; and
+ 299       // ajax_example_dependent_dropdown for &#039;event&#039;.
+ 300     ),
+ 301   );
+ 302 
+ 303   // This entire form element will be replaced whenever &#039;changethis&#039; is updated.
+ 304   $form[&#039;replace_textfield&#039;] = array(
+ 305     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 306     &#039;#title&#039; =&gt; t(&quot;Why&quot;),
+ 307     // The prefix/suffix provide the div that we&#039;re replacing, named by
+ 308     // #ajax[&#039;wrapper&#039;] above.
+ 309     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;replace_textfield_div&quot;&gt;&#039;,
+ 310     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 311   );
+ 312 
+ 313   // An AJAX request calls the form builder function for every change.
+ 314   // We can change how we build the form based on $form_state.
+ 315   if (!empty($form_state[&#039;values&#039;][&#039;changethis&#039;])) {
+ 316     $form[&#039;replace_textfield&#039;][&#039;#description&#039;] = t(&quot;Say why you chose &#039;@value&#039;&quot;, array(&#039;@value&#039; =&gt; $form_state[&#039;values&#039;][&#039;changethis&#039;]));
+ 317   }
+ 318   return $form;
+ 319 }
+ 320 
+ 321 /**
+ 322  * Callback for ajax_example_simplest.
+ 323  *
+ 324  * On an ajax submit, the form builder function is called again, then the $form
+ 325  * and $form_state are passed to this callback function so it can select which
+ 326  * portion of the form to send on to the client.
+ 327  *
+ 328  * @return renderable array (the textfield element)
+ 329  */
+ 330 function ajax_example_simplest_callback($form, $form_state) {
+ 331   // The form has already been submitted and updated. We can return the replaced
+ 332   // item as it is.
+ 333   return $form[&#039;replace_textfield&#039;];
+ 334 }
+ 335 
+ 336 /**
+ 337  * AJAX-enabled select element causes replacement of a set of checkboxes
+ 338  * based on the selection.
+ 339  */
+ 340 function ajax_example_autocheckboxes($form, &amp;$form_state) {
+ 341   // Since the form builder is called after every AJAX request, we rebuild
+ 342   // the form based on $form_state.
+ 343   $num_checkboxes = !empty($form_state[&#039;values&#039;][&#039;howmany_select&#039;]) ? $form_state[&#039;values&#039;][&#039;howmany_select&#039;] : 1;
+ 344 
+ 345   $form[&#039;howmany_select&#039;] = array(
+ 346     &#039;#title&#039; =&gt; t(&#039;How many checkboxes do you want?&#039;),
+ 347     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 348     &#039;#options&#039; =&gt; array(1 =&gt; 1, 2 =&gt; 2, 3 =&gt; 3, 4 =&gt; 4),
+ 349     &#039;#default_value&#039; =&gt; $num_checkboxes,
+ 350     &#039;#ajax&#039; =&gt; array(
+ 351       &#039;callback&#039; =&gt; &#039;ajax_example_autocheckboxes_callback&#039;,
+ 352       &#039;wrapper&#039; =&gt; &#039;checkboxes-div&#039;,
+ 353       //&#039;method&#039; defaults to replaceWith, but valid values also include
+ 354       // append, prepend, before and after.
+ 355       // &#039;method&#039; =&gt; &#039;replaceWith&#039;,
+ 356       // &#039;effect&#039; defaults to none. Other valid values are &#039;fade&#039; and &#039;slide&#039;.
+ 357       // See ajax_example_autotextfields for an example of &#039;fade&#039;.
+ 358       &#039;effect&#039; =&gt; &#039;slide&#039;,
+ 359       // &#039;speed&#039; defaults to &#039;slow&#039;. You can also use &#039;fast&#039;
+ 360       // or a number of milliseconds for the animation to last.
+ 361       // &#039;speed&#039; =&gt; &#039;slow&#039;,
+ 362       // Don&#039;t show any throbber...
+ 363       &#039;progress&#039; =&gt; array(&#039;type&#039; =&gt; &#039;none&#039;),
+ 364     ),
+ 365   );
+ 366 
+ 367 
+ 368   $form[&#039;checkboxes_fieldset&#039;] = array(
+ 369     &#039;#title&#039; =&gt; t(&quot;Generated Checkboxes&quot;),
+ 370     // The prefix/suffix provide the div that we&#039;re replacing, named by
+ 371     // #ajax[&#039;wrapper&#039;] above.
+ 372     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;checkboxes-div&quot;&gt;&#039;,
+ 373     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 374     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 375     &#039;#description&#039; =&gt; t(&#039;This is where we get automatically generated checkboxes&#039;),
+ 376   );
+ 377 
+ 378   for ($i = 1; $i &lt;= $num_checkboxes; $i++) {
+ 379     $form[&#039;checkboxes_fieldset&#039;][&quot;checkbox$i&quot;] = array(
+ 380       &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 381       &#039;#title&#039; =&gt; &quot;Checkbox $i&quot;,
+ 382     );
+ 383   }
+ 384 
+ 385   $form[&#039;submit&#039;] = array(
+ 386     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 387     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 388   );
+ 389 
+ 390   return $form;
+ 391 }
+ 392 
+ 393 /**
+ 394  * Callback element needs only select the portion of the form to be updated.
+ 395  * Since #ajax[&#039;callback&#039;] return can be HTML or a renderable array (or an
+ 396  * array of commands), we can just return a piece of the form.
+ 397  * See @link ajax_example_advanced.inc AJAX Advanced Commands for more details
+ 398  * on AJAX framework commands.
+ 399  *
+ 400  * @return renderable array (the checkboxes fieldset)
+ 401  */
+ 402 function ajax_example_autocheckboxes_callback($form, $form_state) {
+ 403   return $form[&#039;checkboxes_fieldset&#039;];
+ 404 }
+ 405 
+ 406 
+ 407 /**
+ 408  * Show/hide textfields based on AJAX-enabled checkbox clicks.
+ 409  */
+ 410 function ajax_example_autotextfields($form, &amp;$form_state) {
+ 411 
+ 412   $form[&#039;ask_first_name&#039;] = array(
+ 413     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 414     &#039;#title&#039; =&gt; t(&#039;Ask me my first name&#039;),
+ 415     &#039;#ajax&#039; =&gt; array(
+ 416       &#039;callback&#039; =&gt; &#039;ajax_example_autotextfields_callback&#039;,
+ 417       &#039;wrapper&#039; =&gt; &#039;textfields&#039;,
+ 418       &#039;effect&#039; =&gt; &#039;fade&#039;,
+ 419     )
+ 420   );
+ 421   $form[&#039;ask_last_name&#039;] = array(
+ 422    &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 423    &#039;#title&#039; =&gt; t(&#039;Ask me my last name&#039;),
+ 424     &#039;#ajax&#039; =&gt; array(
+ 425       &#039;callback&#039; =&gt; &#039;ajax_example_autotextfields_callback&#039;,
+ 426       &#039;wrapper&#039; =&gt; &#039;textfields&#039;,
+ 427       &#039;effect&#039; =&gt; &#039;fade&#039;,
+ 428     ),
+ 429   );
+ 430 
+ 431   $form[&#039;textfields&#039;] = array(
+ 432     &#039;#title&#039; =&gt; t(&quot;Generated text fields for first and last name&quot;),
+ 433     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;textfields&quot;&gt;&#039;,
+ 434     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 435     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 436     &#039;#description&#039; =&gt; t(&#039;This is where we put automatically generated textfields&#039;),
+ 437   );
+ 438 
+ 439   // Since checkboxes return TRUE or FALSE, we have to check that
+ 440   // $form_state has been filled as well as what it contains.
+ 441   if (!empty($form_state[&#039;values&#039;][&#039;ask_first_name&#039;]) &amp;&amp; $form_state[&#039;values&#039;][&#039;ask_first_name&#039;]) {
+ 442     $form[&#039;textfields&#039;][&#039;first_name&#039;] = array(
+ 443       &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 444       &#039;#title&#039; =&gt; t(&#039;First Name&#039;),
+ 445     );
+ 446   }
+ 447   if (!empty($form_state[&#039;values&#039;][&#039;ask_last_name&#039;]) &amp;&amp; $form_state[&#039;values&#039;][&#039;ask_last_name&#039;]) {
+ 448     $form[&#039;textfields&#039;][&#039;last_name&#039;] = array(
+ 449       &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 450       &#039;#title&#039; =&gt; t(&#039;Last Name&#039;),
+ 451     );
+ 452   }
+ 453 
+ 454   $form[&#039;submit&#039;] = array(
+ 455     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 456     &#039;#value&#039; =&gt; t(&#039;Click Me&#039;),
+ 457   );
+ 458 
+ 459   return $form;
+ 460 }
+ 461 
+ 462 /**
+ 463  * Selects the piece of the form we want to use as replacement text and returns
+ 464  * it as a form (renderable array).
+ 465  *
+ 466  * @return renderable array (the textfields element)
+ 467  */
+ 468 function ajax_example_autotextfields_callback($form, $form_state) {
+ 469   return $form[&#039;textfields&#039;];
+ 470 }
+ 471 
+ 472 
+ 473 /**
+ 474  * A very basic form which with an AJAX-enabled submit.
+ 475  *
+ 476  * On submit, the markup in the #markup element is updated.
+ 477  */
+ 478 function ajax_example_submit_driven_ajax($form, &amp;$form_state) {
+ 479   $form[&#039;box&#039;] = array(
+ 480     &#039;#type&#039; =&gt; &#039;markup&#039;,
+ 481     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;box&quot;&gt;&#039;,
+ 482     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 483     &#039;#markup&#039; =&gt; &#039;&lt;h1&gt;Initial markup for box&lt;/h1&gt;&#039;,
+ 484   );
+ 485 
+ 486   $form[&#039;submit&#039;] = array(
+ 487     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 488     &#039;#ajax&#039; =&gt; array(
+ 489       &#039;callback&#039; =&gt; &#039;ajax_example_submit_driven_callback&#039;,
+ 490       &#039;wrapper&#039; =&gt; &#039;box&#039;,
+ 491     ),
+ 492     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 493   );
+ 494 
+ 495   return $form;
+ 496 }
+ 497 
+ 498 /**
+ 499  * Select the &#039;box&#039; element, change the markup in it, and return it as a
+ 500  * renderable array.
+ 501  *
+ 502  * @return renderable array (the box element)
+ 503  */
+ 504 function ajax_example_submit_driven_callback($form, $form_state) {
+ 505   // In most cases, it is recomended that you put this logic in form generation
+ 506   // rather than the callback. Submit driven forms are an exception, because
+ 507   // you may not want to return the form at all.
+ 508   $element = $form[&#039;box&#039;];
+ 509   $element[&#039;#markup&#039;] = &quot;Clicked submit ({$form_state[&#039;values&#039;][&#039;op&#039;]}): &quot; . date(&#039;c&#039;);
+ 510   return $element;
+ 511 }
+ 512 
+ 513 
+ 514 /**
+ 515  * A form with a dropdown whose options are dependent on a
+ 516  * choice made in a previous dropdown.
+ 517  *
+ 518  * On changing the first dropdown, the options in the second
+ 519  * are updated.
+ 520  */
+ 521 function ajax_example_dependent_dropdown($form, &amp;$form_state) {
+ 522   // Get the list of options to populate the first dropdown.
+ 523   $options_first = _ajax_example_get_first_dropdown_options();
+ 524   // If we have a value for the first dropdown from $form_state[&#039;values&#039;] we use
+ 525   // this both as the default value for the first dropdown and also as a
+ 526   // parameter to pass to the function that retrieves the options for the
+ 527   // second dropdown.
+ 528   $selected = isset($form_state[&#039;values&#039;][&#039;dropdown_first&#039;]) ? $form_state[&#039;values&#039;][&#039;dropdown_first&#039;] : key($options_first);
+ 529 
+ 530   $form[&#039;dropdown_first&#039;] = array(
+ 531     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 532     &#039;#title&#039; =&gt; &#039;Instrument Type&#039;,
+ 533     &#039;#options&#039; =&gt; $options_first,
+ 534     &#039;#default_value&#039; =&gt; $selected,
+ 535     // Bind an ajax callback to the change event (which is the default for the
+ 536     // select form type) of the first dropdown. It will replace the second
+ 537     // dropdown when rebuilt
+ 538     &#039;#ajax&#039; =&gt; array(
+ 539       // When &#039;event&#039; occurs, Drupal will perform an ajax request in the
+ 540       // background. Usually the default value is sufficient (eg. change for
+ 541       // select elements), but valid values include any jQuery event,
+ 542       // most notably &#039;mousedown&#039;, &#039;blur&#039;, and &#039;submit&#039;.
+ 543       // &#039;event&#039; =&gt; &#039;change&#039;,
+ 544       &#039;callback&#039; =&gt; &#039;ajax_example_dependent_dropdown_callback&#039;,
+ 545       &#039;wrapper&#039; =&gt; &#039;dropdown-second-replace&#039;,
+ 546     ),
+ 547   );
+ 548 
+ 549   $form[&#039;dropdown_second&#039;] = array(
+ 550     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 551     &#039;#title&#039; =&gt; $options_first[$selected] . &#039; &#039; . t(&#039;Instruments&#039;),
+ 552     // The entire enclosing div created here gets replaced when dropdown_first
+ 553     // is changed.
+ 554     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;dropdown-second-replace&quot;&gt;&#039;,
+ 555     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 556     // when the form is rebuilt during ajax processing, the $selected variable
+ 557     // will now have the new value and so the options will change
+ 558     &#039;#options&#039; =&gt; _ajax_example_get_second_dropdown_options($selected),
+ 559     &#039;#default_value&#039; =&gt; isset($form_state[&#039;values&#039;][&#039;dropdown_second&#039;]) ? $form_state[&#039;values&#039;][&#039;dropdown_second&#039;] : &#039;&#039;,
+ 560   );
+ 561   $form[&#039;submit&#039;] = array(
+ 562     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 563     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 564   );
+ 565   return $form;
+ 566 }
+ 567 
+ 568 /**
+ 569  * Selects just the second dropdown to be returned for re-rendering
+ 570  *
+ 571  * Since the controlling logic for populating the form is in the form builder
+ 572  * function, all we do here is select the element and return it to be updated.
+ 573  *
+ 574  * @return renderable array (the second dropdown)
+ 575  */
+ 576 function ajax_example_dependent_dropdown_callback($form, $form_state) {
+ 577   return $form[&#039;dropdown_second&#039;];
+ 578 }
+ 579 
+ 580 /**
+ 581  * Helper function to populate the first dropdown. This would normally be
+ 582  * pulling data from the database.
+ 583  *
+ 584  * @return array of options
+ 585  */
+ 586 function _ajax_example_get_first_dropdown_options() {
+ 587   // drupal_map_assoc() just makes an array(&#039;String&#039; =&gt; &#039;String&#039;...).
+ 588   return drupal_map_assoc(array(t(&#039;String&#039;), t(&#039;Woodwind&#039;), t(&#039;Brass&#039;), t(&#039;Percussion&#039;)));
+ 589 }
+ 590 
+ 591 /**
+ 592  * Helper function to populate the second dropdown. This would normally be
+ 593  * pulling data from the database.
+ 594  *
+ 595  * @param $key
+ 596  *   This will determine which set of options is returned.
+ 597  *
+ 598  * @return array of options
+ 599  */
+ 600 function _ajax_example_get_second_dropdown_options($key = &#039;&#039;) {
+ 601   $options = array(
+ 602     t(&#039;String&#039;) =&gt; drupal_map_assoc(array(t(&#039;Violin&#039;), t(&#039;Viola&#039;), t(&#039;Cello&#039;), t(&#039;Double Bass&#039;))),
+ 603     t(&#039;Woodwind&#039;) =&gt; drupal_map_assoc(array(t(&#039;Flute&#039;), t(&#039;Clarinet&#039;), t(&#039;Oboe&#039;), t(&#039;Bassoon&#039;))),
+ 604     t(&#039;Brass&#039;) =&gt; drupal_map_assoc(array(t(&#039;Trumpet&#039;), t(&#039;Trombone&#039;), t(&#039;French Horn&#039;), t(&#039;Euphonium&#039;))),
+ 605     t(&#039;Percussion&#039;) =&gt; drupal_map_assoc(array(t(&#039;Bass Drum&#039;), t(&#039;Timpani&#039;), t(&#039;Snare Drum&#039;), t(&#039;Tambourine&#039;))),
+ 606   );
+ 607   if (isset($options[$key])) {
+ 608     return $options[$key];
+ 609   }
+ 610   else {
+ 611     return array();
+ 612   }
+ 613 }
+ 614 /**
+ 615  * @} End of &quot;defgroup ajax_example&quot;.
+ 616  */</pre>
+
+</div>
+<!-- EDIT6 SECTION "ajax_example.module" [3658-29579] -->
+<h2 class="sectionedit7" id="ajax_exampletest">ajax_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Test ajax example module.
+   5  */
+   6 class AjaxExampleTestCase extends DrupalWebTestCase {
+   7 
+   8   public static function getInfo() {
+   9     return array(
+  10       &#039;name&#039; =&gt; &#039;Ajax example&#039;,
+  11       &#039;description&#039; =&gt; &#039;Checks behavior of the Ajax Example&#039;,
+  12       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  13     );
+  14   }
+  15 
+  16   /**
+  17    * Enable module.
+  18    */
+  19   function setUp() {
+  20     parent::setUp(&#039;ajax_example&#039;);
+  21   }
+  22 
+  23   /**
+  24    * Check the non-JS version of the &quot;Dynamic Sections&quot; example.
+  25    */
+  26   function testDynamicSectionsNoJs() {
+  27     // The path to the example form.
+  28     $path = &#039;examples/ajax_example/dynamic_sections_no_js&#039;;
+  29     // Confirmation text for right and wrong answers.
+  30     $wrong = &#039;Wrong answer. Try again. (Hint: The right answer is &quot;George Washington&quot;.)&#039;;
+  31     $right = &#039;You got the right answer: George Washington&#039;;
+  32     // For each question style, choose some parameters.
+  33     $params = array(
+  34       &#039;Multiple Choice&#039; =&gt; array(
+  35         &#039;value&#039; =&gt; &#039;Abraham Lincoln&#039;,
+  36         &#039;answer&#039; =&gt; &#039;Abraham Lincoln&#039;,
+  37         &#039;response&#039; =&gt; $wrong,
+  38       ),
+  39       &#039;True/False&#039; =&gt; array(
+  40         &#039;value&#039; =&gt; &#039;George Washington&#039;,
+  41         &#039;answer&#039; =&gt; &#039;George Washington&#039;,
+  42         &#039;response&#039; =&gt; $right,
+  43       ),
+  44       &#039;Fill-in-the-blanks&#039; =&gt; array(
+  45         &#039;value&#039; =&gt; NULL,
+  46         &#039;answer&#039; =&gt; &#039;George Washington&#039;,
+  47         &#039;response&#039; =&gt; $right,
+  48       ),
+  49     );
+  50     foreach ($params as $style =&gt; $QandA) {
+  51       // Submit the initial form.
+  52       $edit = array(&#039;question_type_select&#039; =&gt; t($style));
+  53       $this-&gt;drupalPost($path, $edit, t(&#039;Choose&#039;));
+  54       $this-&gt;assertResponse(200, format_string(&#039;Question style &quot;@style&quot; selected.&#039;, array(&#039;@style&#039; =&gt; t($style))));
+  55       // For convenience, make variables out of the entries in $QandA.
+  56       extract($QandA);
+  57       // Check for the expected input field.
+  58       $this-&gt;assertFieldByName(&#039;question&#039;, t($value));
+  59       // Now, submit the dynamically generated form.
+  60       $edit = array(&#039;question&#039; =&gt; t($answer));
+  61       $this-&gt;drupalPost(NULL, $edit, t(&#039;Submit your answer&#039;));
+  62       $this-&gt;assertRaw(t($response), &#039;Dynamic form has been submitted.&#039;);
+  63     }
+  64   }
+  65 
+  66 }</pre>
+
+</div>
+<!-- EDIT7 SECTION "ajax_example.test" [29580-32035] -->
+<h2 class="sectionedit8" id="ajax_example_advancedinc">ajax_example_advanced.inc</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * AJAX Commands examples.
+   6  *
+   7  * This demonstrates each of the
+   8  * new AJAX commands. This is consolidated into a dense page because
+   9  * it&#039;s advanced material and because it would spread itself all over creation
+  10  * otherwise.
+  11  */
+  12 
+  13 /**
+  14  * Form to display the AJAX Commands.
+  15  */
+  16 function ajax_example_advanced_commands($form, &amp;$form_state) {
+  17   $form = array();
+  18   $form[&#039;intro&#039;] = array(
+  19     &#039;#type&#039; =&gt; &#039;markup&#039;,
+  20     &#039;#markup&#039; =&gt; t(&quot;&lt;div&gt;Demonstrates how AJAX commands can be used.&lt;/div&gt;&quot;),
+  21   );
+  22 
+  23   // Shows the &#039;after&#039; command with a callback generating commands.
+  24   $form[&#039;after_command_example_fieldset&#039;] = array(
+  25     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  26     &#039;#title&#039; =&gt; t(&quot;This shows the Ajax &#039;after&#039; command. Click to put something below the div that says &#039;Something can be inserted after this&#039;&quot;)
+  27   );
+  28 
+  29   $form[&#039;after_command_example_fieldset&#039;][&#039;after_command_example&#039;] = array(
+  30     &#039;#value&#039; =&gt; t(&quot;AJAX &#039;After&#039;: Click to put something after the div&quot;),
+  31     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  32     &#039;#ajax&#039; =&gt; array(
+  33       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_after_callback&#039;,
+  34     ),
+  35     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;after_div&#039;&gt;Something can be inserted after this&lt;/div&gt;
+  36                   &lt;div id=&#039;after_status&#039;&gt;&#039;After&#039; Command Status: Unknown&lt;/div&gt;&quot;,
+  37   );
+  38 
+  39   // Shows the &#039;alert&#039; command.
+  40   $form[&#039;alert_command_example_fieldset&#039;] = array(
+  41     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  42     &#039;#title&#039; =&gt; t(&quot;Demonstrates the AJAX &#039;alert&#039; command. Click the button.&quot;),
+  43   );
+  44   $form[&#039;alert_command_example_fieldset&#039;][&#039;alert_command_example&#039;] = array(
+  45     &#039;#value&#039; =&gt; t(&quot;AJAX &#039;Alert&#039;: Click to alert&quot;),
+  46     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  47     &#039;#ajax&#039; =&gt; array(
+  48       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_alert_callback&#039;,
+  49     ),
+  50   );
+  51 
+  52   // Shows the &#039;append&#039; command.
+  53   $form[&#039;append_command_example_fieldset&#039;] = array(
+  54     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  55     &#039;#title&#039; =&gt; t(&quot;This shows the Ajax &#039;append&#039; command. Click to put something below the div that says &#039;Something can be inserted after this&#039;&quot;)
+  56   );
+  57 
+  58   $form[&#039;append_command_example_fieldset&#039;][&#039;append_command_example&#039;] = array(
+  59     &#039;#value&#039; =&gt; t(&quot;AJAX &#039;Append&#039;: Click to append something&quot;),
+  60     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  61     &#039;#ajax&#039; =&gt; array(
+  62       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_append_callback&#039;,
+  63     ),
+  64     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;append_div&#039;&gt;Something can be appended inside this div... &lt;/div&gt;
+  65                   &lt;div id=&#039;append_status&#039;&gt;&#039;After&#039; Command Status: Unknown&lt;/div&gt;&quot;
+  66   );
+  67 
+  68 
+  69   // Shows the &#039;before&#039; command.
+  70   $form[&#039;before_command_example_fieldset&#039;] = array(
+  71     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  72     &#039;#title&#039; =&gt; t(&quot;This shows the Ajax &#039;before&#039; command.&quot;)
+  73   );
+  74 
+  75   $form[&#039;before_command_example_fieldset&#039;][&#039;before_command_example&#039;] = array(
+  76     &#039;#value&#039; =&gt; t(&quot;AJAX &#039;before&#039;: Click to put something before the div&quot;),
+  77     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  78     &#039;#ajax&#039; =&gt; array(
+  79       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_before_callback&#039;,
+  80     ),
+  81     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;before_div&#039;&gt;Something can be inserted before this&lt;/div&gt;
+  82                   &lt;div id=&#039;before_status&#039;&gt;&#039;before&#039; Command Status: Unknown&lt;/div&gt;&quot;
+  83   );
+  84 
+  85   // Shows the &#039;changed&#039; command.
+  86   $form[&#039;changed_command_example_fieldset&#039;] = array(
+  87     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  88     &#039;#title&#039; =&gt; t(&quot;Demonstrates the AJAX &#039;changed&#039; command. If region is &#039;changed&#039;, it is marked with CSS. This example also puts an asterisk by changed content.&quot;),
+  89   );
+  90 
+  91   $form[&#039;changed_command_example_fieldset&#039;][&#039;changed_command_example&#039;] = array(
+  92     &#039;#title&#039; =&gt; t(&quot;AJAX changed: If checked, div is marked as changed.&quot;),
+  93     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+  94     &#039;#default_value&#039; =&gt; FALSE,
+  95     &#039;#ajax&#039; =&gt; array(
+  96       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_changed_callback&#039;,
+  97     ),
+  98     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;changed_div&#039;&gt; &lt;div id=&#039;changed_div_mark_this&#039;&gt;This div can be marked as changed or not.&lt;/div&gt;&lt;/div&gt;
+  99                   &lt;div id=&#039;changed_status&#039;&gt;Status: Unknown&lt;/div&gt;&quot;
+ 100   );
+ 101 
+ 102   // Shows the AJAX &#039;css&#039; command.
+ 103   $form[&#039;css_command_example_fieldset&#039;] = array(
+ 104     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 105     &#039;#title&#039; =&gt; t(&quot;Demonstrates the AJAX &#039;css&#039; command.&quot;),
+ 106   );
+ 107 
+ 108   $form[&#039;css_command_example_fieldset&#039;][&#039;css_command_example&#039;] = array(
+ 109     &#039;#title&#039; =&gt; t(&quot;AJAX CSS: Choose the color you&#039;d like the &#039;#box&#039; div to be.&quot;),
+ 110     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 111     // &#039;#default_value&#039; =&gt; &#039;green&#039;,
+ 112     &#039;#options&#039; =&gt; array(&#039;green&#039; =&gt; &#039;green&#039;, &#039;blue&#039; =&gt; &#039;blue&#039;),
+ 113     &#039;#ajax&#039; =&gt; array(
+ 114       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_css_callback&#039;,
+ 115     ),
+ 116     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;css_div&#039; style=&#039;height: 50px; width: 50px; border: 1px solid black&#039;&gt; box&lt;/div&gt;
+ 117                   &lt;div id=&#039;css_status&#039;&gt;Status: Unknown&lt;/div&gt;&quot;
+ 118   );
+ 119 
+ 120   // Shows the AJAX &#039;data&#039; command. But there is no use of this information,
+ 121   // as this would require a javascript client to use the data.
+ 122   $form[&#039;data_command_example_fieldset&#039;] = array(
+ 123     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 124     &#039;#title&#039; =&gt; t(&quot;Demonstrates the AJAX &#039;data&#039; command.&quot;),
+ 125   );
+ 126 
+ 127   $form[&#039;data_command_example_fieldset&#039;][&#039;data_command_example&#039;] = array(
+ 128     &#039;#title&#039; =&gt; t(&quot;AJAX data: Set a key/value pair on a selector.&quot;),
+ 129     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 130     &#039;#default_value&#039; =&gt; &#039;color=green&#039;,
+ 131     &#039;#ajax&#039; =&gt; array(
+ 132       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_data_callback&#039;,
+ 133     ),
+ 134     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;data_div&#039;&gt;This div should have key=&#039;time&#039;/value=&#039;a time string&#039; attached.&lt;/div&gt;
+ 135                   &lt;div id=&#039;data_status&#039;&gt;Status: Unknown&lt;/div&gt;&quot;
+ 136   );
+ 137 
+ 138   // Shows the AJAX &#039;html&#039; command.
+ 139   $form[&#039;html_command_example_fieldset&#039;] = array(
+ 140     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 141     &#039;#title&#039; =&gt; t(&quot;Demonstrates the AJAX &#039;html&#039; command.&quot;),
+ 142   );
+ 143 
+ 144   $form[&#039;html_command_example_fieldset&#039;][&#039;html_command_example&#039;] = array(
+ 145     &#039;#title&#039; =&gt; t(&quot;AJAX html: Replace the HTML in a selector.&quot;),
+ 146     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 147     &#039;#default_value&#039; =&gt; &#039;new value&#039;,
+ 148     &#039;#ajax&#039; =&gt; array(
+ 149       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_html_callback&#039;,
+ 150     ),
+ 151     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;html_div&#039;&gt;Original contents&lt;/div&gt;
+ 152                   &lt;div id=&#039;html_status&#039;&gt;Status: Unknown&lt;/div&gt;&quot;
+ 153   );
+ 154 
+ 155   // Shows the AJAX &#039;prepend&#039; command.
+ 156   $form[&#039;prepend_command_example_fieldset&#039;] = array(
+ 157     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 158     &#039;#title&#039; =&gt; t(&quot;This shows the AJAX &#039;prepend&#039; command. Click to put something below the div that says &#039;Something can be inserted after this&#039;&quot;)
+ 159   );
+ 160 
+ 161   $form[&#039;prepend_command_example_fieldset&#039;][&#039;prepend_command_example&#039;] = array(
+ 162     &#039;#value&#039; =&gt; t(&quot;AJAX &#039;prepend&#039;: Click to prepend something&quot;),
+ 163     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 164     &#039;#ajax&#039; =&gt; array(
+ 165       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_prepend_callback&#039;,
+ 166     ),
+ 167     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;prepend_div&#039;&gt;Something can be prepended to this div... &lt;/div&gt;
+ 168                   &lt;div id=&#039;prepend_status&#039;&gt;&#039;After&#039; Command Status: Unknown&lt;/div&gt;&quot;
+ 169   );
+ 170 
+ 171   // Shows the AJAX &#039;remove&#039; command.
+ 172   $form[&#039;remove_command_example_fieldset&#039;] = array(
+ 173     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 174     &#039;#title&#039; =&gt; t(&quot;Shows the Ajax &#039;remove&#039; command.&quot;)
+ 175   );
+ 176 
+ 177   $form[&#039;remove_command_example_fieldset&#039;][&#039;remove_command_example&#039;] = array(
+ 178     &#039;#title&#039; =&gt; t(&quot;AJAX &#039;remove&#039;: Check to remove text. Uncheck to add it back.&quot;),
+ 179     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 180     &#039;#default_value&#039; =&gt; FALSE,
+ 181     &#039;#ajax&#039; =&gt; array(
+ 182       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_remove_callback&#039;,
+ 183     ),
+ 184     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;remove_div&#039;&gt;&lt;div id=&#039;remove_text&#039;&gt;text to be removed&lt;/div&gt;&lt;/div&gt;
+ 185                   &lt;div id=&#039;remove_status&#039;&gt;&#039;After&#039; Command Status: Unknown&lt;/div&gt;&quot;
+ 186   );
+ 187 
+ 188   // Show off the AJAX &#039;restripe&#039; command. Also shows classic AJAX replacement
+ 189   // on the &quot;how many rows&quot; processing.
+ 190   $form[&#039;restripe_command_example_fieldset&#039;] = array(
+ 191     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 192     &#039;#title&#039; =&gt; t(&quot;Demonstrates the Ajax &#039;restripe&#039; command.&quot;)
+ 193   );
+ 194 
+ 195   $form[&#039;restripe_command_example_fieldset&#039;][&#039;restripe_num_rows&#039;] = array(
+ 196     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 197     &#039;#default_value&#039; =&gt; !empty($form_state[&#039;values&#039;][&#039;restripe_num_rows&#039;]) ? $form_state[&#039;values&#039;][&#039;restripe_num_rows&#039;] : 1,
+ 198     &#039;#options&#039; =&gt; drupal_map_assoc(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)),
+ 199     &#039;#ajax&#039; =&gt; array(
+ 200       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_restripe_num_rows&#039;,
+ 201       &#039;method&#039; =&gt; &#039;replace&#039;,
+ 202       &#039;wrapper&#039; =&gt; &#039;restripe_table&#039;,
+ 203     ),
+ 204   );
+ 205   $form[&#039;restripe_command_example_fieldset&#039;][&#039;restripe_restripe&#039;] = array(
+ 206     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 207     &#039;#value&#039; =&gt; t(&quot;Restripe the table&quot;),
+ 208     &#039;#ajax&#039; =&gt; array(
+ 209       &#039;callback&#039; =&gt; &#039;ajax_example_advanced_commands_restripe_callback&#039;,
+ 210     ),
+ 211     &#039;#suffix&#039; =&gt; &quot;&lt;div id=&#039;restripe_div&#039;&gt;
+ 212                   &lt;table id=&#039;restripe_table&#039; style=&#039;border: 1px solid black&#039; &gt;
+ 213                   &lt;tr id=&#039;table-first&#039;&gt;&lt;td&gt;first row&lt;/td&gt;&lt;/tr&gt;
+ 214                   &lt;/table&gt;
+ 215                   &lt;/div&gt;
+ 216                   &lt;div id=&#039;restripe_status&#039;&gt;&#039;Restripe&#039; Command Status: Unknown&lt;/div&gt;&quot;,
+ 217 
+ 218   );
+ 219 
+ 220   $form[&#039;submit&#039;] = array(
+ 221     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 222     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 223   );
+ 224 
+ 225   return $form;
+ 226 }
+ 227 
+ 228 /**
+ 229  * &#039;after&#039; callback.
+ 230  *
+ 231  * @see ajax_command_after()
+ 232  */
+ 233 function ajax_example_advanced_commands_after_callback($form, $form_state) {
+ 234   $selector = &#039;#after_div&#039;;
+ 235 
+ 236   $commands = array();
+ 237   $commands[] = ajax_command_after($selector, &quot;New &#039;after&#039;...&quot;);
+ 238   $commands[] = ajax_command_replace(&quot;#after_status&quot;, &quot;&lt;div id=&#039;after_status&#039;&gt;Updated after_command_example &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 239   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 240 }
+ 241 
+ 242 /**
+ 243  * &#039;alert&#039; callback.
+ 244  *
+ 245  * @see ajax_command_alert()
+ 246  */
+ 247 function ajax_example_advanced_commands_alert_callback($form, $form_state) {
+ 248   $commands = array();
+ 249   $commands[] = ajax_command_alert(&quot;Alert requested at &quot; . date(&#039;r&#039;));
+ 250   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 251 }
+ 252 
+ 253 /**
+ 254  * &#039;append&#039; callback.
+ 255  *
+ 256  * @see ajax_command_append()
+ 257  */
+ 258 function ajax_example_advanced_commands_append_callback($form, $form_state) {
+ 259   $selector = &#039;#append_div&#039;;
+ 260 
+ 261   $commands = array();
+ 262   $commands[] = ajax_command_append($selector, &quot;Stuff...&quot;);
+ 263   $commands[] = ajax_command_replace(&quot;#append_status&quot;, &quot;&lt;div id=&#039;append_status&#039;&gt;Updated append_command_example &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 264   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 265 }
+ 266 
+ 267 /**
+ 268  * &#039;before&#039; callback.
+ 269  *
+ 270  * @see ajax_command_before()
+ 271  */
+ 272 function ajax_example_advanced_commands_before_callback($form, $form_state) {
+ 273   $selector = &#039;#before_div&#039;;
+ 274 
+ 275   $commands = array();
+ 276   $commands[] = ajax_command_before($selector, &quot;New &#039;before&#039;...&quot;);
+ 277   $commands[] = ajax_command_replace(&quot;#before_status&quot;, &quot;&lt;div id=&#039;before_status&#039;&gt;Updated before_command_example &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 278   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 279 }
+ 280 
+ 281 /**
+ 282  * &#039;changed&#039; callback.
+ 283  *
+ 284  * @see ajax_command_changed()
+ 285  */
+ 286 function ajax_example_advanced_commands_changed_callback($form, $form_state) {
+ 287   $checkbox_value = $form_state[&#039;values&#039;][&#039;changed_command_example&#039;];
+ 288   $checkbox_value_string = $checkbox_value ? &quot;TRUE&quot; : &quot;FALSE&quot;;
+ 289   $commands = array();
+ 290   if ($checkbox_value) {
+ 291     $commands[] = ajax_command_changed( &#039;#changed_div&#039;, &#039;#changed_div_mark_this&#039;);
+ 292   }
+ 293   else {
+ 294     $commands[] = ajax_command_replace(&#039;#changed_div&#039;, &quot;&lt;div id=&#039;changed_div&#039;&gt; &lt;div id=&#039;changed_div_mark_this&#039;&gt;This div can be marked as changed or not.&lt;/div&gt;&lt;/div&gt;&quot;);
+ 295   }
+ 296   $commands[] = ajax_command_replace(&quot;#changed_status&quot;, &quot;&lt;div id=&#039;changed_status&#039;&gt;Updated changed_command_example to $checkbox_value_string: &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 297   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 298 }
+ 299 
+ 300 /**
+ 301  * &#039;css&#039; callback.
+ 302  *
+ 303  * @see ajax_command_css()
+ 304  */
+ 305 function ajax_example_advanced_commands_css_callback($form, $form_state) {
+ 306   $selector = &#039;#css_div&#039;;
+ 307   $color = $form_state[&#039;values&#039;][&#039;css_command_example&#039;];
+ 308 
+ 309   $commands = array();
+ 310   $commands[] = ajax_command_css($selector, array(&#039;background-color&#039; =&gt; $color));
+ 311   $commands[] = ajax_command_replace(&quot;#css_status&quot;, &quot;&lt;div id=&#039;css_status&#039;&gt;Updated css_command_example to &#039;{$color}&#039; &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 312   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 313 }
+ 314 
+ 315 /**
+ 316  * &#039;data&#039; callback.
+ 317  *
+ 318  * @see ajax_command_data()
+ 319  */
+ 320 function ajax_example_advanced_commands_data_callback($form, $form_state) {
+ 321   $selector = &#039;#data_div&#039;;
+ 322   $text = $form_state[&#039;values&#039;][&#039;data_command_example&#039;];
+ 323   list($key, $value) = preg_split(&#039;/=/&#039;, $text);
+ 324 
+ 325   $commands = array();
+ 326   $commands[] = ajax_command_data($selector, $key, $value);
+ 327   $commands[] = ajax_command_replace(&quot;#data_status&quot;, &quot;&lt;div id=&#039;data_status&#039;&gt;Updated data_command_example with key=$key, value=$value; &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 328   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 329 }
+ 330 
+ 331 /**
+ 332  * &#039;html&#039; callback.
+ 333  *
+ 334  * @see ajax_command_html()
+ 335  */
+ 336 function ajax_example_advanced_commands_html_callback($form, $form_state) {
+ 337   $text = $form_state[&#039;values&#039;][&#039;html_command_example&#039;];
+ 338 
+ 339   $commands = array();
+ 340   $commands[] = ajax_command_html(&#039;#html_div&#039;, $text);
+ 341   $commands[] = ajax_command_replace(&quot;#html_status&quot;, &quot;&lt;div id=&#039;html_status&#039;&gt;Updated html_command_example with text=$text;  &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 342   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 343 }
+ 344 
+ 345 /**
+ 346  * &#039;prepend&#039; callback.
+ 347  *
+ 348  * @see ajax_command_prepend()
+ 349  */
+ 350 function ajax_example_advanced_commands_prepend_callback($form, $form_state) {
+ 351   $commands = array();
+ 352   $commands[] = ajax_command_prepend(&#039;#prepend_div&#039;, &quot;Prepended Stuff...&quot;);
+ 353   $commands[] = ajax_command_replace(&quot;#prepend_status&quot;, &quot;&lt;div id=&#039;prepend_status&#039;&gt;Updated prepend_command_example &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 354   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 355 }
+ 356 
+ 357 /**
+ 358  * &#039;remove&#039; callback.
+ 359  *
+ 360  * @see ajax_command_remove()
+ 361  */
+ 362 function ajax_example_advanced_commands_remove_callback($form, $form_state) {
+ 363   $commands = array();
+ 364   $should_remove = $form_state[&#039;values&#039;][&#039;remove_command_example&#039;];
+ 365   $should_remove_string = $should_remove ? &#039;TRUE&#039; : &#039;FALSE&#039;;
+ 366   if ($should_remove) {
+ 367     $commands[] = ajax_command_remove(&#039;#remove_text&#039;);
+ 368   }
+ 369   else {
+ 370     $commands[] = ajax_command_html(&#039;#remove_div&#039;, &quot;&lt;div id=&#039;remove_text&#039;&gt;text to be removed&lt;/div&gt;&quot;);
+ 371   }
+ 372   $commands[] = ajax_command_replace(&quot;#remove_status&quot;, &quot;&lt;div id=&#039;remove_status&#039;&gt;Updated remove_command_example (value={$should_remove_string} &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 373   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 374 }
+ 375 
+ 376 /**
+ 377  * &#039;restripe&#039; rows callback.
+ 378  *
+ 379  * Rebuilds the table with the selected number of rows.
+ 380  */
+ 381 function ajax_example_advanced_commands_restripe_num_rows($form, $form_state) {
+ 382   $num_rows = $form_state[&#039;values&#039;][&#039;restripe_num_rows&#039;];
+ 383   $output = &quot;&lt;table id=&#039;restripe_table&#039; style=&#039;border: 1px solid black&#039;&gt;&quot;;
+ 384   for ($i=1; $i&lt;=$num_rows; $i++) {
+ 385     $output .= &quot;&lt;tr&gt;&lt;td&gt;Row $i&lt;/td&gt;&lt;/tr&gt;&quot;;
+ 386   }
+ 387   $output .= &quot;&lt;/table&gt;&quot;;
+ 388   return $output;
+ 389 }
+ 390 
+ 391 /**
+ 392  * &#039;restripe&#039; callback.
+ 393  *
+ 394  * @see ajax_command_restripe()
+ 395  */
+ 396 function ajax_example_advanced_commands_restripe_callback($form, $form_state) {
+ 397   $commands = array();
+ 398   $commands[] = ajax_command_restripe(&#039;#restripe_table&#039;);
+ 399   $commands[] = ajax_command_replace(&quot;#restripe_status&quot;, &quot;&lt;div id=&#039;restripe_status&#039;&gt;Restriped table &quot; . date(&#039;r&#039;) . &quot;&lt;/div&gt;&quot;);
+ 400   return array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 401 }</pre>
+
+</div>
+<!-- EDIT8 SECTION "ajax_example_advanced.inc" [32036-48943] -->
+<h2 class="sectionedit9" id="ajax_example_autocompleteinc">ajax_example_autocomplete.inc</h2>
+<div class="level2">
+<pre class="code">  1 &lt;?php
+   2 /**
+   3  * @file
+   4  * ajax_example_autocomplete.inc
+   5  *
+   6  * Demonstrates usage of the Form API&#039;s autocomplete features.
+   7  *
+   8  * This file provides three examples in increasing complexity:
+   9  * - A simple username autocomplete (usernames are unique, so little effort is required)
+  10  * - A node title autocomplete (titles are not unique, so we have to find the nid and stash it in the field)
+  11  * - A username autocomplete that updates a node title autocomplete with a changed #autocomplete_path so that the
+  12  *   #autocomplete_path can have context (the username to use in the search).
+  13  */
+  14 
+  15 /**
+  16  * A simple autocomplete form which just looks up usernames in the user table.
+  17  *
+  18  * @param $form
+  19  * @param $form_state
+  20  * @return array
+  21  */
+  22 function ajax_example_simple_autocomplete($form, &amp;$form_state) {
+  23 
+  24   $form[&#039;info&#039;] = array(
+  25     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&quot;This example does a simplest possible autocomplete by username. You&#039;ll need a few users on your system for it to make sense.&quot;) . &#039;&lt;/div&gt;&#039;,
+  26   );
+  27 
+  28   $form[&#039;user&#039;] = array(
+  29     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+  30     &#039;#title&#039; =&gt; t(&#039;Choose a user (or a people, depending on your usage preference)&#039;),
+  31     // The autocomplete path is provided in hook_menu in ajax_example.module.
+  32     &#039;#autocomplete_path&#039; =&gt; &#039;examples/ajax_example/simple_user_autocomplete_callback&#039;,
+  33   );
+  34 
+  35  return $form;
+  36 }
+  37 
+  38 /**
+  39  * This is just a copy of user_autocomplete().
+  40  *
+  41  * It works simply by searching usernames (and of course in Drupal usernames are unique, so can be used for
+  42  * identifying a record.)
+  43  *
+  44  * The returned $matches array has
+  45  * * key: string which will be displayed once the autocomplete is selected
+  46  * * value: the value which will is displayed in the autocomplete pulldown.
+  47  *
+  48  * In the simplest cases (see user_autocomplete()) these are the same, and nothing needs to be done. However, more more
+  49  * complicated autocompletes require more work. Here we demonstrate the difference by displaying the UID along with
+  50  * the username in the dropdown.
+  51  *
+  52  * In the end, though, we&#039;ll be doing something with the value that ends up in the textfield, so it needs to uniquely
+  53  * identify the record we want to access. This is demonstrated in ajax_example_unique_autocomplete().
+  54  *
+  55  * @param $string
+  56  *   The string that will be searched.
+  57  */
+  58 function ajax_example_simple_user_autocomplete_callback($string = &quot;&quot;) {
+  59   $matches = array();
+  60   if ($string) {
+  61     $result = db_select(&#039;users&#039;)
+  62       -&gt;fields(&#039;users&#039;, array(&#039;name&#039;, &#039;uid&#039;))
+  63       -&gt;condition(&#039;name&#039;, db_like($string) . &#039;%&#039;, &#039;LIKE&#039;)
+  64       -&gt;range(0, 10)
+  65       -&gt;execute();
+  66     foreach ($result as $user) {
+  67       // In the simplest case (see user_autocomplete), the key and the value are the same. Here we&#039;ll display the
+  68       // uid along with the username in the dropdown.
+  69       $matches[$user-&gt;name] = check_plain($user-&gt;name) . &quot; (uid=$user-&gt;uid)&quot;;
+  70     }
+  71   }
+  72 
+  73   drupal_json_output($matches);
+  74 }
+  75 
+  76 
+  77 
+  78 
+  79 /**
+  80  * A unique autocomplete form which looks up nodes by title in the node table, but must keep track of the nid, because
+  81  * titles are certainly not guaranteed to be unique.
+  82  *
+  83  * @param $form
+  84  * @param $form_state
+  85  * @return array
+  86  */
+  87 function ajax_example_unique_autocomplete($form, &amp;$form_state) {
+  88 
+  89   $form[&#039;info&#039;] = array(
+  90     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&quot;This example does a node autocomplete by title. The difference between this and a username autocomplete is that the node title may not be unique, so we have to use the nid for uniqueness, placing it in a parseable location in the textfield.&quot;) . &#039;&lt;/div&gt;&#039;,
+  91   );
+  92 
+  93   $form[&#039;node&#039;] = array(
+  94     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+  95     &#039;#title&#039; =&gt; t(&#039;Choose a node by title&#039;),
+  96     // The autocomplete path is provided in hook_menu in ajax_example.module.
+  97     &#039;#autocomplete_path&#039; =&gt; &#039;examples/ajax_example/unique_node_autocomplete_callback&#039;,
+  98   );
+  99 
+ 100   $form[&#039;actions&#039;] = array(
+ 101     &#039;#type&#039; =&gt; &#039;actions&#039;
+ 102   );
+ 103 
+ 104   $form[&#039;actions&#039;][&#039;submit&#039;] = array(
+ 105     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 106     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 107   );
+ 108 
+ 109   return $form;
+ 110 }
+ 111 
+ 112 /**
+ 113  * Validate handler to convert our string like &quot;Some node title [3325]&quot; into a nid.
+ 114  *
+ 115  * In case the user did not actually use the autocomplete or have a valid string there, we&#039;ll try to look
+ 116  * up a result anyway giving it our best guess.
+ 117  *
+ 118  * Since the user chose a unique node, we must now use the same one in our submit handler, which means we need to look
+ 119  * in the string for the nid.
+ 120  *
+ 121  * @param $form
+ 122  * @param $form_state
+ 123  */
+ 124 function ajax_example_unique_autocomplete_validate($form, &amp;$form_state) {
+ 125   $title = $form_state[&#039;values&#039;][&#039;node&#039;];
+ 126   $matches = array();
+ 127   $nid = 0;
+ 128 
+ 129   // This preg_match() looks for the last pattern like [33334] and if found extracts the numeric portion.
+ 130   $result = preg_match(&#039;/\[([0-9]+)\]$/&#039;, $title, $matches);
+ 131   if ($result &gt; 0) {
+ 132     // If $result is nonzero, we found a match and can use it as the index into $matches.
+ 133     $nid = $matches[$result];
+ 134     // Verify that it&#039;s a valid nid.
+ 135     $node = node_load($nid);
+ 136     if (empty($node)) {
+ 137       form_error($form[&#039;node&#039;], t(&#039;Sorry, no node with nid %nid can be found&#039;, array(&#039;%nid&#039; =&gt; $nid)));
+ 138       return;
+ 139     }
+ 140   }
+ 141   // BUT: Not everybody will have javascript turned on, or they might hit ESC and not use the autocomplete values
+ 142   // offered. In that case, we can attempt to come up with a useful value. This is not absolutely necessary,
+ 143   // and we *could* just emit a form_error() as below.
+ 144   else {
+ 145     $nid = db_select(&#039;node&#039;)
+ 146       -&gt;fields(&#039;node&#039;, array(&#039;nid&#039;))
+ 147       -&gt;condition(&#039;title&#039;, db_like($title) . &#039;%&#039;, &#039;LIKE&#039;)
+ 148       -&gt;range(0, 1)
+ 149       -&gt;execute()
+ 150       -&gt;fetchField();
+ 151   }
+ 152 
+ 153   // Now, if we somehow found a nid, assign it to the node. If we failed, emit an error.
+ 154   if (!empty($nid)) {
+ 155     $form_state[&#039;values&#039;][&#039;node&#039;] = $nid;
+ 156   }
+ 157   else {
+ 158     form_error($form[&#039;node&#039;], t(&#039;Sorry, no node starting with %title can be found&#039;, array(&#039;%title&#039; =&gt; $title)));
+ 159   }
+ 160 }
+ 161 
+ 162 /**
+ 163  * Submit handler for node lookup unique autocomplete example.
+ 164  *
+ 165  * Here the nid has already been placed in $form_state[&#039;values&#039;][&#039;node&#039;] by the validation handler.
+ 166  *
+ 167  * @param $form
+ 168  * @param $form_state
+ 169  */
+ 170 function ajax_example_unique_autocomplete_submit($form, &amp;$form_state) {
+ 171   $node = node_load($form_state[&#039;values&#039;][&#039;node&#039;]);
+ 172   drupal_set_message(t(&#039;You found node %nid with title %title&#039;, array(&#039;%nid&#039; =&gt; $node-&gt;nid, &#039;%title&#039; =&gt; $node-&gt;title)));
+ 173 }
+ 174 
+ 175 /**
+ 176  * Autocomplete callback for nodes by title.
+ 177  *
+ 178  * Searches for a node by title, but then identifies it by nid, so the actual returned value can be used later by
+ 179  * the form.
+ 180  *
+ 181  * The returned $matches array has
+ 182  * * key: The title, with the identifying nid in brackets, like &quot;Some node title [3325]&quot;
+ 183  * * value: the title which will is displayed in the autocomplete pulldown.
+ 184  *
+ 185  * Note that we must use a key style that can be parsed successfully and unambiguously. For example, if we might
+ 186  * have node titles that could have [3325] in them, then we&#039;d have to use a more restrictive token.
+ 187  *
+ 188  * @param $string
+ 189  *   The string that will be searched.
+ 190  */
+ 191 function ajax_example_unique_node_autocomplete_callback($string = &quot;&quot;) {
+ 192   $matches = array();
+ 193   if ($string) {
+ 194     $result = db_select(&#039;node&#039;)
+ 195       -&gt;fields(&#039;node&#039;, array(&#039;nid&#039;, &#039;title&#039;))
+ 196       -&gt;condition(&#039;title&#039;, db_like($string) . &#039;%&#039;, &#039;LIKE&#039;)
+ 197       -&gt;range(0, 10)
+ 198       -&gt;execute();
+ 199     foreach ($result as $node) {
+ 200       $matches[$node-&gt;title . &quot; [$node-&gt;nid]&quot;] = check_plain($node-&gt;title);
+ 201     }
+ 202   }
+ 203 
+ 204   drupal_json_output($matches);
+ 205 }
+ 206 
+ 207 
+ 208 
+ 209 
+ 210 /**
+ 211  * In this example, we&#039;ll look up nodes by title, but we want only nodes that have been authored by a particular user.
+ 212  * That means that we&#039;ll have to make an autocomplete function which takes a username as an argument, and
+ 213  * use #ajax to change the #autocomplete_path based on the selected user.
+ 214  *
+ 215  * Although the implementation of the validate handler may look complex, it&#039;s just ambitious. The idea here is:
+ 216  * 1. Autcomplete to get a valid username.
+ 217  * 2. Use #ajax to update the node element with a #autocomplete_callback that gives the context for the username.
+ 218  * 3. Do an autcomplete on the node field that is limited by the username.
+ 219  *
+ 220  * @param $form
+ 221  * @param $form_state
+ 222  * @return array
+ 223  */
+ 224 function ajax_example_node_by_author_autocomplete($form, &amp;$form_state) {
+ 225 
+ 226   $form[&#039;intro&#039;] = array(
+ 227     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&quot;This example uses a user autocomplete to dynamically change a node title autocomplete using #ajax.
+ 228       This is a way to get past the fact that we have no other way to provide context to the autocomplete function.
+ 229       It won&#039;t work very well unless you have a few users who have created some content that you can search for.&quot;) . &#039;&lt;/div&gt;&#039;,
+ 230   );
+ 231 
+ 232   $form[&#039;author&#039;] = array(
+ 233     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 234     &#039;#title&#039; =&gt; t(&#039;Choose the username that authored nodes you are interested in&#039;),
+ 235     // Since we just need simple user lookup, we can use the simplest function of them all, user_autocomplete().
+ 236     &#039;#autocomplete_path&#039; =&gt; &#039;user/autocomplete&#039;,
+ 237     &#039;#ajax&#039; =&gt; array(
+ 238       &#039;callback&#039; =&gt; &#039;ajax_example_node_by_author_ajax_callback&#039;,
+ 239       &#039;wrapper&#039; =&gt; &#039;autocomplete-by-node-ajax-replace&#039;,
+ 240     ),
+ 241   );
+ 242 
+ 243   // This form element with autocomplete will be replaced by #ajax whenever the author changes, allowing the search
+ 244   // to be limited by user.
+ 245   $form[&#039;node&#039;] = array(
+ 246     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 247     &#039;#title&#039; =&gt; t(&#039;Choose a node by title&#039;),
+ 248     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;autocomplete-by-node-ajax-replace&quot;&gt;&#039;,
+ 249     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 250     &#039;#disabled&#039; =&gt; TRUE,
+ 251   );
+ 252 
+ 253   // When the author changes in the author field, we&#039;ll change the autocomplete_path to match.
+ 254   if (!empty($form_state[&#039;values&#039;][&#039;author&#039;])) {
+ 255     $author = user_load_by_name($form_state[&#039;values&#039;][&#039;author&#039;]);
+ 256     if (!empty($author)) {
+ 257       $autocomplete_path = &#039;examples/ajax_example/node_by_author_autocomplete/&#039; . $author-&gt;uid;
+ 258       $form[&#039;node&#039;][&#039;#autocomplete_path&#039;] = $autocomplete_path;
+ 259       $form[&#039;node&#039;][&#039;#title&#039;] = t(&#039;Choose a node title authored by %author&#039;, array(&#039;%author&#039; =&gt; $author-&gt;name));
+ 260       $form[&#039;node&#039;][&#039;#disabled&#039;] = FALSE;
+ 261     }
+ 262   }
+ 263 
+ 264   $form[&#039;actions&#039;] = array(
+ 265     &#039;#type&#039; =&gt; &#039;actions&#039;
+ 266   );
+ 267 
+ 268   $form[&#039;actions&#039;][&#039;submit&#039;] = array(
+ 269     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 270     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 271   );
+ 272 
+ 273   return $form;
+ 274 }
+ 275 
+ 276 /**
+ 277  *
+ 278  * AJAX callback for author form element.
+ 279  *
+ 280  * @param $form
+ 281  * @param $form_state
+ 282  * @return array
+ 283  */
+ 284 function ajax_example_node_by_author_ajax_callback($form, $form_state) {
+ 285   return $form[&#039;node&#039;];
+ 286 }
+ 287 
+ 288 /**
+ 289  * Validate handler to convert our string like &quot;Some node title [3325]&quot; into a nid.
+ 290  *
+ 291  * In case the user did not actually use the autocomplete or have a valid string there, we&#039;ll try to look
+ 292  * up a result anyway giving it our best guess.
+ 293  *
+ 294  * Since the user chose a unique node, we must now use the same one in our submit handler, which means we need to look
+ 295  * in the string for the nid.
+ 296  *
+ 297  * This handler looks complex because it&#039;s ambitious (and tries to punt and find a node if they&#039;ve entered a valid
+ 298  * username and part of a title), but you *could* just do a form_error() if nothing were found,
+ 299  * forcing people to use the autocomplete to look up the relevant items.
+ 300  *
+ 301  * @param $form
+ 302  * @param $form_state
+ 303  */
+ 304 function ajax_example_node_by_author_autocomplete_validate($form, &amp;$form_state) {
+ 305   $title = $form_state[&#039;values&#039;][&#039;node&#039;];
+ 306   $author = $form_state[&#039;values&#039;][&#039;author&#039;];
+ 307   $matches = array();
+ 308   $nid = 0;
+ 309 
+ 310   $account = user_load_by_name($author); // We must have a valid user.
+ 311   if (empty($account)) {
+ 312     form_error($form[&#039;author&#039;], t(&#039;You must choose a valid author username&#039;));
+ 313     return;
+ 314   }
+ 315   // This preg_match() looks for the last pattern like [33334] and if found extracts the numeric portion.
+ 316   $result = preg_match(&#039;/\[([0-9]+)\]$/&#039;, $title, $matches);
+ 317   if ($result &gt; 0) {
+ 318     // If $result is nonzero, we found a match and can use it as the index into $matches.
+ 319     $nid = $matches[$result];
+ 320     // Verify that it&#039;s a valid nid.
+ 321     $node = node_load($nid);
+ 322     if (empty($node)) {
+ 323       form_error($form[&#039;node&#039;], t(&#039;Sorry, no node with nid %nid can be found&#039;, array(&#039;%nid&#039; =&gt; $nid)));
+ 324       return;
+ 325     }
+ 326   }
+ 327   // BUT: Not everybody will have javascript turned on, or they might hit ESC and not use the autocomplete values
+ 328   // offered. In that case, we can attempt to come up with a useful value. This is not absolutely necessary,
+ 329   // and we *could* just emit a form_error() as below. Here we&#039;ll find the *first* matching title and assume
+ 330   // that is adequate.
+ 331   else {
+ 332     $nid = db_select(&#039;node&#039;)
+ 333       -&gt;fields(&#039;node&#039;, array(&#039;nid&#039;))
+ 334       -&gt;condition(&#039;uid&#039;, $account-&gt;uid)
+ 335       -&gt;condition(&#039;title&#039;, db_like($title) . &#039;%&#039;, &#039;LIKE&#039;)
+ 336       -&gt;range(0, 1)
+ 337       -&gt;execute()
+ 338       -&gt;fetchField();
+ 339   }
+ 340 
+ 341   // Now, if we somehow found a nid, assign it to the node. If we failed, emit an error.
+ 342   if (!empty($nid)) {
+ 343     $form_state[&#039;values&#039;][&#039;node&#039;] = $nid;
+ 344   }
+ 345   else {
+ 346     form_error($form[&#039;node&#039;], t(&#039;Sorry, no node starting with %title can be found&#039;, array(&#039;%title&#039; =&gt; $title)));
+ 347   }
+ 348 }
+ 349 
+ 350 /**
+ 351  * Submit handler for node lookup unique autocomplete example.
+ 352  *
+ 353  * Here the nid has already been placed in $form_state[&#039;values&#039;][&#039;node&#039;] by the validation handler.
+ 354  *
+ 355  * @param $form
+ 356  * @param $form_state
+ 357  */
+ 358 function ajax_example_node_by_author_autocomplete_submit($form, &amp;$form_state) {
+ 359   $node = node_load($form_state[&#039;values&#039;][&#039;node&#039;]);
+ 360   $account = user_load($node-&gt;uid);
+ 361   drupal_set_message(t(&#039;You found node %nid with title !title_link, authored by !user_link&#039;,
+ 362     array(&#039;%nid&#039; =&gt; $node-&gt;nid, &#039;!title_link&#039; =&gt; l($node-&gt;title, &#039;node/&#039; . $node-&gt;nid), &#039;!user_link&#039; =&gt; theme(&#039;username&#039;, array(&#039;account&#039; =&gt; $account)))));
+ 363 }
+ 364 
+ 365 /**
+ 366  * Autocomplete callback for nodes by title but limited by author.
+ 367  *
+ 368  * Searches for a node by title given the passed-in author username.
+ 369  *
+ 370  * The returned $matches array has
+ 371  * * key: The title, with the identifying nid in brackets, like &quot;Some node title [3325]&quot;
+ 372  * * value: the title which will is displayed in the autocomplete pulldown.
+ 373  *
+ 374  * Note that we must use a key style that can be parsed successfully and unambiguously. For example, if we might
+ 375  * have node titles that could have [3325] in them, then we&#039;d have to use a more restrictive token.
+ 376  *
+ 377  * @param $author_uid
+ 378  *   The author username to limit the search.
+ 379  * @param $string
+ 380  *   The string that will be searched.
+ 381  */
+ 382 function ajax_example_node_by_author_node_autocomplete_callback($author_uid, $string = &quot;&quot;) {
+ 383   $matches = array();
+ 384   if ($author_uid &gt; 0 &amp;&amp; trim($string)) {
+ 385     $result = db_select(&#039;node&#039;)
+ 386       -&gt;fields(&#039;node&#039;, array(&#039;nid&#039;, &#039;title&#039;))
+ 387       -&gt;condition(&#039;uid&#039;, $author_uid)
+ 388       -&gt;condition(&#039;title&#039;, db_like($string) . &#039;%&#039;, &#039;LIKE&#039;)
+ 389       -&gt;range(0, 10)
+ 390       -&gt;execute();
+ 391     foreach ($result as $node) {
+ 392       $matches[$node-&gt;title . &quot; [$node-&gt;nid]&quot;] = check_plain($node-&gt;title);
+ 393     }
+ 394   }
+ 395 
+ 396   drupal_json_output($matches);
+ 397 }</pre>
+
+</div>
+<!-- EDIT9 SECTION "ajax_example_autocomplete.inc" [48944-65717] -->
+<h2 class="sectionedit10" id="ajax_example_graceful_degradationinc">ajax_example_graceful_degradation.inc</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Demonstrations of AJAX with graceful degradation.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup ajax_degradation_example Example: AJAX Graceful Degradation
+  10  * @ingroup examples
+  11  * @{
+  12  * These examples show AJAX with graceful degradation when Javascript is not
+  13  * available.
+  14  *
+  15  * In each of these the key idea is that the form is rebuilt different ways
+  16  * depending on form input. In order to accomplish that, the formbuilder function
+  17  * is in charge of almost all logic.
+  18  */
+  19 
+  20 /**
+  21  * A form with a dropdown whose options are dependent on a
+  22  * choice made in a previous dropdown.
+  23  *
+  24  * On changing the first dropdown, the options in the second
+  25  * are updated. Gracefully degrades if no javascript.
+  26  *
+  27  * A bit of CSS and javascript is required. The CSS hides the &quot;add more&quot; button
+  28  * if javascript is not enabled. The Javascript snippet is really only used
+  29  * to enable us to present the form in degraded mode without forcing the user
+  30  * to turn off Javascript.  Both of these are loaded by using the
+  31  * #attached FAPI property, so it is a good example of how to use that.
+  32  *
+  33  * The extra argument $no_js_use is here only to allow presentation of this
+  34  * form as if Javascript were not enabled. ajax_example_menu() provides two
+  35  * ways to call this form, one normal ($no_js_use = FALSE) and one simulating
+  36  * Javascript disabled ($no_js_use = TRUE).
+  37  */
+  38 function ajax_example_dependent_dropdown_degrades($form, &amp;$form_state, $no_js_use = FALSE) {
+  39   // Get the list of options to populate the first dropdown.
+  40   $options_first = _ajax_example_get_first_dropdown_options();
+  41 
+  42   // If we have a value for the first dropdown from $form_state[&#039;values&#039;] we use
+  43   // this both as the default value for the first dropdown and also as a
+  44   // parameter to pass to the function that retrieves the options for the
+  45   // second dropdown.
+  46   $selected = isset($form_state[&#039;values&#039;][&#039;dropdown_first&#039;]) ? $form_state[&#039;values&#039;][&#039;dropdown_first&#039;] : key($options_first);
+  47 
+  48   // Attach the CSS and JS we need to show this with and without javascript.
+  49   // Without javascript we need an extra &quot;Choose&quot; button, and this is
+  50   // hidden when we have javascript enabled.
+  51   $form[&#039;#attached&#039;][&#039;css&#039;] = array(
+  52     drupal_get_path(&#039;module&#039;, &#039;ajax_example&#039;) . &#039;/ajax_example.css&#039;,
+  53   );
+  54   $form[&#039;#attached&#039;][&#039;js&#039;] = array(
+  55     drupal_get_path(&#039;module&#039;, &#039;ajax_example&#039;) . &#039;/ajax_example.js&#039;,
+  56   );
+  57 
+  58   $form[&#039;dropdown_first_fieldset&#039;] = array(
+  59     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  60   );
+  61   $form[&#039;dropdown_first_fieldset&#039;][&#039;dropdown_first&#039;] = array(
+  62     &#039;#type&#039; =&gt; &#039;select&#039;,
+  63     &#039;#title&#039; =&gt; &#039;Instrument Type&#039;,
+  64     &#039;#options&#039; =&gt; $options_first,
+  65     &#039;#attributes&#039; =&gt; array(&#039;class&#039; =&gt; array(&#039;enabled-for-ajax&#039;)),
+  66 
+  67     // The &#039;#ajax&#039; property allows us to bind a callback to the server whenever this
+  68     // form element changes. See ajax_example_autocheckboxes and
+  69     // ajax_example_dependent_dropdown in ajax_example.module for more details.
+  70     &#039;#ajax&#039; =&gt; array(
+  71       &#039;callback&#039; =&gt; &#039;ajax_example_dependent_dropdown_degrades_first_callback&#039;,
+  72       &#039;wrapper&#039; =&gt; &#039;dropdown-second-replace&#039;,
+  73     ),
+  74   );
+  75 
+  76   // This simply allows us to demonstrate no-javascript use without
+  77   // actually turning off javascript in the browser. Removing the #ajax
+  78   // element turns off AJAX behaviors on that element and as a result
+  79   // ajax.js doesn&#039;t get loaded. This is for demonstration purposes only.
+  80   if ($no_js_use) {
+  81     unset($form[&#039;dropdown_first_fieldset&#039;][&#039;dropdown_first&#039;][&#039;#ajax&#039;]);
+  82   }
+  83 
+  84   // Since we don&#039;t know if the user has js or not, we always need to output
+  85   // this element, then hide it with with css if javascript is enabled.
+  86   $form[&#039;dropdown_first_fieldset&#039;][&#039;continue_to_second&#039;] = array(
+  87     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  88     &#039;#value&#039; =&gt; t(&#039;Choose&#039;),
+  89     &#039;#attributes&#039; =&gt; array(&#039;class&#039; =&gt; array(&#039;next-button&#039;)),
+  90   );
+  91 
+  92   $form[&#039;dropdown_second_fieldset&#039;] = array(
+  93     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  94   );
+  95   $form[&#039;dropdown_second_fieldset&#039;][&#039;dropdown_second&#039;] = array(
+  96     &#039;#type&#039; =&gt; &#039;select&#039;,
+  97     &#039;#title&#039; =&gt; $options_first[$selected] . &#039; &#039; . t(&#039;Instruments&#039;),
+  98     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;dropdown-second-replace&quot;&gt;&#039;,
+  99     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 100     &#039;#attributes&#039; =&gt; array(&#039;class&#039; =&gt; array(&#039;enabled-for-ajax&#039;)),
+ 101     // When the form is rebuilt during processing (either AJAX or multistep),
+ 102     // the $selected variable will now have the new value and so the options
+ 103     // will change.
+ 104     &#039;#options&#039; =&gt; _ajax_example_get_second_dropdown_options($selected),
+ 105   );
+ 106   $form[&#039;dropdown_second_fieldset&#039;][&#039;submit&#039;] = array(
+ 107     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 108     &#039;#value&#039; =&gt; t(&#039;OK&#039;),
+ 109     // This class allows attached js file to override the disabled attribute,
+ 110     // since it&#039;s not necessary in ajax-enabled form.
+ 111     &#039;#attributes&#039; =&gt; array(&#039;class&#039; =&gt; array(&#039;enabled-for-ajax&#039;)),
+ 112   );
+ 113 
+ 114   // Disable dropdown_second if a selection has not been made on dropdown_first.
+ 115   if (empty($form_state[&#039;values&#039;][&#039;dropdown_first&#039;])) {
+ 116     $form[&#039;dropdown_second_fieldset&#039;][&#039;dropdown_second&#039;][&#039;#disabled&#039;] = TRUE;
+ 117     $form[&#039;dropdown_second_fieldset&#039;][&#039;dropdown_second&#039;][&#039;#description&#039;] = t(&#039;You must make your choice on the first dropdown before changing this second one.&#039;);
+ 118     $form[&#039;dropdown_second_fieldset&#039;][&#039;submit&#039;][&#039;#disabled&#039;] = TRUE;
+ 119   }
+ 120 
+ 121   return $form;
+ 122 }
+ 123 
+ 124 /**
+ 125  * Submit function for ajax_example_dependent_dropdown_degrades().
+ 126  */
+ 127 function ajax_example_dependent_dropdown_degrades_submit($form, &amp;$form_state) {
+ 128 
+ 129   // Now handle the case of the next, previous, and submit buttons.
+ 130   // only submit will result in actual submission, all others rebuild.
+ 131   switch ($form_state[&#039;triggering_element&#039;][&#039;#value&#039;]) {
+ 132     case t(&#039;OK&#039;): // Submit: We&#039;re done.
+ 133       drupal_set_message(t(&#039;Your values have been submitted. dropdown_first=@first, dropdown_second=@second&#039;, array(&#039;@first&#039; =&gt; $form_state[&#039;values&#039;][&#039;dropdown_first&#039;], &#039;@second&#039; =&gt; $form_state[&#039;values&#039;][&#039;dropdown_second&#039;])));
+ 134       return;
+ 135   }
+ 136   // &#039;Choose&#039; or anything else will cause rebuild of the form and present
+ 137   // it again.
+ 138   $form_state[&#039;rebuild&#039;] = TRUE;
+ 139 }
+ 140 
+ 141 /**
+ 142  * Selects just the second dropdown to be returned for re-rendering.
+ 143  *
+ 144  * @return
+ 145  *   Renderable array (the second dropdown).
+ 146  */
+ 147 function ajax_example_dependent_dropdown_degrades_first_callback($form, $form_state) {
+ 148   return $form[&#039;dropdown_second_fieldset&#039;][&#039;dropdown_second&#039;];
+ 149 }
+ 150 
+ 151 
+ 152 /**
+ 153  * Example of a form with portions dynamically enabled or disabled, but
+ 154  * with graceful degradation in the case of no javascript.
+ 155  *
+ 156  * The idea here is that certain parts of the form don&#039;t need to be displayed
+ 157  * unless a given option is selected, but then they should be displayed and
+ 158  * configured.
+ 159  *
+ 160  * The third $no_js_use argument is strictly for demonstrating operation
+ 161  * without javascript, without making the user/developer turn off javascript.
+ 162  */
+ 163 function ajax_example_dynamic_sections($form, &amp;$form_state, $no_js_use = FALSE) {
+ 164 
+ 165   // Attach the CSS and JS we need to show this with and without javascript.
+ 166   // Without javascript we need an extra &quot;Choose&quot; button, and this is
+ 167   // hidden when we have javascript enabled.
+ 168   $form[&#039;#attached&#039;][&#039;css&#039;] = array(
+ 169     drupal_get_path(&#039;module&#039;, &#039;ajax_example&#039;) . &#039;/ajax_example.css&#039;,
+ 170   );
+ 171   $form[&#039;#attached&#039;][&#039;js&#039;] = array(
+ 172     drupal_get_path(&#039;module&#039;, &#039;ajax_example&#039;) . &#039;/ajax_example.js&#039;,
+ 173   );
+ 174   $form[&#039;description&#039;] = array(
+ 175     &#039;#type&#039; =&gt; &#039;markup&#039;,
+ 176     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&#039;This example demonstrates a form which dynamically creates various sections based on the configuration in the form.
+ 177       It deliberately allows graceful degradation to a non-javascript environment.
+ 178       In a non-javascript environment, the &quot;Choose&quot; button next to the select control
+ 179       is displayed; in a javascript environment it is hidden by the module CSS.
+ 180       &lt;br/&gt;&lt;br/&gt;The basic idea here is that the form is built up based on
+ 181       the selection in the question_type_select field, and it is built the same
+ 182       whether we are in a javascript/AJAX environment or not.
+ 183       &lt;br/&gt;&lt;br/&gt;
+ 184       Try the &lt;a href=&quot;!ajax_link&quot;&gt;AJAX version&lt;/a&gt; and the &lt;a href=&quot;!non_ajax_link&quot;&gt;simulated-non-AJAX version&lt;/a&gt;.
+ 185     &#039;, array(&#039;!ajax_link&#039; =&gt; url(&#039;examples/ajax_example/dynamic_sections&#039;), &#039;!non_ajax_link&#039; =&gt; url(&#039;examples/ajax_example/dynamic_sections_no_js&#039;) )) . &#039;&lt;/div&gt;&#039;,
+ 186   );
+ 187   $form[&#039;question_type_select&#039;] = array(
+ 188     &#039;#type&#039; =&gt; &#039;select&#039;,
+ 189     &#039;#title&#039; =&gt; t(&#039;Question style&#039;),
+ 190     &#039;#options&#039; =&gt; drupal_map_assoc(array(t(&#039;Choose question style&#039;), t(&#039;Multiple Choice&#039;), t(&#039;True/False&#039;), t(&#039;Fill-in-the-blanks&#039;))),
+ 191     &#039;#ajax&#039; =&gt; array(
+ 192       &#039;wrapper&#039; =&gt; &#039;questions-fieldset-wrapper&#039;,
+ 193       &#039;callback&#039; =&gt; &#039;ajax_example_dynamic_sections_select_callback&#039;,
+ 194     ),
+ 195   );
+ 196   // The CSS for this module hides this next button if JS is enabled.
+ 197   $form[&#039;question_type_submit&#039;] = array(
+ 198     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 199     &#039;#value&#039; =&gt; t(&#039;Choose&#039;),
+ 200     &#039;#attributes&#039; =&gt; array(&#039;class&#039; =&gt; array(&#039;next-button&#039;)),
+ 201     &#039;#limit_validation_errors&#039; =&gt; array(),  // No need to validate when submitting this.
+ 202     &#039;#validate&#039; =&gt; array(),
+ 203   );
+ 204 
+ 205   // This simply allows us to demonstrate no-javascript use without
+ 206   // actually turning off javascript in the browser. Removing the #ajax
+ 207   // element turns off AJAX behaviors on that element and as a result
+ 208   // ajax.js doesn&#039;t get loaded.
+ 209   if ($no_js_use) {
+ 210     // Remove the #ajax from the above, so ajax.js won&#039;t be loaded.
+ 211     unset($form[&#039;question_type_select&#039;][&#039;#ajax&#039;]);
+ 212   }
+ 213 
+ 214   // This fieldset just serves as a container for the part of the form
+ 215   // that gets rebuilt.
+ 216   $form[&#039;questions_fieldset&#039;] = array(
+ 217     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 218     // These provide the wrapper referred to in #ajax[&#039;wrapper&#039;] above.
+ 219     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;questions-fieldset-wrapper&quot;&gt;&#039;,
+ 220     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 221   );
+ 222   if (!empty($form_state[&#039;values&#039;][&#039;question_type_select&#039;])) {
+ 223 
+ 224     $form[&#039;questions_fieldset&#039;][&#039;question&#039;] = array(
+ 225       &#039;#markup&#039; =&gt; t(&#039;Who was the first president of the U.S.?&#039;),
+ 226     );
+ 227     $question_type = $form_state[&#039;values&#039;][&#039;question_type_select&#039;];
+ 228 
+ 229     switch ($question_type) {
+ 230       case t(&#039;Multiple Choice&#039;):
+ 231         $form[&#039;questions_fieldset&#039;][&#039;question&#039;] = array(
+ 232           &#039;#type&#039; =&gt; &#039;radios&#039;,
+ 233           &#039;#title&#039; =&gt; t(&#039;Who was the first president of the United States&#039;),
+ 234           &#039;#options&#039; =&gt; drupal_map_assoc(array(t(&#039;George Bush&#039;), t(&#039;Adam McGuire&#039;), t(&#039;Abraham Lincoln&#039;), t(&#039;George Washington&#039;))),
+ 235         );
+ 236         break;
+ 237 
+ 238       case t(&#039;True/False&#039;):
+ 239         $form[&#039;questions_fieldset&#039;][&#039;question&#039;] = array(
+ 240           &#039;#type&#039; =&gt; &#039;radios&#039;,
+ 241           &#039;#title&#039; =&gt; t(&#039;Was George Washington the first president of the United States?&#039;),
+ 242           &#039;#options&#039; =&gt; array(t(&#039;George Washington&#039;) =&gt; t(&quot;True&quot;), 0 =&gt; t(&quot;False&quot;)),
+ 243           &#039;#description&#039; =&gt; t(&#039;Click &quot;True&quot; if you think George Washington was the first president of the United States.&#039;),
+ 244         );
+ 245         break;
+ 246 
+ 247       case t(&#039;Fill-in-the-blanks&#039;):
+ 248         $form[&#039;questions_fieldset&#039;][&#039;question&#039;] = array(
+ 249           &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 250           &#039;#title&#039; =&gt; t(&#039;Who was the first president of the United States&#039;),
+ 251           &#039;#description&#039; =&gt; t(&#039;Please type the correct answer to the question.&#039;),
+ 252         );
+ 253         break;
+ 254     }
+ 255 
+ 256     $form[&#039;questions_fieldset&#039;][&#039;submit&#039;] = array(
+ 257       &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 258       &#039;#value&#039; =&gt; t(&#039;Submit your answer&#039;),
+ 259     );
+ 260   }
+ 261   return $form;
+ 262 }
+ 263 
+ 264 /**
+ 265  * Validation function for ajax_example_dynamic_sections().
+ 266  */
+ 267 function ajax_example_dynamic_sections_validate($form, &amp;$form_state) {
+ 268   $answer = $form_state[&#039;values&#039;][&#039;question&#039;];
+ 269   if ($answer !== t(&#039;George Washington&#039;)) {
+ 270     form_set_error(&#039;question&#039;, t(&#039;Wrong answer. Try again. (Hint: The right answer is &quot;George Washington&quot;.)&#039;));
+ 271   }
+ 272 }
+ 273 
+ 274 /**
+ 275  * Submit function for ajax_example_dynamic_sections().
+ 276  */
+ 277 function ajax_example_dynamic_sections_submit($form, &amp;$form_state) {
+ 278   // This is only executed when a button is pressed, not when the AJAXified
+ 279   // select is changed.
+ 280   // Now handle the case of the next, previous, and submit buttons.
+ 281   // Only submit will result in actual submission, all others rebuild.
+ 282   switch ($form_state[&#039;triggering_element&#039;][&#039;#value&#039;]) {
+ 283     case t(&#039;Submit your answer&#039;): // Submit: We&#039;re done.
+ 284       $form_state[&#039;rebuild&#039;] = FALSE;
+ 285       $answer = $form_state[&#039;values&#039;][&#039;question&#039;];
+ 286 
+ 287       // Special handling for the checkbox.
+ 288       if ($answer == 1 &amp;&amp; $form[&#039;questions_fieldset&#039;][&#039;question&#039;][&#039;#type&#039;] == &#039;checkbox&#039;) {
+ 289         $answer = $form[&#039;questions_fieldset&#039;][&#039;question&#039;][&#039;#title&#039;];
+ 290       }
+ 291       if ($answer === t(&#039;George Washington&#039;)) {
+ 292         drupal_set_message(t(&#039;You got the right answer: @answer&#039;, array(&#039;@answer&#039; =&gt; $answer)));
+ 293       }
+ 294       else {
+ 295         drupal_set_message(t(&#039;Sorry, your answer (@answer) is wrong&#039;, array(&#039;@answer&#039; =&gt; $answer)));
+ 296       }
+ 297       $form_state[&#039;rebuild&#039;] = FALSE;
+ 298       return;
+ 299     // Any other form element will cause rebuild of the form and present
+ 300     // it again.
+ 301     case t(&#039;Choose&#039;):
+ 302       $form_state[&#039;values&#039;][&#039;question_type_select&#039;] =
+ 303         $form_state[&#039;input&#039;][&#039;question_type_select&#039;];
+ 304       // Fall through.
+ 305     default:
+ 306       $form_state[&#039;rebuild&#039;] = TRUE;
+ 307   }
+ 308 }
+ 309 
+ 310 /**
+ 311  * Callback for the select element.
+ 312  *
+ 313  * This just selects and returns the questions_fieldset.
+ 314  */
+ 315 function ajax_example_dynamic_sections_select_callback($form, $form_state) {
+ 316   return $form[&#039;questions_fieldset&#039;];
+ 317 }
+ 318 
+ 319 
+ 320 /**
+ 321  * This example is a classic wizard, where a different and sequential form
+ 322  * is presented on each step of the form.
+ 323  *
+ 324  * In the AJAX version, the form is replaced for each wizard section. In the
+ 325  * multistep version, it causes a new page load.
+ 326  *
+ 327  * @param $form
+ 328  * @param $form_state
+ 329  * @param $no_js_use
+ 330  *   Used for this demonstration only. If true means that the form should be
+ 331  *   built using a simulated no-javascript approach (ajax.js will not be
+ 332  *   loaded.)
+ 333  */
+ 334 function ajax_example_wizard($form, &amp;$form_state, $no_js_use = FALSE) {
+ 335 
+ 336   // Provide a wrapper around the entire form, since we&#039;ll replace the whole
+ 337   // thing with each submit.
+ 338   $form[&#039;#prefix&#039;] = &#039;&lt;div id=&quot;wizard-form-wrapper&quot;&gt;&#039;;
+ 339   $form[&#039;#suffix&#039;] = &#039;&lt;/div&gt;&#039;;
+ 340   $form[&#039;#tree&#039;] = TRUE; // We want to deal with hierarchical form values.
+ 341 
+ 342   $form[&#039;description&#039;] = array(
+ 343     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&#039;This example is a step-by-step wizard. The &lt;a href=&quot;!ajax&quot;&gt;AJAX version&lt;/a&gt; does it without page reloads; the &lt;a href=&quot;!multistep&quot;&gt;multistep version&lt;/a&gt; is the same code but simulates a non-javascript environment, showing it with page reloads.&#039;,
+ 344       array(&#039;!ajax&#039; =&gt; url(&#039;examples/ajax_example/wizard&#039;), &#039;!multistep&#039; =&gt; url(&#039;examples/ajax_example/wizard_no_js&#039;)))
+ 345     . &#039;&lt;/div&gt;&#039;,
+ 346   );
+ 347 
+ 348   // $form_state[&#039;storage&#039;] has no specific drupal meaning, but it is
+ 349   // traditional to keep variables for multistep forms there.
+ 350   $step = empty($form_state[&#039;storage&#039;][&#039;step&#039;]) ? 1 : $form_state[&#039;storage&#039;][&#039;step&#039;];
+ 351   $form_state[&#039;storage&#039;][&#039;step&#039;] = $step;
+ 352 
+ 353   switch ($step) {
+ 354     case 1:
+ 355       $form[&#039;step1&#039;] = array(
+ 356         &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 357         &#039;#title&#039; =&gt; t(&#039;Step 1: Personal details&#039;),
+ 358       );
+ 359       $form[&#039;step1&#039;][&#039;name&#039;] = array(
+ 360         &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 361         &#039;#title&#039; =&gt; t(&#039;Your name&#039;),
+ 362         &#039;#default_value&#039; =&gt; empty($form_state[&#039;values&#039;][&#039;step1&#039;][&#039;name&#039;]) ? &#039;&#039; : $form_state[&#039;values&#039;][&#039;step1&#039;][&#039;name&#039;],
+ 363         &#039;#required&#039; =&gt; TRUE,
+ 364       );
+ 365       break;
+ 366 
+ 367     case 2:
+ 368       $form[&#039;step2&#039;] = array(
+ 369         &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 370         &#039;#title&#039; =&gt; t(&#039;Step 2: Street address info&#039;),
+ 371       );
+ 372       $form[&#039;step2&#039;][&#039;address&#039;] = array(
+ 373         &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 374         &#039;#title&#039; =&gt; t(&#039;Your street address&#039;),
+ 375         &#039;#default_value&#039; =&gt; empty($form_state[&#039;values&#039;][&#039;step2&#039;][&#039;address&#039;]) ? &#039;&#039; : $form_state[&#039;values&#039;][&#039;step2&#039;][&#039;address&#039;],
+ 376         &#039;#required&#039; =&gt; TRUE,
+ 377       );
+ 378       break;
+ 379 
+ 380     case 3:
+ 381       $form[&#039;step3&#039;] = array(
+ 382         &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 383         &#039;#title&#039; =&gt; t(&#039;Step 3: City info&#039;),
+ 384       );
+ 385       $form[&#039;step3&#039;][&#039;city&#039;] = array(
+ 386         &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 387         &#039;#title&#039; =&gt; t(&#039;Your city&#039;),
+ 388         &#039;#default_value&#039; =&gt; empty($form_state[&#039;values&#039;][&#039;step3&#039;][&#039;city&#039;]) ? &#039;&#039; : $form_state[&#039;values&#039;][&#039;step3&#039;][&#039;city&#039;],
+ 389         &#039;#required&#039; =&gt; TRUE,
+ 390       );
+ 391       break;
+ 392   }
+ 393   if ($step == 3) {
+ 394     $form[&#039;submit&#039;] = array(
+ 395       &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 396       &#039;#value&#039; =&gt; t(&quot;Submit your information&quot;),
+ 397     );
+ 398   }
+ 399   if ($step &lt; 3) {
+ 400     $form[&#039;next&#039;] = array(
+ 401       &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 402       &#039;#value&#039; =&gt; t(&#039;Next step&#039;),
+ 403       &#039;#ajax&#039; =&gt; array(
+ 404         &#039;wrapper&#039; =&gt; &#039;wizard-form-wrapper&#039;,
+ 405         &#039;callback&#039; =&gt; &#039;ajax_example_wizard_callback&#039;,
+ 406       ),
+ 407     );
+ 408   }
+ 409   if ($step &gt; 1) {
+ 410     $form[&#039;prev&#039;] = array(
+ 411       &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 412       &#039;#value&#039; =&gt; t(&quot;Previous step&quot;),
+ 413 
+ 414       // Since all info will be discarded, don&#039;t validate on &#039;prev&#039;.
+ 415       &#039;#limit_validation_errors&#039; =&gt; array(),
+ 416       // #submit is required to use #limit_validation_errors
+ 417       &#039;#submit&#039; =&gt; array(&#039;ajax_example_wizard_submit&#039;),
+ 418       &#039;#ajax&#039; =&gt; array(
+ 419         &#039;wrapper&#039; =&gt; &#039;wizard-form-wrapper&#039;,
+ 420         &#039;callback&#039; =&gt; &#039;ajax_example_wizard_callback&#039;,
+ 421       ),
+ 422     );
+ 423   }
+ 424 
+ 425   // This simply allows us to demonstrate no-javascript use without
+ 426   // actually turning off javascript in the browser. Removing the #ajax
+ 427   // element turns off AJAX behaviors on that element and as a result
+ 428   // ajax.js doesn&#039;t get loaded.
+ 429   // For demonstration only! You don&#039;t need this.
+ 430   if ($no_js_use) {
+ 431     // Remove the #ajax from the above, so ajax.js won&#039;t be loaded.
+ 432     // For demonstration only.
+ 433     unset($form[&#039;next&#039;][&#039;#ajax&#039;]);
+ 434     unset($form[&#039;prev&#039;][&#039;#ajax&#039;]);
+ 435   }
+ 436 
+ 437   return $form;
+ 438 }
+ 439 
+ 440 function ajax_example_wizard_callback($form, $form_state) {
+ 441   return $form;
+ 442 }
+ 443 
+ 444 /**
+ 445  * Submit function for ajax_example_wizard.
+ 446  *
+ 447  * In AJAX this is only submitted when the final submit button is clicked,
+ 448  * but in the non-javascript situation, it is submitted with every
+ 449  * button click.
+ 450  */
+ 451 function ajax_example_wizard_submit($form, &amp;$form_state) {
+ 452 
+ 453   // Save away the current information.
+ 454   $current_step = &#039;step&#039; . $form_state[&#039;storage&#039;][&#039;step&#039;];
+ 455   if (!empty($form_state[&#039;values&#039;][$current_step])) {
+ 456     $form_state[&#039;storage&#039;][&#039;values&#039;][$current_step] = $form_state[&#039;values&#039;][$current_step];
+ 457   }
+ 458 
+ 459   // Increment or decrement the step as needed. Recover values if they exist.
+ 460   if ($form_state[&#039;triggering_element&#039;][&#039;#value&#039;] == t(&#039;Next step&#039;)) {
+ 461     $form_state[&#039;storage&#039;][&#039;step&#039;]++;
+ 462     // If values have already been entered for this step, recover them from
+ 463     // $form_state[&#039;storage&#039;] to pre-populate them.
+ 464     $step_name = &#039;step&#039; . $form_state[&#039;storage&#039;][&#039;step&#039;];
+ 465     if (!empty($form_state[&#039;storage&#039;][&#039;values&#039;][$step_name])) {
+ 466       $form_state[&#039;values&#039;][$step_name] = $form_state[&#039;storage&#039;][&#039;values&#039;][$step_name];
+ 467     }
+ 468   }
+ 469   if ($form_state[&#039;triggering_element&#039;][&#039;#value&#039;] == t(&#039;Previous step&#039;)) {
+ 470     $form_state[&#039;storage&#039;][&#039;step&#039;]--;
+ 471     // Recover our values from $form_state[&#039;storage&#039;] to pre-populate them.
+ 472     $step_name = &#039;step&#039; . $form_state[&#039;storage&#039;][&#039;step&#039;];
+ 473     $form_state[&#039;values&#039;][$step_name] = $form_state[&#039;storage&#039;][&#039;values&#039;][$step_name];
+ 474   }
+ 475 
+ 476   // If they&#039;re done, submit.
+ 477   if ($form_state[&#039;triggering_element&#039;][&#039;#value&#039;] == t(&#039;Submit your information&#039;)) {
+ 478     $value_message = t(&#039;Your information has been submitted:&#039;) . &#039; &#039;;
+ 479     foreach ($form_state[&#039;storage&#039;][&#039;values&#039;] as $step =&gt; $values) {
+ 480       $value_message .= &quot;$step: &quot;;
+ 481       foreach ($values as $key =&gt; $value) {
+ 482         $value_message .= &quot;$key=$value, &quot;;
+ 483       }
+ 484     }
+ 485     drupal_set_message($value_message);
+ 486     $form_state[&#039;rebuild&#039;] = FALSE;
+ 487     return;
+ 488   }
+ 489 
+ 490   // Otherwise, we still have work to do.
+ 491   $form_state[&#039;rebuild&#039;] = TRUE;
+ 492 }
+ 493 
+ 494 
+ 495 /**
+ 496  * This example shows a button to &quot;add more&quot; - add another textfield, and
+ 497  * the corresponding &quot;remove&quot; button.
+ 498  *
+ 499  * It works equivalently with javascript or not, and does the same basic steps
+ 500  * either way.
+ 501  *
+ 502  * The basic idea is that we build the form based on the setting of
+ 503  * $form_state[&#039;num_names&#039;]. The custom submit functions for the &quot;add-one&quot;
+ 504  * and &quot;remove-one&quot; buttons increment and decrement $form_state[&#039;num_names&#039;]
+ 505  * and then force a rebuild of the form.
+ 506  *
+ 507  * The $no_js_use argument is simply for demonstration: When set, it prevents
+ 508  * &#039;#ajax&#039; from being set, thus making the example behave as if javascript
+ 509  * were disabled in the browser.
+ 510  */
+ 511 function ajax_example_add_more($form, &amp;$form_state, $no_js_use = FALSE) {
+ 512   $form[&#039;description&#039;] = array(
+ 513     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&#039;This example shows an add-more and a remove-last button. The &lt;a href=&quot;!ajax&quot;&gt;AJAX version&lt;/a&gt; does it without page reloads; the &lt;a href=&quot;!multistep&quot;&gt;non-js version&lt;/a&gt; is the same code but simulates a non-javascript environment, showing it with page reloads.&#039;,
+ 514       array(&#039;!ajax&#039; =&gt; url(&#039;examples/ajax_example/add_more&#039;), &#039;!multistep&#039; =&gt; url(&#039;examples/ajax_example/add_more_no_js&#039;)))
+ 515     . &#039;&lt;/div&gt;&#039;,
+ 516   );
+ 517 
+ 518   // Because we have many fields with the same values, we have to set
+ 519   // #tree to be able to access them.
+ 520   $form[&#039;#tree&#039;] = TRUE;
+ 521   $form[&#039;names_fieldset&#039;] = array(
+ 522     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 523     &#039;#title&#039; =&gt; t(&#039;People coming to the picnic&#039;),
+ 524     // Set up the wrapper so that AJAX will be able to replace the fieldset.
+ 525     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;names-fieldset-wrapper&quot;&gt;&#039;,
+ 526     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+ 527   );
+ 528 
+ 529   // Build the fieldset with the proper number of names. We&#039;ll use
+ 530   // $form_state[&#039;num_names&#039;] to determine the number of textfields to build.
+ 531   if (empty($form_state[&#039;num_names&#039;])) {
+ 532     $form_state[&#039;num_names&#039;] = 1;
+ 533   }
+ 534   for ($i = 0; $i &lt; $form_state[&#039;num_names&#039;]; $i++) {
+ 535     $form[&#039;names_fieldset&#039;][&#039;name&#039;][$i] = array(
+ 536       &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 537       &#039;#title&#039; =&gt; t(&#039;Name&#039;),
+ 538     );
+ 539   }
+ 540   $form[&#039;names_fieldset&#039;][&#039;add_name&#039;] = array(
+ 541     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 542     &#039;#value&#039; =&gt; t(&#039;Add one more&#039;),
+ 543     &#039;#submit&#039; =&gt; array(&#039;ajax_example_add_more_add_one&#039;),
+ 544     // See the examples in ajax_example.module for more details on the
+ 545     // properties of #ajax.
+ 546     &#039;#ajax&#039; =&gt; array(
+ 547       &#039;callback&#039; =&gt; &#039;ajax_example_add_more_callback&#039;,
+ 548       &#039;wrapper&#039; =&gt; &#039;names-fieldset-wrapper&#039;,
+ 549     ),
+ 550   );
+ 551   if ($form_state[&#039;num_names&#039;] &gt; 1) {
+ 552     $form[&#039;names_fieldset&#039;][&#039;remove_name&#039;] = array(
+ 553       &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 554       &#039;#value&#039; =&gt; t(&#039;Remove one&#039;),
+ 555       &#039;#submit&#039; =&gt; array(&#039;ajax_example_add_more_remove_one&#039;),
+ 556       &#039;#ajax&#039; =&gt; array(
+ 557         &#039;callback&#039; =&gt; &#039;ajax_example_add_more_callback&#039;,
+ 558         &#039;wrapper&#039; =&gt; &#039;names-fieldset-wrapper&#039;,
+ 559       ),
+ 560     );
+ 561   }
+ 562   $form[&#039;submit&#039;] = array(
+ 563     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 564     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 565   );
+ 566 
+ 567   // This simply allows us to demonstrate no-javascript use without
+ 568   // actually turning off javascript in the browser. Removing the #ajax
+ 569   // element turns off AJAX behaviors on that element and as a result
+ 570   // ajax.js doesn&#039;t get loaded.
+ 571   // For demonstration only! You don&#039;t need this.
+ 572   if ($no_js_use) {
+ 573     // Remove the #ajax from the above, so ajax.js won&#039;t be loaded.
+ 574     if (!empty($form[&#039;names_fieldset&#039;][&#039;remove_name&#039;][&#039;#ajax&#039;])) {
+ 575       unset($form[&#039;names_fieldset&#039;][&#039;remove_name&#039;][&#039;#ajax&#039;]);
+ 576     }
+ 577     unset($form[&#039;names_fieldset&#039;][&#039;add_name&#039;][&#039;#ajax&#039;]);
+ 578   }
+ 579 
+ 580   return $form;
+ 581 }
+ 582 
+ 583 /**
+ 584  * Callback for both ajax-enabled buttons.
+ 585  *
+ 586  * Selects and returns the fieldset with the names in it.
+ 587  */
+ 588 function ajax_example_add_more_callback($form, $form_state) {
+ 589   return $form[&#039;names_fieldset&#039;];
+ 590 }
+ 591 
+ 592 /**
+ 593  * Submit handler for the &quot;add-one-more&quot; button.
+ 594  *
+ 595  * Increments the max counter and causes a rebuild.
+ 596  */
+ 597 function ajax_example_add_more_add_one($form, &amp;$form_state) {
+ 598   $form_state[&#039;num_names&#039;]++;
+ 599   $form_state[&#039;rebuild&#039;] = TRUE;
+ 600 }
+ 601 
+ 602 /**
+ 603  * Submit handler for the &quot;remove one&quot; button.
+ 604  *
+ 605  * Decrements the max counter and causes a form rebuild.
+ 606  */
+ 607 function ajax_example_add_more_remove_one($form, &amp;$form_state) {
+ 608   if ($form_state[&#039;num_names&#039;] &gt; 1) {
+ 609     $form_state[&#039;num_names&#039;]--;
+ 610   }
+ 611   $form_state[&#039;rebuild&#039;] = TRUE;
+ 612 }
+ 613 
+ 614 /**
+ 615  * Final submit handler.
+ 616  *
+ 617  * Reports what values were finally set.
+ 618  */
+ 619 function ajax_example_add_more_submit($form, &amp;$form_state) {
+ 620   $output = t(&#039;These people are coming to the picnic: @names&#039;,
+ 621     array(&#039;@names&#039; =&gt; implode(&#039;, &#039;, $form_state[&#039;values&#039;][&#039;names_fieldset&#039;][&#039;name&#039;])) );
+ 622   drupal_set_message($output);
+ 623 }
+ 624 /**
+ 625  * @} End of &quot;defgroup ajax_degradation_example&quot;.
+ 626  */</pre>
+
+</div>
+<!-- EDIT10 SECTION "ajax_example_graceful_degradation.inc" [65718-92872] -->
+<h2 class="sectionedit11" id="ajax_example_miscinc">ajax_example_misc.inc</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * AJAX Miscellaneous Topics.
+   6  */
+   7 
+   8 /**
+   9  * Demonstrates a clickable AJAX-enabled link using the &#039;use-ajax&#039; class.
+  10  *
+  11  * Because of the &#039;use-ajax&#039; class applied here, the link submission is done
+  12  * without a page refresh.
+  13  *
+  14  * When using the AJAX framework outside the context of a form or a renderable
+  15  * array of type &#039;link&#039;, you have to include ajax.js explicitly.
+  16  *
+  17  * @return
+  18  *
+  19  * @ingroup ajax_example
+  20  */
+  21 function ajax_example_render_link() {
+  22   // drupal_add_library is invoked automatically when a form element has the
+  23   // &#039;#ajax&#039; property, but since we are not rendering a form here, we have to
+  24   // do it ourselves.
+  25   drupal_add_library(&#039;system&#039;, &#039;drupal.ajax&#039;);
+  26   $explanation = &quot;
+  27 The link below has the &lt;i&gt;use-ajax&lt;/i&gt; class applied to it, so if
+  28 javascript is enabled, ajax.js will try to submit it via an AJAX call instead
+  29 of a normal page load. The URL also contains the &#039;/nojs/&#039; magic string, which
+  30 is stripped if javascript is enabled, allowing the server code to tell by the
+  31 URL whether JS was enabled or not, letting it do different things based on that.&quot;;
+  32   $output = &quot;&lt;div&gt;&quot; . t($explanation) . &quot;&lt;/div&gt;&quot;;
+  33   // The use-ajax class is special, so that the link will call without causing
+  34   // a page reload. Note the /nojs portion of the path - if javascript is
+  35   // enabled, this part will be stripped from the path before it is called.
+  36   $link = l(t(&#039;Click here&#039;), &#039;ajax_link_callback/nojs/&#039;, array(&#039;attributes&#039; =&gt; array(&#039;class&#039; =&gt; array(&#039;use-ajax&#039;))));
+  37   $output .= &quot;&lt;div id=&#039;myDiv&#039;&gt;&lt;/div&gt;&lt;div&gt;$link&lt;/div&gt;&quot;;
+  38   return $output;
+  39 }
+  40 
+  41 /**
+  42  * Demonstrates a clickable AJAX-enabled link using a renderable array with the
+  43  * #ajax property.
+  44  *
+  45  * A link that is constructed as a renderable array can have the #ajax property,
+  46  * which ensures that the link submission is done without a page refresh. The
+  47  * href of the link is used as the ajax callback, but it degrades gracefully
+  48  * without JavaScript because if the &#039;nojs&#039; portion of the href is not stripped
+  49  * out by js, the callback will return content as required for a full page
+  50  * reload.
+  51  *
+  52  * The necessary JavaScript file, ajax.js, will be included on the page
+  53  * automatically.
+  54  *
+  55  * @return
+  56  */
+  57 function ajax_example_render_link_ra() {
+  58   $explanation = &quot;
+  59 The link below has been rendered as an element with the #ajax property, so if
+  60 javascript is enabled, ajax.js will try to submit it via an AJAX call instead
+  61 of a normal page load. The URL also contains the &#039;/nojs/&#039; magic string, which
+  62 is stripped if javascript is enabled, allowing the server code to tell by the
+  63 URL whether JS was enabled or not, letting it do different things based on that.&quot;;
+  64   $build[&#039;my_div&#039;] = array(
+  65     &#039;#markup&#039; =&gt; $explanation . &#039;&lt;div id=&quot;myDiv&quot;&gt;&lt;/div&gt;&#039;,
+  66   );
+  67   $build[&#039;ajax_link&#039;] = array(
+  68     &#039;#type&#039; =&gt; &#039;link&#039;,
+  69     &#039;#title&#039; =&gt; t(&#039;Click here&#039;),
+  70     // Note the /nojs portion of the href - if javascript is enabled,
+  71     // this part will be stripped from the path before it is called.
+  72     &#039;#href&#039; =&gt; &#039;ajax_link_callback/nojs/&#039;,
+  73     &#039;#id&#039; =&gt; &#039;ajax_link&#039;,
+  74     &#039;#ajax&#039; =&gt; array(
+  75       &#039;wrapper&#039; =&gt; &#039;myDiv&#039;,
+  76       &#039;method&#039; =&gt; &#039;html&#039;,
+  77     ),
+  78   );
+  79   return $build;
+  80 }
+  81 
+  82 /**
+  83  * Callback for link example.
+  84  *
+  85  * Takes different logic paths based on whether Javascript was enabled.
+  86  * If $type == &#039;ajax&#039;, it tells this function that ajax.js has rewritten
+  87  * the URL and thus we are doing an AJAX and can return an array of commands.
+  88  *
+  89  * @param $type
+  90  *   Either &#039;ajax&#039; or &#039;nojs. Type is simply the normal URL argument to this URL.
+  91  *
+  92  * @return
+  93  *   If $type == &#039;ajax&#039;, returns an array of AJAX Commands.
+  94  *   Otherwise, just returns the content, which will end up being a page.
+  95  *
+  96  * @ingroup ajax_example
+  97  */
+  98 function ajax_link_response($type = &#039;ajax&#039;) {
+  99   if ($type == &#039;ajax&#039;) {
+ 100     $output = t(&quot;This is some content delivered via AJAX&quot;);
+ 101     $commands = array();
+ 102     // See ajax_example_advanced.inc for more details on the available commands
+ 103     // and how to use them.
+ 104     $commands[] = ajax_command_append(&#039;#myDiv&#039;, $output);
+ 105     $page = array(&#039;#type&#039; =&gt; &#039;ajax&#039;, &#039;#commands&#039; =&gt; $commands);
+ 106     ajax_deliver($page);
+ 107   }
+ 108   else {
+ 109     $output = t(&quot;This is some content delivered via a page load.&quot;);
+ 110     return $output;
+ 111   }
+ 112 }</pre>
+
+</div>
+<!-- EDIT11 SECTION "ajax_example_misc.inc" [92873-97678] -->
+<h2 class="sectionedit12" id="ajax_example_node_form_alterinc">ajax_example_node_form_alter.inc</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * This example shows how to use AJAX when altering a node form.
+   5  *
+   6  * It maintains a table parallel to the node table containing attributes
+   7  * &#039;example_1&#039; and &#039;example_2&#039; which are displayed on the node form.
+   8  * &#039;example_2&#039; is displayed dynamically when example_1 is checked.
+   9  */
+  10 
+  11 /**
+  12  * Implements hook_form_FORM_ID_alter() for the node form.
+  13  *
+  14  * Adds two fields to the node form, second only appears after first is enabled.
+  15  */
+  16 function ajax_example_form_node_form_alter(&amp;$form, &amp;$form_state, $form_id) {
+  17   $node = $form[&#039;#node&#039;];
+  18   $form[&#039;ajax_example_1&#039;] = array(
+  19     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+  20     &#039;#title&#039; =&gt; t(&#039;AJAX Example 1&#039;),
+  21     &#039;#description&#039; =&gt; t(&#039;Enable to show second field.&#039;),
+  22     &#039;#default_value&#039; =&gt; $node-&gt;ajax_example[&#039;example_1&#039;],
+  23     &#039;#ajax&#039; =&gt; array(
+  24       &#039;callback&#039; =&gt; &#039;ajax_example_form_node_callback&#039;,
+  25       &#039;wrapper&#039; =&gt; &#039;ajax-example-form-node&#039;,
+  26       &#039;effect&#039; =&gt; &#039;fade&#039;,
+  27     )
+  28   );
+  29   $form[&#039;container&#039;] = array(
+  30     &#039;#prefix&#039; =&gt; &#039;&lt;div id=&quot;ajax-example-form-node&quot;&gt;&#039;,
+  31     &#039;#suffix&#039; =&gt; &#039;&lt;/div&gt;&#039;,
+  32   );
+  33 
+  34   // If the state values exist and &#039;ajax_example_1&#039; state value is 1 or
+  35   // if the state values don&#039;t exist and &#039;example1&#039; variable is 1 then
+  36   // display the ajax_example_2 field.
+  37   if (!empty($form_state[&#039;values&#039;][&#039;ajax_example_1&#039;]) &amp;&amp; $form_state[&#039;values&#039;][&#039;ajax_example_1&#039;] == 1
+  38       || empty($form_state[&#039;values&#039;]) &amp;&amp; $node-&gt;ajax_example[&#039;example_1&#039;]) {
+  39 
+  40     $form[&#039;container&#039;][&#039;ajax_example_2&#039;] = array(
+  41       &#039;#type&#039; =&gt; &#039;textfield&#039;,
+  42       &#039;#title&#039; =&gt; t(&#039;AJAX Example 2&#039;),
+  43       &#039;#description&#039; =&gt; t(&#039;AJAX Example 2&#039;),
+  44       &#039;#default_value&#039; =&gt; empty($form_state[&#039;values&#039;][&#039;ajax_example_2&#039;]) ?
+  45                           $node-&gt;ajax_example[&#039;example_2&#039;] :
+  46                           $form_state[&#039;values&#039;][&#039;ajax_example_2&#039;],
+  47     );
+  48   }
+  49 }
+  50 
+  51 /**
+  52  * Returns changed part of the form.
+  53  *
+  54  * @return renderable array
+  55  *
+  56  * @see ajax_example_form_node_form_alter()
+  57  */
+  58 function ajax_example_form_node_callback($form, $form_state) {
+  59   return $form[&#039;container&#039;];
+  60 }
+  61 
+  62 /**
+  63  * Implements hook_node_submit().
+  64  * @see ajax_example_form_node_form_alter()
+  65  */
+  66 function ajax_example_node_submit($node, $form, &amp;$form_state) {
+  67   $values = $form_state[&#039;values&#039;];
+  68   // Move the new data into the node object.
+  69   $node-&gt;ajax_example[&#039;example_1&#039;] = $values[&#039;ajax_example_1&#039;];
+  70   // Depending on the state of ajax_example_1; it may not exist.
+  71   $node-&gt;ajax_example[&#039;example_2&#039;] = isset($values[&#039;ajax_example_2&#039;]) ? $values[&#039;ajax_example_2&#039;] : &#039;&#039;;
+  72 }
+  73 
+  74 /**
+  75  * Implements hook_node_prepare().
+  76  *
+  77  * @see ajax_example_form_node_form_alter()
+  78  */
+  79 function ajax_example_node_prepare($node) {
+  80   if (empty($node-&gt;ajax_example)) {
+  81     // Set default values, since this only runs when adding a new node.
+  82     $node-&gt;ajax_example[&#039;example_1&#039;] = 0;
+  83     $node-&gt;ajax_example[&#039;example_2&#039;] = &#039;&#039;;
+  84   }
+  85 }
+  86 
+  87 /**
+  88  * Implements hook_node_load().
+  89  *
+  90  * @see ajax_example_form_node_form_alter()
+  91  */
+  92 function ajax_example_node_load($nodes, $types) {
+  93   $result = db_query(&#039;SELECT * FROM {ajax_example_node_form_alter} WHERE nid IN(:nids)&#039;, array(&#039;:nids&#039; =&gt; array_keys($nodes)))-&gt;fetchAllAssoc(&#039;nid&#039;);
+  94 
+  95   foreach ($nodes as &amp;$node) {
+  96     $node-&gt;ajax_example[&#039;example_1&#039;] =
+  97       isset($result[$node-&gt;nid]-&gt;example_1) ?
+  98       $result[$node-&gt;nid]-&gt;example_1 : 0;
+  99     $node-&gt;ajax_example[&#039;example_2&#039;] =
+ 100       isset($result[$node-&gt;nid]-&gt;example_2) ?
+ 101       $result[$node-&gt;nid]-&gt;example_2 : &#039;&#039;;
+ 102   }
+ 103 }
+ 104 
+ 105 /**
+ 106  * Implements hook_node_insert().
+ 107  *
+ 108  * @see ajax_example_form_node_form_alter()
+ 109  */
+ 110 function ajax_example_node_insert($node) {
+ 111   if (isset($node-&gt;ajax_example)) {
+ 112     db_insert(&#039;ajax_example_node_form_alter&#039;)
+ 113       -&gt;fields(array(
+ 114         &#039;nid&#039; =&gt; $node-&gt;nid,
+ 115         &#039;example_1&#039; =&gt; $node-&gt;ajax_example[&#039;example_1&#039;],
+ 116         &#039;example_2&#039; =&gt; $node-&gt;ajax_example[&#039;example_2&#039;],
+ 117       ))
+ 118       -&gt;execute();
+ 119   }
+ 120 }
+ 121 
+ 122 /**
+ 123  * Implements hook_node_update().
+ 124  * @see ajax_example_form_node_form_alter()
+ 125  */
+ 126 function ajax_example_node_update($node) {
+ 127   if (db_select(&#039;ajax_example_node_form_alter&#039;, &#039;a&#039;)-&gt;fields(&#039;a&#039;)-&gt;condition(&#039;nid&#039;, $node-&gt;nid, &#039;=&#039;)-&gt;execute()-&gt;fetchAssoc()) {
+ 128     db_update(&#039;ajax_example_node_form_alter&#039;)
+ 129       -&gt;fields(array(
+ 130         &#039;example_1&#039; =&gt; $node-&gt;ajax_example[&#039;example_1&#039;],
+ 131         &#039;example_2&#039; =&gt; $node-&gt;ajax_example[&#039;example_2&#039;],
+ 132       ))
+ 133       -&gt;condition(&#039;nid&#039;, $node-&gt;nid)
+ 134       -&gt;execute();
+ 135   }
+ 136   else {
+ 137     // Cleaner than doing it again.
+ 138     ajax_example_node_insert($node);
+ 139   }
+ 140 }
+ 141 
+ 142 /**
+ 143  * Implements hook_node_delete().
+ 144  * @see ajax_example_form_node_form_alter()
+ 145  */
+ 146 function ajax_example_node_delete($node) {
+ 147   db_delete(&#039;ajax_example_node_form_alter&#039;)
+ 148     -&gt;condition(&#039;nid&#039;, $node-&gt;nid)
+ 149     -&gt;execute();
+ 150 }</pre>
+
+</div>
+<!-- EDIT12 SECTION "ajax_example_node_form_alter.inc" [97679-] -->

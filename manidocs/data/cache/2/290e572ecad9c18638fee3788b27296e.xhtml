@@ -1,0 +1,112 @@
+
+<p>
+<strong>Python Database Access</strong>
+</p>
+
+<p>
+DB-Python Connectivity
+Using Sqlite
+</p>
+
+<p>
+Disparate Systems need <abbr title="Application Programming Interface">API</abbr> (Application Programming Interface) for communication <br/>
+
+</p>
+<ul>
+<li class="level1"><div class="li"> ODBC</div>
+</li>
+<li class="level1"><div class="li"> JDBC</div>
+</li>
+<li class="level1"><div class="li"> ADO</div>
+</li>
+</ul>
+
+<p>
+Python DB-<abbr title="Application Programming Interface">API</abbr> 2.0
+</p>
+
+<p>
+Connectivity: <br/>
+
+Mysql for Python <br/>
+
+cx_Oracle  <br/>
+
+adodbapi (MSSQL) <br/>
+
+PyGreSQL
+</p>
+
+<p>
+<em class="u">Database Programming</em>
+</p>
+
+<p>
+<a href="http://wiki.python.org/moin/DatabaseProgramming/" class="urlextern" title="http://wiki.python.org/moin/DatabaseProgramming/"  rel="nofollow">http://wiki.python.org/moin/DatabaseProgramming/</a>
+</p>
+
+<p>
+<strong>SQLite</strong>
+</p>
+<pre class="code">Less than 300 KB C Library
+
+Not Client/Server system (So if we need MySQL process 
+-- daemon running on our box, to communicate with a similar 
+setup on the target machine - it will be a headache)
+
+ACID RDBMS
+Atomic Consistent Isolated Durable - Core elements of DB
+
+Usage: Firefox, Adobe Air, WebOS, iPhone OS, etc
+Lots of management add-ons</pre>
+
+<p>
+<em class="u">SQLite in Python
+</em>
+</p>
+<pre class="code">pysqlite: project name
+sqlite3 : std.libe module name
+
+Connection obj    -&gt; DB handle
+Cursor obj        -&gt; DB Object handle
+execute () method -&gt; SQL Statements</pre>
+
+<p>
+<strong>Database Connectivity
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; import os
+&gt;&gt;&gt; import sqlite3
+&gt;&gt;&gt; os.getcwd()
+&#039;/home/mani/pydev&#039; # This is where DB will be placed
+
+&gt;&gt;&gt; con = sqlite3.connect(&#039;hrdb&#039;) #Connection String to a database
+&gt;&gt;&gt; type(con)
+&lt;class &#039;sqlite3.Connection&#039;&gt;
+
+&gt;&gt;&gt; cur = con.cursor()
+
+&gt;&gt;&gt; cur.execute(&#039;&#039;&#039;CREATE TABLE emp (id integer primary key, fn varchar(20), ln varchar(20))&#039;&#039;&#039;)
+&lt;sqlite3.Cursor object at 0xb55bb8e0&gt;
+
+&gt;&gt;&gt; cur.execute(&#039;&#039;&#039;INSERT INTO emp VALUES (1, &#039;Tim&#039;, &#039;Warner&#039;)&#039;&#039;&#039;)
+&lt;sqlite3.Cursor object at 0xb55bb8e0&gt;
+
+&gt;&gt;&gt; cur.execute(&#039;&#039;&#039;INSERT INTO emp VALUES (2, &#039;Zoey&#039;, &#039;Harter&#039;)&#039;&#039;&#039;)
+&lt;sqlite3.Cursor object at 0xb55bb8e0&gt;
+
+&gt;&gt;&gt; con.commit()
+
+&gt;&gt;&gt; cur.execute(&#039;SELECT * FROM emp&#039;)
+&lt;sqlite3.Cursor object at 0xb55bb8e0&gt;
+
+&gt;&gt;&gt; print(cur.fetchall())
+[(1, &#039;Tim&#039;, &#039;Warner&#039;), (2, &#039;Zoey&#039;, &#039;Harter&#039;)]
+
+&gt;&gt;&gt; cur.execute(&#039;SELECT * from emp WHERE id = 1&#039;)
+&lt;sqlite3.Cursor object at 0xb55bb8e0&gt;
+
+&gt;&gt;&gt; print(cur.fetchall())
+[(1, &#039;Tim&#039;, &#039;Warner&#039;)]
+
+&gt;&gt;&gt; con.close()</pre>

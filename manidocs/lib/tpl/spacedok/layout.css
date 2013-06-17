@@ -1,0 +1,339 @@
+/**
+ * Tableless Layout for spacedok template
+ * derived from the minima template by
+ * @author Tony Baldwin <tonybaldwin@gmx.com>
+ * live sample: tonybaldwin.me/hax
+ *
+ * @author Andreas Gohr <andi@splitbrain.org>
+ * @author moraes <moraes@tipos.com.br>
+ * @author Esther Brunner <wikidesign@gmail.com>
+ */
+ 
+/* -------------- general --------------- */
+
+div.dokuwiki {
+  margin-top: 13px;
+  margin-bottom: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+#spacedok__wide_left, #spacedok__wide_right { width: 987px; }
+#spacedok__medium_left, #spacedok__medium_right { width: 754px; }
+#spacedok__narrow_left, #spacedok__narrow_right { width: 610px; }
+
+/* -------------- header --------------- */
+
+div.dokuwiki .header { height: 55px; }
+
+#spacedok__wide_left .header,
+#spacedok__wide_right .header {
+  background: transparent url(images/header_wide__theme__.jpg) no-repeat;
+}
+
+#spacedok__medium_left .header,
+#spacedok__medium_right .header {
+  background: transparent url(images/header_medium__theme__.jpg) no-repeat;
+}
+
+#spacedok__narrow_left .header,
+#spacedok__narrow_right .header {
+  background: transparent url(images/header_narrow__theme__.jpg) no-repeat;
+}
+
+#spacedok__wide_left .header { padding: 21px 89px 13px 288px; }
+#spacedok__medium_left .header { padding: 21px 68px 13px 220px; }
+#spacedok__narrow_left .header { padding: 21px 55px 13px 178px; }
+#spacedok__wide_right .header { padding: 21px 55px 13px 89px; }
+#spacedok__medium_right .header { padding: 21px 42px 13px 68px; }
+#spacedok__narrow_right .header { padding: 21px 34px 13px 55px; }
+
+div.dokuwiki .logo {
+  font-size: 220%;
+  font-weight: bolder;
+  margin-top: 8px;
+  /* vertical-align: middle; */
+}
+
+div.dokuwiki .logo a {
+  color: __background__ !important;
+  text-decoration: none !important;
+}
+
+/* ---------------  main ---------------- */
+
+div.dokuwiki div.main {
+  overflow: auto;
+  background-color: __background__;
+  border-left: 1px solid __text_alt__;
+  border-right: 1px solid __text_alt__;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* ---------------  page ---------------- */
+
+div.dokuwiki div.page {
+  text-align: justify;
+  line-height: 1.5em;
+  padding-top: 21px;
+  padding-bottom: 34px;
+  background-color: __background__;
+}
+
+div.dokuwiki div.tabs {
+  font-size: 12px;
+  padding-top: 5px;
+  line-height: 1.5em;
+  background-color: __background_alt__;
+  border-bottom: 1px solid __border__;
+}
+
+div.dokuwiki span.activetab {
+  background-color: __background__;
+  padding: 2px 5px;
+  border: 1px solid __border__;
+  border-bottom: 1px solid __background__;
+}
+
+div.dokuwiki a.tab {
+  background-color: __background_neu__;
+  padding: 2px 5px;
+  border: 1px solid __text_other__;
+  border-bottom: 0px;
+}
+
+div.dokuwiki a.tab:hover {
+  text-decoration: none;
+  background-color: __background_other__;
+  border: 1px solid __border__;
+  border-bottom: 0px;
+}
+
+#spacedok__wide_left div.tabs,
+#spacedok__wide_left div.breadcrumbs,
+#spacedok__wide_right div.tabs,
+#spacedok__wide_right div.breadcrumbs {
+  width: 842px;
+}
+
+#spacedok__wide_left div.page,
+#spacedok__wide_right div.page {
+  width: 610px;
+}
+
+#spacedok__wide_left div.page,
+#spacedok__wide_left div.tabs,
+#spacedok__wide_left div.breadcrumbs {
+  padding-left: 55px;
+  padding-right: 88px;
+  float: right;
+}
+
+#spacedok__wide_right div.page,
+#spacedok__wide_right div.tabs,
+#spacedok__wide_right div.breadcrumbs {
+  padding-left: 88px;
+  padding-right: 55px;
+  float: left;
+}
+
+#spacedok__medium_left div.tabs,
+#spacedok__medium_left div.breadcrumbs,
+#spacedok__medium_right div.tabs,
+#spacedok__medium_right div.breadcrumbs {
+  width: 643px;
+}
+
+#spacedok__medium_left div.page,
+#spacedok__medium_right div.page {
+  width: 466px;
+}
+
+#spacedok__medium_left div.page,
+#spacedok__medium_left div.tabs,
+#spacedok__medium_left div.breadcrumbs {
+  padding-left: 42px;
+  padding-right: 67px;
+  float: right;
+}
+
+#spacedok__medium_right div.page,
+#spacedok__medium_right div.tabs,
+#spacedok__medium_right div.breadcrumbs {
+  padding-left: 67px;
+  padding-right: 42px;
+  float: left;
+}
+
+#spacedok__narrow_left div.tabs,
+#spacedok__narrow_left div.breadcrumbs,
+#spacedok__narrow_right div.tabs,
+#spacedok__narrow_right div.breadcrumbs {
+  width: 520px;
+}
+
+#spacedok__narrow_left div.page,
+#spacedok__narrow_right div.page {
+  width: 377px;
+}
+
+#spacedok__narrow_left div.page,
+#spacedok__narrow_left div.tabs,
+#spacedok__narrow_left div.breadcrumbs {
+  padding-left: 34px;
+  padding-right: 54px;
+  float: right;
+}
+
+#spacedok__narrow_right div.page,
+#spacedok__narrow_right div.tabs,
+#spacedok__narrow_right div.breadcrumbs {
+  padding-left: 54px;
+  padding-right: 34px;
+  float: left;
+}
+
+/* ---------------  sidebar ---------------- */
+
+div.dokuwiki div.sidebar {
+  background: __background_alt__;
+	font-size: 90%;
+	background-image: url('images/steel.jpg');
+	background-repeat: repeat;
+}
+
+div.dokuwiki div.sidebar:after {
+  content: "&nbsp;";
+  display: block;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+#spacedok__wide_left div.sidebar { padding: 21px 34px 34px 54px; width: 144px; }
+#spacedok__medium_left div.sidebar { padding: 21px 26px 34px 41px; width: 110px; }
+#spacedok__narrow_left div.sidebar { padding: 21px 21px 34px 33px; width: 89px; }
+
+#spacedok__wide_right div.sidebar {
+  margin-left: 753px;
+  padding: 21px 54px 34px 34px;
+}
+
+#spacedok__medium_right div.sidebar {
+  margin-left: 575px;
+  padding: 21px 41px 34px 26px;
+}
+
+#spacedok__narrow_right div.sidebar {
+  margin-left: 465px;
+  padding: 21px 33px 34px 21px;
+}
+
+#spacedok__wide_left div.sidebar:after,
+#spacedok__medium_left div.sidebar:after,
+#spacedok__narrow_left div.sidebar:after {
+  clear: right;
+}
+
+#spacedok__wide_right div.sidebar:after,
+#spacedok__medium_right div.sidebar:after,
+#spacedok__narrow_right div.sidebar:after {
+  clear: left;
+}
+
+div.dokuwiki div.search {
+  width: 100%;
+}
+
+/* ---------------  button bar ---------------- */
+
+div.dokuwiki div.bar {
+  border-top: 1px solid __border__;
+  border-bottom: 1px solid __border__;
+  background: __background_alt__;
+  clear: both;
+}
+
+#spacedok__wide_left div.bar,
+#spacedok__medium_left div.bar,
+#spacedok__narrow_left div.bar {
+  border-right: 1px solid __border__;
+  padding: 2px 2px 2px 0;
+}
+
+#spacedok__wide_right div.bar,
+#spacedok__medium_right div.bar,
+#spacedok__narrow_right div.bar {
+  border-left: 1px solid __border__;
+  padding: 2px 0 2px 2px;
+}
+
+#spacedok__wide_left div.bar { margin-left: -55px; padding-left: 55px; width: 607px; }
+#spacedok__medium_left div.bar { margin-left: -42px; padding-left: 42px; width: 463px; }
+#spacedok__narrow_left div.bar { margin-left: -34px; padding-left: 34px; width: 374px; }
+
+#spacedok__wide_right div.bar { width: 662px; }
+#spacedok__medium_right div.bar { width: 505px; }
+#spacedok__narrow_right div.bar { width: 408px; }
+
+/* ------------- file metadata ----------------------- */
+
+div.dokuwiki div.meta {
+  margin-top: 2em;
+  color: __text_alt__;
+  font-size: 80%;
+}
+
+/* ------------- footer ----------------------- */
+
+div.dokuwiki div.footer {
+  height: 10px;
+	font-size: 5px;
+	line-height: 9px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+div.dokuwiki div.edgeleft {
+	float: left;
+	padding-left: 10px;
+  background: __background__ url(images/edgeleft__theme__.gif) no-repeat bottom left;
+}
+
+div.dokuwiki div.edgeright {
+	float: right;
+	padding-right: 10px;
+  background: __background__ url(images/edgeright__theme__.gif) no-repeat bottom right;
+}
+
+#spacedok__wide_left div.edgeleft,
+#spacedok__wide_right div.edgeright {
+  width: 223px;
+  background-color: __background_alt__;
+}
+
+#spacedok__medium_left div.edgeleft,
+#spacedok__medium_right div.edgeright {
+  width: 168px;
+  background-color: __background_alt__;
+}
+
+#spacedok__narrow_left div.edgeleft,
+#spacedok__narrow_right div.edgeright {
+  width: 134px;
+  background-color: __background_alt__;
+}
+
+#spacedok__wide_left div.edgeright, #spacedok__wide_right div.edgeleft { width: 744px; }
+#spacedok__medium_left div.edgeright, #spacedok__medium_right div.edgeleft { width: 566px; }
+#spacedok__narrow_left div.edgeright, #spacedok__narrow_right div.edgeleft { width: 456px; }
+
+div.dokuwiki div.borderbottom {
+  width: 100%;
+  border-bottom: 1px solid __text_alt__;
+}

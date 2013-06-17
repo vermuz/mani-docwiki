@@ -1,0 +1,43 @@
+====== Mani`s Notebook ======
+
+====== Drupal ======
+  * [[overview| Drupal Overview]]
+  * [[drupaldev|Drupal Development Notes]]
+  * [[drushnotes|Drush Notes]]
+  * [[mani-php|PHP]]
+  * [[mani-vagrant|Mani Vagrant Setup]]
+  * [[drupal-module-dev|Drupal Module Development]]
+  * [[drupal-module-dev-code|Drupal Module Development Code Examples]]
+  * [[drupal-example-module-code|Drupal Example Module Code]]
+
+====== SQL ======
+  * [[sqlcommands|SQL Commands]]
+  * [[mysql|MySQL]]
+  * [[mysqlmultiinstance|MySQL Multi Instances]]
+
+====== Python ======
+  * [[python|Python Notes]]
+  * [[synchscript|DB Synch Script]]
+  * [[violent-python| Python Security Scripting]]
+
+====== GIT ======
+  * [[git|GIT]]
+  * [[githubnote|Github Notes]]
+  * [[gitdev|Git Development Local Environment Notes]]
+  * [[gitinstall|Git Installation]]
+
+====== Linux ======
+  * [[mani-ssh|SSH]]
+  * [[drupalinux|Drupal on Linux Notes]]
+
+====== Data ======
+  * [[sci-of-data| Science of Data]]
+
+====== Interview Prep ======
+  * [[interview-topics| Interview Topics]]
+
+====== Planner ======
+  * [[thing-to-do | To do]]
+
+====== Marriage ======
+    * [[things-to-say | Communication]]

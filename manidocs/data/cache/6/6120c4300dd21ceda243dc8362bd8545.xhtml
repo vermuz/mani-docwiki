@@ -1,0 +1,84 @@
+
+<p>
+<strong>Dynamically Typed</strong>
+</p>
+
+<p>
+No need to explicitly declare type
+</p>
+
+<p>
+<strong>Strongly Typed
+</strong>
+</p>
+
+<p>
+The interpreter will not accept jokes like adding char to an integer type.
+</p>
+<pre class="code">1 + a  (will not work)</pre>
+
+<p>
+<strong>Immutability</strong>
+</p>
+
+<p>
+Once you give data a type, it has that type forever.
+</p>
+<pre class="code">a - 3.14
+a = int(a) --&gt; will work
+b = int(a) --&gt; will not work</pre>
+
+<p>
+<strong>Evaluation Strategy</strong>
+</p>
+
+<p>
+<em>Call by value
+</em>
+</p>
+
+<p>
+The argument expression is evaluated, and the resulting value is bound to the corresponding variable in the function (frequently by copying the value into a new memory region). Separation of data in terms of outside the function and inside the function. foo(a): when a is passed to foo, a new copy is created.
+</p>
+<pre class="code">function operates on a copy of the passed-in arguments</pre>
+
+<p>
+<em>Call by reference
+</em>
+</p>
+
+<p>
+Function receives an implicit reference to the argument, rather than a copy of its value. In case of foo(a): data being passed here is the same data as being modified by the function.
+</p>
+<pre class="code">function operates on the original outside arguments</pre>
+
+<p>
+<em><strong>
+Call by reference has the advantage of greater time and space efficiency (since arguments do not need to be copied).</strong></em>
+</p>
+
+<p>
+<strong>Python - Call by Sharing (Call by object-sharing)</strong>
+</p>
+
+<p>
+The semantics of call by sharing differ from call by reference in that assignments to function arguments within the function are not visible to the caller. However, since the function has access to the same object as the caller (no copy is made), mutations to those objects within the function are visible to the caller, which differs from call by value. Strings are immutable.
+</p>
+<pre class="code">If an argument value is a mutable object, Python uses call by reference.
+If an argument value is immutable, Python uses call by value.</pre>
+<pre class="code">#!/usr/bin/python
+
+# Function definition is here
+def changeme (mylist):
+    &quot;This changes a passed list into this function&quot;
+    mylist.append([1,2,3,4]);
+    print &quot;Values inside the function: &quot;, mylist
+    return
+
+# Now you can call changeme function
+mylist = [10,20,30];
+changeme(mylist);
+print(&quot;Values outside the function: &quot;, mylist)
+
+Values inside the function:  [10, 20, 30, [1, 2, 3, 4]]
+Values outside the function:  [10, 20, 30, [1, 2, 3, 4]]</pre>

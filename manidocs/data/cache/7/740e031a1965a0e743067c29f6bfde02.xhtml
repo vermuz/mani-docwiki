@@ -1,0 +1,202 @@
+
+<p>
+<strong>Sets
+</strong>
+</p>
+
+<p>
+Take collections of distinct items and perform operations on them
+</p>
+
+<p>
+Math:
+</p>
+<ul>
+<li class="level1"><div class="li"> Collection of distinct objects</div>
+</li>
+<li class="level5"><div class="li"> Considered an object</div>
+</li>
+</ul>
+
+<p>
+Python:
+</p>
+<ul>
+<li class="level1"><div class="li"> Valueless dictionaries (Keys only)</div>
+</li>
+<li class="level1"><div class="li"> Unordered collection of unique, immutable element.</div>
+</li>
+<li class="level1"><div class="li"> Good for isolating uniques</div>
+</li>
+<li class="level1"><div class="li"> Not indexed</div>
+</li>
+<li class="level1"><div class="li"> Python creates hash values to keep track of them</div>
+</li>
+<li class="level1"><div class="li"> Set operations (union, intersection, difference)</div>
+</li>
+<li class="level1"><div class="li"> Membership Testing (in, issubset, issuperset)</div>
+</li>
+</ul>
+<pre class="code"># Passing a string
+myset = set(&#039;python&#039;)
+# Passing a List
+myset2 = set([0,1,2,3,4])</pre>
+<pre class="code">&gt;&gt;&gt; s1 = set([0,2,4,6])
+&gt;&gt;&gt; type(s1)
+&lt;class &#039;set&#039;&gt;
+&gt;&gt;&gt; s2 = set(&#039;mani&#039;)
+&gt;&gt;&gt; s1
+{0, 2, 4, 6}
+&gt;&gt;&gt; s2
+{&#039;a&#039;, &#039;i&#039;, &#039;m&#039;, &#039;n&#039;}</pre>
+
+<p>
+<strong>Update is Union</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; s3 = set([10, 12, 14, 16])
+&gt;&gt;&gt; s1.update(s3)
+&gt;&gt;&gt; s1
+{0, 2, 4, 6, 10, 12, 14, 16}</pre>
+
+<p>
+<strong>Set to create a copy
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; newset = set(s1)
+&gt;&gt;&gt; newset
+{0, 2, 4, 6, 10, 12, 14, 16}</pre>
+
+<p>
+<strong>I want to know the Memory address of an object
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; id(s1)
+3042165228
+&gt;&gt;&gt; id(newset)
+3051773708
+
+OUCH !!!
+
+&gt;&gt;&gt; sx = s1
+&gt;&gt;&gt; id(s1)
+3042165228
+&gt;&gt;&gt; id(sx)
+3042165228</pre>
+
+<p>
+<strong>Pop</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; sx
+{0, 2, 4, 6, 10, 12, 14, 16}
+&gt;&gt;&gt; sx = sx.pop()
+&gt;&gt;&gt; sx
+0
+&gt;&gt;&gt; s1
+{2, 4, 6, 10, 12, 14, 16}
+&gt;&gt;&gt; s1.pop()
+2
+&gt;&gt;&gt; s1
+{4, 6, 10, 12, 14, 16}</pre>
+
+<p>
+<strong>Remove
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; s1
+{4, 6, 10, 12, 14, 16}
+&gt;&gt;&gt; s1.remove(10)
+&gt;&gt;&gt; s1
+{4, 6, 12, 14, 16}</pre>
+
+<p>
+<strong>Membership
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; s1
+{4, 6, 12, 14, 16}
+&gt;&gt;&gt; 8 in s1
+False
+&gt;&gt;&gt; 6 in s1
+True
+&gt;&gt;&gt; 12 not in s1
+False
+&gt;&gt;&gt; 13 not in s1
+True
+
+//************************
+&gt;&gt;&gt; s1 = set([0,2,4,6])
+&gt;&gt;&gt; s2 = set([10,12,14,16])
+&gt;&gt;&gt; s1.update(s2)
+&gt;&gt;&gt; s1
+{0, 2, 4, 6, 10, 12, 14, 16}
+&gt;&gt;&gt; s1.issubset(s2)
+False
+&gt;&gt;&gt; s2.issubset(s1)
+True</pre>
+
+<p>
+<strong>Clear a set
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; s1.clear()
+&gt;&gt;&gt; s1
+set()</pre>
+
+<p>
+<strong>Create an empty set and add values to it
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; s1 = set()
+&gt;&gt;&gt; s1.add(0)
+&gt;&gt;&gt; s1.add(1)
+&gt;&gt;&gt; s1
+{0, 1}
+&gt;&gt;&gt; s2 = set([2,3,4,5])
+&gt;&gt;&gt; s1.update(s2)
+&gt;&gt;&gt; s1
+{0, 1, 2, 3, 4, 5}</pre>
+
+<p>
+<strong>Make a list- then make a set of that list
+</strong>
+</p>
+<pre class="code"># CREATE A LIST
+lang = [&#039;lisp&#039;, &#039;python&#039;, &#039;abc&#039;, &#039;c&#039;, &#039;python&#039;, &#039;ruby&#039;, &#039;perl&#039;, &#039;ruby&#039;]
+# CREATE A SET OUT OF IT
+&gt;&gt;&gt; l1 = set(lang)
+# DUPES ARE GONE!
+&gt;&gt;&gt; l1
+{&#039;c&#039;, &#039;abc&#039;, &#039;lisp&#039;, &#039;perl&#039;, &#039;python&#039;, &#039;ruby&#039;}</pre>
+
+<p>
+<strong>Union and Intersection
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; l2 = set(morelang)
+&gt;&gt;&gt; l2
+{&#039;haskell&#039;, &#039;perl&#039;, &#039;erlang&#039;, &#039;sql&#039;}
+&gt;&gt;&gt; l1
+{&#039;c&#039;, &#039;abc&#039;, &#039;lisp&#039;, &#039;perl&#039;, &#039;python&#039;, &#039;ruby&#039;}
+&gt;&gt;&gt; l1 - l2
+{&#039;lisp&#039;, &#039;python&#039;, &#039;c&#039;, &#039;abc&#039;, &#039;ruby&#039;}
+&gt;&gt;&gt; l1.intersection(l2)
+{&#039;perl&#039;}
+&gt;&gt;&gt; u = l1.union(l2)
+&gt;&gt;&gt; u
+{&#039;python&#039;, &#039;c&#039;, &#039;abc&#039;, &#039;sql&#039;, &#039;lisp&#039;, &#039;erlang&#039;, &#039;ruby&#039;, &#039;haskell&#039;, &#039;perl&#039;}</pre>
+
+<p>
+<strong>For through a Set
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; l1
+{&#039;c&#039;, &#039;abc&#039;, &#039;lisp&#039;, &#039;perl&#039;, &#039;python&#039;, &#039;ruby&#039;}
+&gt;&gt;&gt; for i in l1:
+	print(i)
+
+c
+abc
+lisp
+perl
+python
+ruby</pre>

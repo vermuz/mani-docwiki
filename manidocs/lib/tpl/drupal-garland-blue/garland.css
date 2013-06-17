@@ -1,0 +1,173 @@
+/**
+ * css
+ *
+ * @author Mirko Windhoff
+ */
+
+body {
+  background-color:white;
+}
+
+table.layout {
+  width: 100%;
+}
+td.layout_left {
+  min-width:10% !important;
+  width:200px !important;
+  background: transparent url(images/body.png) repeat-x 0px -121px;
+}
+td.layout_right {
+  min-width:10% !important;
+  width:200px !important;
+  background: transparent url(images/body.png) repeat-x 0px -121px;
+}
+td.layout_center {
+  padding: 0px;
+}
+
+div.dokuwiki ul {
+  list-style-image: url(images/bullet.png);
+}
+div.dokuwiki ul.admin_tasks, div.dokuwiki ul.acl { 
+  list-style: none;
+}
+div.leftbar ul {
+  list-style: none;
+  margin: 0;
+}
+/* sidebar */
+div.leftbar, div.rightbar {
+  padding:0;
+  padding: 1.5em 1em;
+}
+
+/* leftbar */
+div.leftbar li {
+  line-height: 100%;
+}
+div.leftbar a.wikilink1, div.leftbar a.wikilink2, div.leftbar a.mail {
+  display: block;
+  padding: 4px 4px 4px 15px;
+  font-weight: bold;
+}
+div.leftbar a.wikilink1 {
+  color: __extern__ !important;
+}
+div.leftbar a.wikilink1:hover, div.leftbar a.wikilink2:hover {
+  text-decoration: none;
+  color: white !important;
+  background-color: __background_hover__;
+}
+
+/* special headlines */
+div.leftbar h1 a, div.leftbar h2 a, div.leftbar h3 a, div.leftbar h4 a, div.leftbar h5 a {
+  padding: 4px 4px 4px 10px;
+}
+div.leftbar h1, div.leftbar h2, div.leftbar h3, div.leftbar h4, div.leftbar h5 {
+  margin-left:0;
+}
+
+/* indent different sections */
+div.leftbar div.level1 { margin-left: -65px; }
+div.leftbar div.level2 { margin-left: -45px; }
+div.leftbar div.level3 { margin-left: -25px; }
+div.leftbar div.level4 { margin-left: -5px; }
+div.leftbar div.level5 { margin-left: 15px; }
+div.rightbar div.level1 { margin-left: 0.1em; margin-right: 0.1em; }
+div.rightbar div.level2 { margin-left: 0.1em; }
+div.rightbar div.level3 { margin-left: 1px; }
+div.rightbar div.level4 { margin-left: 1px; }
+div.rightbar div.level5 { margin-left: 1px; }
+
+div.leftbar div.secedit input.button {
+  vertical-align: middle;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  cursor: pointer;
+  display: inline;
+}
+
+/* garland menu */
+div.top_menu {
+  padding-right: 10px;
+  float:right;
+}
+div.top_menu ul {
+  display:inline;
+}
+div.top_menu ul li {
+  background-image:none;
+  float:left;
+  margin:0;
+  padding:0;
+  display:inline;
+  list-style-type:none;
+  padding:0 0.5em;
+}
+div.top_menu ul li a, div.top_menu ul li a:link, div.top_menu ul li a:visited {
+  background:transparent url(images/bg-navigation-item.png) no-repeat scroll 50% 0;
+  color:white !important;
+  display:block;
+  margin:0 1em;
+  padding:0.75em 0 0;
+}
+div.top_menu ul li a:hover, div.top_menu ul li a.active {
+  background:transparent url(images/bg-navigation-item-hover.png) no-repeat scroll 50% 0;
+  color:white !important;
+}
+#bar__bottomcenter {
+  padding: 4px 0 0 40px;
+}
+/* garland overlap style */
+div.squeeze {
+  background:#ffffff url(images/bg-content.png) repeat-x scroll 50% 0;
+  position:relative;
+  top:-41px;
+  margin-right:10px;
+}
+div.right-corner {
+  background:transparent url(images/bg-content-right.png) no-repeat scroll 100% 0;
+  position:relative;
+  left:10px;
+}
+div.left-corner {
+  background:transparent url(images/bg-content-left.png) no-repeat scroll 0 0;
+  position:relative;
+  left:-10px;
+  margin-left:-10px;
+  min-height:400px;
+  padding:13px 10px 5em 20px;
+}
+div.page {
+  padding-top: 23px;
+}
+/* misc */
+#bar__bottom a img {
+    opacity: 0.5;
+}
+#bar__bottom a:hover img {
+    opacity: 1;
+}
+div.plugin_translation {
+  padding-top: 5px;
+}
+
+div.plugin_translation a, div.plugin_translation span {
+  color: #dddddd;
+}
+div.dokuwiki form.bureaucracy__plugin fieldset {
+float:left;
+width:500px;
+}
+div.dokuwiki pre.code {
+  max-width:80em;
+  overflow:visible;
+  font-family:Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+  margin-bottom:10px;
+  padding:5px;
+  border:1px dashed #BBBBBB;
+  font-size:100%;
+  line-height:130%;
+}

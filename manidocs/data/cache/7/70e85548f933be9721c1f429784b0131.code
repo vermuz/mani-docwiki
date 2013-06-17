@@ -1,0 +1,7 @@
+<span class="sc2">&lt;<a href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>
+<span class="sc2">&lt;?</span>
+<span class="sc2">$capital <span class="sy0">=</span> <span class="nu0">67</span>;</span>
+<span class="sc2">print<span class="br0">&#40;</span><span class="st0">&quot;Variable capital is $capital&lt;br&gt;</span></span>&quot;);
+print(&quot;Variable CaPiTaL is $CaPiTaL<span class="sc2">&lt;<a href="http://december.com/html/4/element/br.html"><span class="kw2">br</span></a>&gt;</span>&quot;);
+?&gt;
+<span class="sc2">&lt;<span class="sy0">/</span><a href="http://december.com/html/4/element/body.html"><span class="kw2">body</span></a>&gt;</span>

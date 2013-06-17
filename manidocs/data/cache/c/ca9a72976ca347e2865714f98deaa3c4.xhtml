@@ -1,0 +1,332 @@
+
+<h1 class="sectionedit1" id="email_example">Email Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Email Example" [1-29] -->
+<h2 class="sectionedit2" id="email_exampleinfo">email_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = E-mail Example
+   2 description = Demonstrate Drupal&#039;s e-mail APIs.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = email_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "email_example.info" [30-236] -->
+<h2 class="sectionedit3" id="email_examplemodule">email_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Example of how to use Drupal&#039;s mail API.
+   5  */
+   6 
+   7 /**
+   8  * @defgroup email_example Example: Email
+   9  * @ingroup examples
+  10  * @{
+  11  * Example of how to use Drupal&#039;s mail API.
+  12  *
+  13  * This example module provides two different examples of the Drupal email API:
+  14  *  - Defines a simple contact form and shows how to use drupal_mail()
+  15  *    to send an e-mail (defined in hook_mail()) when the form is submitted.
+  16  *  - Shows how modules can alter emails defined by other Drupal modules or
+  17  *    Core using hook_mail_alter by attaching a custom signature before
+  18  *    they are sent.
+  19  */
+  20 
+  21 /**
+  22  * Implement hook_mail().
+  23  *
+  24  * This hook defines a list of possible e-mail templates that this module can
+  25  * send. Each e-mail is given a unique identifier, or &#039;key&#039;.
+  26  *
+  27  * $message comes in with some standard properties already set: &#039;to&#039; address,
+  28  * &#039;from&#039; address, and a set of default &#039;headers&#039; from drupal_mail(). The goal
+  29  * of hook_mail() is to set the message&#039;s &#039;subject&#039; and &#039;body&#039; properties, as
+  30  * well as make any adjustments to the headers that are necessary.
+  31  *
+  32  * The $params argument is an array which can hold any additional data required
+  33  * to build the mail subject and body; for example, user-entered form data, or
+  34  * some context information as to where the mail request came from.
+  35  *
+  36  * Note that hook_mail() is not actually a hook. It is only called for a single
+  37  * module, the module named in the first argument of drupal_mail(). So it&#039;s
+  38  * a callback of a type, but not a hook.
+  39  */
+  40 function email_example_mail($key, &amp;$message, $params) {
+  41   global $user;
+  42 
+  43   // Each message is associated with a language, which may or may not be the
+  44   // current user&#039;s selected language, depending on the type of e-mail being
+  45   // sent. This $options array is used later in the t() calls for subject
+  46   // and body to ensure the proper translation takes effect.
+  47   $options = array(
+  48     &#039;langcode&#039; =&gt; $message[&#039;language&#039;]-&gt;language,
+  49   );
+  50 
+  51   switch ($key) {
+  52     // Send a simple message from the contact form.
+  53     case &#039;contact_message&#039;:
+  54       $message[&#039;subject&#039;] = t(&#039;E-mail sent from @site-name&#039;, array(&#039;@site-name&#039; =&gt; variable_get(&#039;site_name&#039;, &#039;Drupal&#039;)), $options);
+  55       // Note that the message body is an array, not a string.
+  56       $message[&#039;body&#039;][] = t(&#039;@name sent you the following message:&#039;, array(&#039;@name&#039; =&gt; $user-&gt;name), $options);
+  57       // Because this is just user-entered text, we do not need to translate it.
+  58 
+  59       // Since user-entered text may have unintentional HTML entities in it like
+  60       // &#039;&lt;&#039; or &#039;&gt;&#039;, we need to make sure these entities are properly escaped,
+  61       // as the body will later be transformed from HTML to text, meaning
+  62       // that a normal use of &#039;&lt;&#039; will result in truncation of the message.
+  63       $message[&#039;body&#039;][] = check_plain($params[&#039;message&#039;]);
+  64       break;
+  65   }
+  66 }
+  67 
+  68 /**
+  69  * Sends an e-mail.
+  70  *
+  71  * @param $form_values
+  72  *   An array of values from the contact form fields that were submitted.
+  73  *   There are just two relevant items: $form_values[&#039;email&#039;] and
+  74  *   $form_values[&#039;message&#039;].
+  75  */
+  76 function email_example_mail_send($form_values) {
+  77   // All system mails need to specify the module and template key (mirrored from
+  78   // hook_mail()) that the message they want to send comes from.
+  79   $module = &#039;email_example&#039;;
+  80   $key = &#039;contact_message&#039;;
+  81 
+  82   // Specify &#039;to&#039; and &#039;from&#039; addresses.
+  83   $to = $form_values[&#039;email&#039;];
+  84   $from = variable_get(&#039;site_mail&#039;, &#039;admin@example.com&#039;);
+  85 
+  86   // &quot;params&quot; loads in additional context for email content completion in
+  87   // hook_mail(). In this case, we want to pass in the values the user entered
+  88   // into the form, which include the message body in $form_values[&#039;message&#039;].
+  89   $params = $form_values;
+  90 
+  91   // The language of the e-mail. This will one of three values:
+  92   // * user_preferred_language(): Used for sending mail to a particular website
+  93   //   user, so that the mail appears in their preferred language.
+  94   // * global $language: Used when sending a mail back to the user currently
+  95   //   viewing the site. This will send it in the language they&#039;re currently
+  96   //   using.
+  97   // * language_default(): Used when sending mail to a pre-existing, &#039;neutral&#039;
+  98   //   address, such as the system e-mail address, or when you&#039;re unsure of the
+  99   //   language preferences of the intended recipient.
+ 100   //
+ 101   // Since in our case, we are sending a message to a random e-mail address that
+ 102   // is not necessarily tied to a user account, we will use the site&#039;s default
+ 103   // language.
+ 104   $language = language_default();
+ 105 
+ 106   // Whether or not to automatically send the mail when drupal_mail() is
+ 107   // called. This defaults to TRUE, and is normally what you want unless you
+ 108   // need to do additional processing before drupal_mail_send() is called.
+ 109   $send = TRUE;
+ 110   // Send the mail, and check for success. Note that this does not guarantee
+ 111   // message delivery; only that there were no PHP-related issues encountered
+ 112   // while sending.
+ 113   $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+ 114   if ($result[&#039;result&#039;] == TRUE) {
+ 115     drupal_set_message(t(&#039;Your message has been sent.&#039;));
+ 116   }
+ 117   else {
+ 118     drupal_set_message(t(&#039;There was a problem sending your message and it was not sent.&#039;), &#039;error&#039;);
+ 119   }
+ 120 
+ 121 }
+ 122 
+ 123 /**
+ 124  * Implement hook_mail_alter().
+ 125  *
+ 126  * This function is not required to send an email using Drupal&#039;s mail system.
+ 127  *
+ 128  * Hook_mail_alter() provides an interface to alter any aspect of email sent by
+ 129  * Drupal. You can use this hook to add a common site footer to all outgoing
+ 130  * email, add extra header fields, and/or modify the email in anyway. HTML-izing
+ 131  * the outgoing email is one possibility.
+ 132  */
+ 133 function email_example_mail_alter(&amp;$message) {
+ 134   // For the purpose of this example, modify all the outgoing messages and
+ 135   // attach a site signature. The signature will be translated to the language
+ 136   // in which message was built.
+ 137   $options = array(
+ 138     &#039;langcode&#039; =&gt; $message[&#039;language&#039;]-&gt;language,
+ 139   );
+ 140 
+ 141   $signature = t(&quot;\n--\nMail altered by email_example module.&quot;, array(), $options);
+ 142   if (is_array($message[&#039;body&#039;])) {
+ 143     $message[&#039;body&#039;][] = $signature;
+ 144   }
+ 145   else {  // Some modules use the body as a string, erroneously.
+ 146     $message[&#039;body&#039;] .= $signature;
+ 147   }
+ 148 }
+ 149 
+ 150 ///// Supporting functions ////
+ 151 
+ 152 /**
+ 153  * Implement hook_menu().
+ 154  *
+ 155  * Set up a page with an e-mail contact form on it.
+ 156  */
+ 157 function email_example_menu() {
+ 158   $items[&#039;example/email_example&#039;] = array(
+ 159     &#039;title&#039; =&gt; &#039;E-mail Example: contact form&#039;,
+ 160     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+ 161     &#039;page arguments&#039; =&gt; array(&#039;email_example_form&#039;),
+ 162     &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+ 163   );
+ 164 
+ 165   return $items;
+ 166 }
+ 167 
+ 168 /**
+ 169  * The contact form.
+ 170  */
+ 171 function email_example_form() {
+ 172   $form[&#039;intro&#039;] = array(
+ 173     &#039;#markup&#039; =&gt; t(&#039;Use this form to send a message to an e-mail address. No spamming!&#039;),
+ 174   );
+ 175   $form[&#039;email&#039;] = array(
+ 176     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 177     &#039;#title&#039; =&gt; t(&#039;E-mail address&#039;),
+ 178     &#039;#required&#039; =&gt; TRUE,
+ 179   );
+ 180   $form[&#039;message&#039;] = array(
+ 181     &#039;#type&#039; =&gt; &#039;textarea&#039;,
+ 182     &#039;#title&#039; =&gt; t(&#039;Message&#039;),
+ 183     &#039;#required&#039; =&gt; TRUE,
+ 184   );
+ 185   $form[&#039;submit&#039;] = array(
+ 186     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 187     &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+ 188   );
+ 189 
+ 190   return $form;
+ 191 }
+ 192 
+ 193 /**
+ 194  * Form validation logic for the contact form.
+ 195  */
+ 196 function email_example_form_validate($form, &amp;$form_state) {
+ 197   if (!valid_email_address($form_state[&#039;values&#039;][&#039;email&#039;])) {
+ 198     form_set_error(&#039;email&#039;, t(&#039;That e-mail address is not valid.&#039;));
+ 199   }
+ 200 }
+ 201 
+ 202 /**
+ 203  * Form submission logic for the contact form.
+ 204  */
+ 205 function email_example_form_submit($form, &amp;$form_state) {
+ 206   email_example_mail_send($form_state[&#039;values&#039;]);
+ 207 }
+ 208 /**
+ 209  * @} End of &quot;defgroup email_example&quot;.
+ 210  */</pre>
+
+</div>
+<!-- EDIT3 SECTION "email_example.module" [237-8922] -->
+<h2 class="sectionedit4" id="email_exampletest">email_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Simpletest case for email_example module.
+   5  *
+   6  * Verify example module functionality.
+   7  */
+   8 
+   9 /**
+  10  * Functionality tests for email example module.
+  11  */
+  12 class EmailExampleTestCase extends DrupalWebTestCase {
+  13 
+  14   public static function getInfo() {
+  15     return array(
+  16       &#039;name&#039; =&gt; &#039;Email example&#039;,
+  17       &#039;description&#039; =&gt; &#039;Verify the email submission using the contact form.&#039;,
+  18       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  19     );
+  20   }
+  21 
+  22   function setUp() {
+  23     // Enable the email_example module.
+  24     parent::setUp(&#039;email_example&#039;);
+  25   }
+  26 
+  27   /**
+  28    * Verify the functionality of the example module.
+  29    */
+  30   function testContactForm() {
+  31     // Create and login user.
+  32     $account = $this-&gt;drupalCreateUser();
+  33     $this-&gt;drupalLogin($account);
+  34 
+  35     // Set default language for t() translations
+  36     $t_options = array(
+  37       &#039;langcode&#039; =&gt; language_default()-&gt;language,
+  38     );
+  39 
+  40     // First try to send to an invalid email address.
+  41     $email_options = array(
+  42       &#039;email&#039;   =&gt; $this-&gt;randomName(),
+  43       &#039;message&#039; =&gt; $this-&gt;randomName(128),
+  44     );
+  45     $result = $this-&gt;drupalPost(&#039;example/email_example&#039;, $email_options, t(&#039;Submit&#039;));
+  46 
+  47     // Verify that email address is invalid and email was not sent.
+  48     $this-&gt;assertText(t(&#039;That e-mail address is not valid.&#039;), &#039;Options were validated and form submitted.&#039;);
+  49     $this-&gt;assertTrue(!count($this-&gt;drupalGetMails()), &#039;No email was sent.&#039;);
+  50 
+  51     // Now try with a valid email address.
+  52     $email_options[&#039;email&#039;] = $this-&gt;randomName() . &#039;@&#039; . $this-&gt;randomName() . &#039;.drupal&#039;;
+  53     $result = $this-&gt;drupalPost(&#039;example/email_example&#039;, $email_options, t(&#039;Submit&#039;));
+  54 
+  55     // Verify that email address is valid and email was sent.
+  56  //   $this-&gt;assertText(t(&#039;Your message has been sent.&#039;), &#039;Options were validated and form submitted.&#039;);
+  57     $this-&gt;assertTrue(count($this-&gt;drupalGetMails()), &#039;An email has been sent.&#039;);
+  58 
+  59     // Validate sent email.
+  60     $email  = $this-&gt;drupalGetMails();
+  61     // Grab the first entry.
+  62     $email = $email[0];
+  63 
+  64     // Verify email recipient.
+  65     $this-&gt;assertEqual(
+  66       $email[&#039;to&#039;],
+  67       $email_options[&#039;email&#039;],
+  68       &#039;Email recipient successfully verified.&#039;
+  69     );
+  70 
+  71     // Verify email subject.
+  72     $this-&gt;assertEqual(
+  73       $email[&#039;subject&#039;],
+  74       t(&#039;E-mail sent from @site-name&#039;, array(&#039;@site-name&#039; =&gt; variable_get(&#039;site_name&#039;, &#039;Drupal&#039;)), $t_options),
+  75       &#039;Email subject successfully verified.&#039;
+  76     );
+  77 
+  78     // Verify email body.
+  79     $this-&gt;assertTrue(
+  80       strstr(
+  81         $email[&#039;body&#039;],
+  82         t(&#039;@name sent you the following message:&#039;, array(&#039;@name&#039; =&gt; $account-&gt;name), $t_options)
+  83       ),
+  84       &#039;Email body successfully verified.&#039;
+  85     );
+  86 
+  87     // Verify that signature is attached.
+  88     $this-&gt;assertTrue(
+  89       strstr(
+  90         $email[&#039;body&#039;],
+  91         t(&quot;--\nMail altered by email_example module.&quot;, array(), $t_options)
+  92       ),
+  93       &#039;Email signature successfully verified.&#039;
+  94     );
+  95   }
+  96 }</pre>
+
+</div>
+<!-- EDIT4 SECTION "email_example.test" [8923-] -->

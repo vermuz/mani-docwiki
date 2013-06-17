@@ -1,0 +1,37 @@
+**GUI Development**
+
+  * GUI Toolkits
+  * Using Tkinter
+
+Build and deploy cross-platform desktop apps in Python \\
+Framework/Toolkit (Collection of classes) \\
+Widget window gadget frame, button, textbox, label
+
+**Popular GUI Toolkits
+**
+<code>
+wxPython: port of wxWidgets - BitTorrent, Dropbox
+PyQt: port of Qt toolkit - KDE, Google Earth, Opera, VLC (Qt)
+PyGTK: port of GTK Library - GNOME, GIMP
+</code>
+
+**Tkinter
+**
+
+Python binding to TCL/Tk
+
+<code>
+from tkinter import * #All names in current namespace
+
+root = Tk() # Parent Window base form
+root.title('Button App')
+Label(text='I am a button').pack(pady=15)
+
+def quitapp():
+    root.destroy()
+
+Button(text='Quit', command = quitapp).pack(side=BOTTOM)
+root.mainloop() # will start the routine
+</code>
+
+http://www.tkdocs.com/tutorial/index.html

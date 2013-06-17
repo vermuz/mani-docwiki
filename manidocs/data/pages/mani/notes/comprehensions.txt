@@ -1,0 +1,96 @@
+**Comprehension
+**
+            Set Comprehension returns a set object
+            List Comprehension returns a list object
+            
+__Set Comprehension__
+
+'shorthand for creating new sets'
+
+<code>
+>>> s2
+{16, 10, 12, 14}
+>>> type(s2)
+<class 'set'>
+>>> setcomp = {i * 2 for i in s2}
+>>> setcomp
+{32, 24, 20, 28}
+>>> type(setcomp)
+<class 'set'>
+</code>
+
+__List Comprehension
+__
+
+Nifty 'shorthand' method for creating new lists
+
+<code>
+>>> alist = [1,2,4,6,8,10]
+>>> alist = [i * 4 for i in alist]
+>>> type(alist)
+<class 'list'>
+>>> alist
+[4, 8, 16, 24, 32, 40]
+</code>
+
+__Create a list of lists
+__
+
+<code>
+>>> type(phrase)
+<class 'list'>
+>>> phrase
+['Lorem', 'ipsum', 'dolor', 'sit', 'amet,', 'consectetur', 'adipiscing', 'elit.']
+>>> stuff = [[p.upper(),p.lower(), len(p)] for p in phrase]
+>>> stuff
+[['LOREM', 'lorem', 5], ['IPSUM', 'ipsum', 5], ['DOLOR', 'dolor', 5], ['SIT', 'sit', 3], ['AMET,', 'amet,', 5], ['CONSECTETUR', 'consectetur', 11], ['ADIPISCING', 'adipiscing', 10], ['ELIT.', 'elit.', 5]]
+</code>
+
+__Comprehensions with a Dictionary
+__
+
+You can reorder key/value pairs
+
+<code>
+>>> dic1 ={'ay':1, 'bee':2, 'cee':3}
+>>> dic2 = {}
+>>> dic2 = {value:key for key, value in dic1.items()}
+>>> dic2
+{1: 'ay', 2: 'bee', 3: 'cee'}
+</code>
+
+__Another case for using List comprehension.
+So, we create a file lang.txt__
+<code>
+>>> lang = ('/home/mani/pydev/lang.txt')
+>>> lang
+'/home/mani/pydev/lang.txt'
+>>> lang = open('/home/mani/pydev/lang.txt')
+</code>
+__Python can`t read it
+__
+<code>
+>>> lang
+<_io.TextIOWrapper name='/home/mani/pydev/lang.txt' mode='r' encoding='UTF-8'>
+</code>
+
+__Open as a list
+__
+<code>
+>>> lang = list(open('/home/mani/pydev/lang.txt'))
+>>> lang
+['python\n', 'c\n', 'haskell\n', 'lisp\n', 'java\n', 'alice\n', 'abc\n', 'perl\n', 'ruby\n', 'basic\n', 'erlang\n', '\n']
+>>> type(lang)
+<class 'list'>
+</code>
+
+__Problem: in lang.txt, we hit enter after typing names. We need to clean that up.
+__
+__Apply a comprehension.
+__
+
+<code>
+>>> lang = [n.rstrip() for n in lang]
+>>> lang
+['python', 'c', 'haskell', 'lisp', 'java', 'alice', 'abc', 'perl', 'ruby', 'basic', 'erlang', '']
+</code>

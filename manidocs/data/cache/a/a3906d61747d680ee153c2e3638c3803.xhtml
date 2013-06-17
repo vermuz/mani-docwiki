@@ -1,0 +1,770 @@
+
+<h1 class="sectionedit1" id="render_example">Render Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Render Example" [1-30] -->
+<h2 class="sectionedit2" id="render_examplecss">render_example.css</h2>
+<div class="level2">
+<pre class="code">   1 .render-array { 
+   2     border: 2px solid black; 
+   3     margin-top: 10px;
+   4     padding-left: 5px;
+   5     padding-top: 5px;
+   6 }
+   7 
+   8 .render-header {
+   9   font-size: large;
+  10   font-style: italic;
+  11 }
+  12 
+  13 .unrendered-label {
+  14   font-style: italic;
+  15   margin-top: 10px;
+  16 }
+  17 
+  18 .rendered {
+  19   background-color: lightblue;
+  20 }</pre>
+
+</div>
+<!-- EDIT2 SECTION "render_example.css" [31-465] -->
+<h2 class="sectionedit3" id="render_exampleinfo">render_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Render example
+   2 description = Demonstrates drupal_render&#039;s capabilities and altering render arrays
+   3 package = Example modules
+   4 core = 7.x
+   5 dependencies[] = devel
+   6 stylesheets[all][] = render_example.css
+   7 files[] = render_example.test</pre>
+
+</div>
+<!-- EDIT3 SECTION "render_example.info" [466-782] -->
+<h2 class="sectionedit4" id="render_exampleinstall">render_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Install, update and uninstall functions for the render_example module.
+   6  */
+   7 
+   8 /**
+   9  * Implements hook_uninstall().
+  10  */
+  11 function render_example_uninstall() {
+  12   variable_del(&#039;render_example_show_page&#039;);
+  13   variable_del(&#039;render_example_show_block&#039;);
+  14   variable_del(&#039;render_example_reverse_sidebar&#039;);
+  15   variable_del(&#039;render_example_note_about_render_arrays&#039;);
+  16   variable_del(&#039;render_example_move_navigation_menu&#039;);
+  17 }</pre>
+
+</div>
+<!-- EDIT4 SECTION "render_example.install" [783-1349] -->
+<h2 class="sectionedit5" id="render_examplemodule">render_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Demonstrates render arrays.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup render_example Example: Render
+  10  * @ingroup examples
+  11  * @{
+  12  * Demonstrate how render arrays are arranged and how they can be altered.
+  13  * This alters blocks and the page to show the actual render array
+  14  * that is being used to create each item.
+  15  *
+  16  * @see drupal_render()
+  17  */
+  18 
+  19 // This allows drupal_var_export() to work.
+  20 require_once(&#039;includes/utility.inc&#039;);
+  21 
+  22 /**
+  23  * Implements hook_menu().
+  24  */
+  25 function render_example_menu() {
+  26   $items[&#039;examples/render_example&#039;] = array(
+  27     &#039;title&#039; =&gt; &#039;Render Example&#039;,
+  28     &#039;page callback&#039; =&gt; &#039;render_example_info&#039;,
+  29     &#039;access callback&#039; =&gt; TRUE,
+  30   );
+  31   $items[&#039;examples/render_example/altering&#039;] = array(
+  32     &#039;title&#039; =&gt; &#039;Alter pages and blocks&#039;,
+  33     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  34     &#039;page arguments&#039; =&gt; array(&#039;render_example_demo_form&#039;),
+  35     &#039;access arguments&#039; =&gt; array(&#039;access devel information&#039;),
+  36   );
+  37   $items[&#039;examples/render_example/arrays&#039;] = array(
+  38     &#039;title&#039; =&gt; &#039;Render array examples&#039;,
+  39     &#039;page callback&#039; =&gt; &#039;render_example_arrays&#039;,
+  40     &#039;access callback&#039; =&gt; TRUE,
+  41   );
+  42 
+  43   return $items;
+  44 }
+  45 
+  46 
+  47 /**
+  48  * Simple basic information about the module; an entry point.
+  49  */
+  50 function render_example_info() {
+  51   return t(&#039;The render example provides a &lt;ul&gt;&lt;li&gt;&lt;a href=&quot;!arrays&quot;&gt;demonstration of of render array usage&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&quot;!alter&quot;&gt;using hook_page_alter()&lt;/a&gt; to make various changes on a page.&lt;/li&gt;&lt;/ul&gt;&#039;, array(&#039;!arrays&#039; =&gt; url(&#039;examples/render_example/arrays&#039;), &#039;!alter&#039; =&gt; url(&#039;examples/render_example/altering&#039;)));
+  52 }
+  53 
+  54 
+  55 /**
+  56  * Provides a number of render arrays and show what they do.
+  57  *
+  58  * Each array is keyed by a description; it&#039;s returned for rendering at page
+  59  * render time. It&#039;s easy to add new examples to this.
+  60  *
+  61  * The array items in $demos are intended to be raw, normal render arrays
+  62  * that can be experimented with to end up with different outcomes.
+  63  */
+  64 function render_example_arrays() {
+  65 
+  66   $interval = 60; // Interval in seconds for cache update with #cache.
+  67 
+  68   $demos = array(
+  69     // Demonstrate the simplest markup, a #markup element.
+  70     t(&#039;Super simple #markup&#039;)  =&gt; array(
+  71       &#039;#markup&#039; =&gt; t(&#039;Some basic text in a #markup (shows basic markup and how it is rendered)&#039;),
+  72     ),
+  73 
+  74     // Shows how #prefix and #suffix can add markup into an array.
+  75     t(&#039;Using #prefix and #suffix&#039;) =&gt; array(
+  76       &#039;#markup&#039; =&gt; t(&#039;This one adds a prefix and suffix, which put a div around the item&#039;),
+  77       &#039;#prefix&#039; =&gt; &#039;&lt;div&gt;&lt;br/&gt;(prefix)&lt;br/&gt;&#039;,
+  78       &#039;#suffix&#039; =&gt; &#039;&lt;br/&gt;(suffix)&lt;/div&gt;&#039;,
+  79     ),
+  80 
+  81     // When #theme is provided, it is the #theme function&#039;s job to figure out
+  82     // the meaning of the render array. The #theme function receives the entire
+  83     // element in $variables and must return it, where it will be the content
+  84     // of &#039;#children&#039;. When a #theme or other function is provided, custom
+  85     // properties can be invented and used as needed, as the #separator
+  86     // property provided here.
+  87     //
+  88     // If #theme is not provided, either explicitly or by the underlying
+  89     // element, then the children are rendered using their own properties and
+  90     // the results go into #children.
+  91     t(&#039;theme for an element&#039;) =&gt; array(
+  92       &#039;child&#039; =&gt; array(
+  93         t(&#039;This is some text that should be put together&#039;),
+  94         t(&#039;This is some more text that we need&#039;),
+  95       ),
+  96       &#039;#separator&#039; =&gt; &#039; | &#039;,  // Made up for this theme function.
+  97       &#039;#theme&#039; =&gt; &#039;render_example_aggregate&#039;,
+  98     ),
+  99 
+ 100     // #theme_wrappers provides an array of theme functions which theme the
+ 101     // envelope or &quot;wrapper&quot; of a set of child elements. The theme function
+ 102     // finds its element children (the sub-arrays) already rendered in
+ 103     // &#039;#children&#039;.
+ 104     t(&#039;theme_wrappers demonstration&#039;) =&gt; array(
+ 105       &#039;child1&#039; =&gt; array(&#039;#markup&#039; =&gt; t(&#039;Markup for child1&#039;)),
+ 106       &#039;child2&#039; =&gt; array(&#039;#markup&#039; =&gt; t(&#039;Markup for child2&#039;)),
+ 107       &#039;#theme_wrappers&#039; =&gt; array(&#039;render_example_add_div&#039;, &#039;render_example_add_notes&#039;),
+ 108     ),
+ 109 
+ 110     // Add &#039;#pre_render&#039; and &#039;#post_render&#039; handlers.
+ 111     // - &#039;#pre_render&#039; functions get access to the array before it is rendered
+ 112     //   and can change it. This is similar to a theme function, but it is a
+ 113     //   specific fixed function and changes the array in place rather than
+ 114     //   rendering it..
+ 115     // - &#039;#post_render&#039; functions get access to the rendered content, but also
+ 116     //   have the original array available.
+ 117     t(&#039;pre_render and post_render&#039;) =&gt; array(
+ 118       &#039;#markup&#039; =&gt; &#039;&lt;div style=&quot;color:green&quot;&gt;&#039; . t(&#039;markup for pre_render and post_render example&#039;) . &#039;&lt;/div&gt;&#039;,
+ 119       &#039;#pre_render&#039; =&gt; array(&#039;render_example_add_suffix&#039;),
+ 120       &#039;#post_render&#039; =&gt; array(&#039;render_example_add_prefix&#039;),
+ 121     ),
+ 122 
+ 123     // Cache an element for $interval seconds using #cache.
+ 124     // The assumption here is that this is an expensive item to render, perhaps
+ 125     // large or otherwise expensive. Of course here it&#039;s just a piece of markup,
+ 126     // so we don&#039;t get the value.
+ 127     //
+ 128     // #cache allows us to set
+ 129     // - &#039;keys&#039;, an array of strings that will create the string cache key.
+ 130     // - &#039;bin&#039;, the cache bin
+ 131     // - &#039;expire&#039;, the expire timestamp. Note that this is actually limited
+ 132     //   to the granularity of a cron run.
+ 133     // - &#039;granularity&#039;, a bitmask determining at what level the caching is done
+ 134     //   (user, role, page).
+ 135     t(&#039;cache demonstration&#039;) =&gt; array(
+ 136       // If your expensive function were to be executed here it would happen
+ 137       // on every page load regardless of the cache. The actual markup is
+ 138       // added via the #pre_render function, so that drupal_render() will only
+ 139       // execute the expensive function if this array has not been cached.
+ 140       &#039;#markup&#039; =&gt; &#039;&#039;,
+ 141       &#039;#pre_render&#039; =&gt; array(&#039;render_example_cache_pre_render&#039;),
+ 142       &#039;#cache&#039; =&gt; array(
+ 143         &#039;keys&#039; =&gt; array(&#039;render_example&#039;, &#039;cache&#039;, &#039;demonstration&#039;),
+ 144         &#039;bin&#039; =&gt; &#039;cache&#039;,
+ 145         &#039;expire&#039; =&gt; time() + $interval,
+ 146         &#039;granularity&#039; =&gt; DRUPAL_CACHE_PER_PAGE | DRUPAL_CACHE_PER_ROLE,
+ 147       ),
+ 148     ),
+ 149   );
+ 150 
+ 151 
+ 152   // The rest of this function just places the above arrays in a context where
+ 153   // they can be rendered (hopefully attractively and usefully) on the page.
+ 154   $page_array = array();
+ 155   foreach ($demos as $key =&gt; $item) {
+ 156     $page_array[$key][&#039;#theme_wrappers&#039;] = array(&#039;render_array&#039;);
+ 157     $page_array[$key][&#039;#description&#039;] = $key;
+ 158 
+ 159     $page_array[$key][&#039;unrendered&#039;] = array(
+ 160       &#039;#prefix&#039; =&gt; &#039;&lt;div class=&quot;unrendered-label&quot;&gt;&#039; . t(&#039;Unrendered array (as plain text and with a krumo version)&#039;) . &#039;:&lt;/div&gt;&#039;,
+ 161       &#039;#type&#039; =&gt; &#039;markup&#039;,
+ 162       &#039;#markup&#039; =&gt; htmlentities(drupal_var_export($item)),
+ 163     );
+ 164     $page_array[$key][&#039;kpr&#039;] = array(
+ 165       // The kpr() function is from devel module and is here only allow us
+ 166       // to output the array in a way that&#039;s easy to explore.
+ 167       &#039;#markup&#039; =&gt; kpr($item, TRUE),
+ 168     );
+ 169     $page_array[$key][&#039;hr&#039;] = array(&#039;#markup&#039; =&gt; &#039;&lt;hr/&gt;&#039;);
+ 170     $page_array[$key][&#039;rendered&#039;] = array($item);
+ 171     $page_array[$key][&#039;rendered&#039;][&#039;#prefix&#039;] = &#039;&lt;p&gt;&lt;em&gt;Rendered version (light blue)&lt;/em&gt;:&lt;/p&gt;&#039; . &#039;&lt;div class=&quot;rendered&quot;&gt;&#039;;
+ 172     $page_array[$key][&#039;rendered&#039;][&#039;#suffix&#039;] = &#039;&lt;/div&gt;&#039;;
+ 173   }
+ 174 
+ 175   return $page_array;
+ 176 }
+ 177 
+ 178 /**
+ 179  * A &#039;#pre_render&#039; function.
+ 180  *
+ 181  * @param $element
+ 182  *   The element which will be rendered.
+ 183  *
+ 184  * @return
+ 185  *   The altered element. In this case we add the #markup.
+ 186  */
+ 187 function render_example_cache_pre_render($element) {
+ 188   $element[&#039;#markup&#039;] = render_example_cache_expensive();
+ 189 
+ 190   // The following line is due to the bug described in
+ 191   // http://drupal.org/node/914792. A #markup element&#039;s #pre_render must set
+ 192   // #children because it replaces the default #markup pre_render, which is
+ 193   // drupal_pre_render_markup().
+ 194   $element[&#039;#children&#039;] = $element[&#039;#markup&#039;];
+ 195   return $element;
+ 196 }
+ 197 
+ 198 /**
+ 199  * A potentially expensive function.
+ 200  *
+ 201  * @return
+ 202  *   Some demo text.
+ 203  */
+ 204 function render_example_cache_expensive() {
+ 205   $interval = 60;
+ 206   $time_message = t(&#039;The current time was %time when this was cached. Updated every %interval seconds&#039;, array(&#039;%time&#039; =&gt; date(&#039;r&#039;), &#039;%interval&#039; =&gt; $interval));
+ 207   // Uncomment the following line to demonstrate that this function is not
+ 208   // being run when the rendered array is cached.
+ 209   // drupal_set_message($time_message);
+ 210   return $time_message;
+ 211 }
+ 212 
+ 213 /**
+ 214  * A &#039;#pre_render&#039; function.
+ 215  *
+ 216  * @param $element
+ 217  *   The element which will be rendered.
+ 218  *
+ 219  * @return
+ 220  *   The altered element. In this case we add a #prefix to it.
+ 221  */
+ 222 function render_example_add_suffix($element) {
+ 223   $element[&#039;#suffix&#039;] = &#039;&lt;div style=&quot;color:red&quot;&gt;&#039; . t(&#039;This #suffix was added by a #pre_render&#039;) . &#039;&lt;/div&gt;&#039;;
+ 224 
+ 225   // The following line is due to the bug described in
+ 226   // http://drupal.org/node/914792. A #markup element&#039;s #pre_render must set
+ 227   // #children because it replaces the default #markup pre_render, which is
+ 228   // drupal_pre_render_markup().
+ 229   $element[&#039;#children&#039;] = $element[&#039;#markup&#039;];
+ 230   return $element;
+ 231 }
+ 232 
+ 233 /**
+ 234  * A &#039;#post_render&#039; function to add a little markup onto the end markup.
+ 235  *
+ 236  * @param $markup
+ 237  *   The rendered element.
+ 238  * @param $element
+ 239  *   The element which was rendered (for reference)
+ 240  *
+ 241  * @return
+ 242  *   Markup altered as necessary. In this case we add a little postscript to it.
+ 243  */
+ 244 function render_example_add_prefix($markup, $element) {
+ 245   $markup = &#039;&lt;div style=&quot;color:blue&quot;&gt;This markup was added after rendering by a #post_render&lt;/div&gt;&#039; . $markup;
+ 246   return $markup;
+ 247 }
+ 248 
+ 249 /**
+ 250  * A #theme function.
+ 251  *
+ 252  * This #theme function has the responsibility of consolidating/rendering the
+ 253  * children&#039;s markup and returning it, where it will be placed in the
+ 254  * element&#039;s #children property.
+ 255  */
+ 256 function theme_render_example_aggregate($variables) {
+ 257   $output = &#039;&#039;;
+ 258   foreach (element_children($variables[&#039;element&#039;][&#039;child&#039;]) as $item) {
+ 259     $output .= $variables[&#039;element&#039;][&#039;child&#039;][$item] . $variables[&#039;element&#039;][&#039;#separator&#039;];
+ 260   }
+ 261   return $output;
+ 262 }
+ 263 
+ 264 /*************** Altering Section **************************
+ 265  * The following section of the example builds and arranges the altering
+ 266  * example.
+ 267  */
+ 268 
+ 269 /**
+ 270  * Builds the form that offers options of what items to show.
+ 271  */
+ 272 function render_example_demo_form($form, &amp;$form_state) {
+ 273   $form[&#039;description&#039;] = array(
+ 274     &#039;#type&#039; =&gt; &#039;markup&#039;,
+ 275     &#039;#markup&#039; =&gt; t(&#039;This example shows what render arrays look like in the building of a page. It will not work unless the user running it has the &quot;access devel information&quot; privilege. It shows both the actual arrays used to build a page or block and also the capabilities of altering the page late in its lifecycle.&#039;),
+ 276   );
+ 277 
+ 278   $form[&#039;show_arrays&#039;] = array(
+ 279     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 280     &#039;#title&#039; =&gt; t(&#039;Show render arrays&#039;),
+ 281   );
+ 282 
+ 283   foreach (array(&#039;block&#039;, &#039;page&#039;) as $type) {
+ 284     $form[&#039;show_arrays&#039;][&#039;render_example_show_&#039; . $type] = array(
+ 285       &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 286       &#039;#title&#039; =&gt; t(&#039;Show @type render arrays&#039;, array(&#039;@type&#039; =&gt; $type)),
+ 287       &#039;#default_value&#039; =&gt; variable_get(&#039;render_example_show_&#039; . $type, FALSE),
+ 288     );
+ 289   }
+ 290 
+ 291   $form[&#039;page_fiddling&#039;] = array(
+ 292     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 293     &#039;#title&#039; =&gt; t(&#039;Make changes on page via hook_page_alter()&#039;),
+ 294   );
+ 295   $form[&#039;page_fiddling&#039;][&#039;render_example_note_about_render_arrays&#039;] = array(
+ 296     &#039;#title&#039; =&gt; t(&#039;Add a note about render arrays to top of sidebar_first (if it exists)&#039;),
+ 297     &#039;#description&#039; =&gt; t(&#039;Creates a simple render array that displays the use of #pre_render, #post_render, #theme, and #theme_wrappers.&#039;),
+ 298     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 299     &#039;#default_value&#039; =&gt; variable_get(&#039;render_example_note_about_render_arrays&#039;, FALSE),
+ 300   );
+ 301   $form[&#039;page_fiddling&#039;][&#039;render_example_move_navigation_menu&#039;] = array(
+ 302     &#039;#title&#039; =&gt; t(&#039;Move the navigation menu to the top of the content area&#039;),
+ 303     &#039;#description&#039; =&gt; t(&#039;Uses hook_page_alter() to move the navigation menu into another region.&#039;),
+ 304     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 305     &#039;#default_value&#039; =&gt; variable_get(&#039;render_example_move_navigation_menu&#039;, FALSE),
+ 306   );
+ 307   $form[&#039;page_fiddling&#039;][&#039;render_example_reverse_sidebar&#039;] = array(
+ 308     &#039;#title&#039; =&gt; t(&#039;Reverse ordering of sidebar_first elements (if it exists) - will affect the above&#039;),
+ 309     &#039;#description&#039; =&gt; t(&#039;Uses hook_page_alter() to reverse the ordering of items in sidebar_first&#039;),
+ 310     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 311     &#039;#default_value&#039; =&gt; variable_get(&#039;render_example_reverse_sidebar&#039;, FALSE),
+ 312   );
+ 313   $form[&#039;page_fiddling&#039;][&#039;render_example_prefix&#039;] = array(
+ 314     &#039;#title&#039; =&gt; t(&#039;Use #prefix and #suffix to wrap a div around every block&#039;),
+ 315     &#039;#description&#039; =&gt; t(&#039;Uses hook_page_alter to wrap all blocks with a div using #prefix and #suffix&#039;),
+ 316     &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 317     &#039;#default_value&#039; =&gt; variable_get(&#039;render_example_prefix&#039;),
+ 318   );
+ 319 
+ 320   return system_settings_form($form);
+ 321 }
+ 322 
+ 323 /**
+ 324  * Implements hook_page_alter().
+ 325  *
+ 326  * Alters the page in several different ways based on how the form has been
+ 327  * configured.
+ 328  */
+ 329 function render_example_page_alter(&amp;$page) {
+ 330 
+ 331   $original_page = $page;
+ 332 
+ 333   // Re-sort the sidebar in reverse order.
+ 334   if (variable_get(&#039;render_example_reverse_sidebar&#039;, FALSE) &amp;&amp; !empty($page[&#039;sidebar_first&#039;])) {
+ 335     $page[&#039;sidebar_first&#039;] = array_reverse($page[&#039;sidebar_first&#039;]);
+ 336     foreach (element_children($page[&#039;sidebar_first&#039;]) as $element) {
+ 337       // Reverse the weights if they exist.
+ 338       if (!empty($page[&#039;sidebar_first&#039;][$element][&#039;#weight&#039;])) {
+ 339         $page[&#039;sidebar_first&#039;][$element][&#039;#weight&#039;] *= -1;
+ 340       }
+ 341     }
+ 342     $page[&#039;sidebar_first&#039;][&#039;#sorted&#039;] = FALSE;
+ 343   }
+ 344 
+ 345   // Add a list of items to the top of sidebar_first.
+ 346   // This shows how #theme and #theme_wrappers work.
+ 347   if (variable_get(&#039;render_example_note_about_render_arrays&#039;, FALSE) &amp;&amp; !empty($page[&#039;sidebar_first&#039;])) {
+ 348     $items = array(
+ 349       t(&#039;Render arrays are everywhere in D7&#039;),
+ 350       t(&#039;Leave content unrendered as much as possible&#039;),
+ 351       t(&#039;This allows rearrangement and alteration very late in page cycle&#039;),
+ 352     );
+ 353 
+ 354     $note = array(
+ 355       &#039;#title&#039; =&gt; t(&#039;Render Array Example&#039;),
+ 356       &#039;#items&#039; =&gt; $items,
+ 357 
+ 358       // The functions in #pre_render get to alter the actual data before it
+ 359       // gets rendered by the various theme functions.
+ 360       &#039;#pre_render&#039; =&gt; array(&#039;render_example_change_to_ol&#039;),
+ 361       // The functions in #post_render get both the element and the rendered
+ 362       // data and can add to the rendered data.
+ 363       &#039;#post_render&#039; =&gt; array(&#039;render_example_add_hr&#039;),
+ 364       // The #theme theme operation gets the first chance at rendering the
+ 365       // element and its children.
+ 366       &#039;#theme&#039; =&gt; &#039;item_list&#039;,
+ 367       // Then the theme operations in #theme_wrappers can wrap more around
+ 368       // what #theme left in #chilren.
+ 369       &#039;#theme_wrappers&#039; =&gt; array(&#039;render_example_add_div&#039;, &#039;render_example_add_notes&#039;),
+ 370       &#039;#weight&#039; =&gt; -9999,
+ 371     );
+ 372     $page[&#039;sidebar_first&#039;][&#039;render_array_note&#039;] = $note;
+ 373     $page[&#039;sidebar_first&#039;][&#039;#sorted&#039;] = FALSE;
+ 374   }
+ 375 
+ 376 
+ 377   // Move the navigation menu into the content area.
+ 378   if (variable_get(&#039;render_example_move_navigation_menu&#039;, FALSE) &amp;&amp; !empty($page[&#039;sidebar_first&#039;][&#039;system_navigation&#039;]) &amp;&amp; !empty($page[&#039;content&#039;])) {
+ 379     $page[&#039;content&#039;][&#039;system_navigation&#039;] = $page[&#039;sidebar_first&#039;][&#039;system_navigation&#039;];
+ 380     $page[&#039;content&#039;][&#039;system_navigation&#039;][&#039;#weight&#039;] = -99999;
+ 381     unset($page[&#039;content&#039;][&#039;#sorted&#039;]);
+ 382     unset($page[&#039;sidebar_first&#039;][&#039;system_navigation&#039;]);
+ 383   }
+ 384 
+ 385   // Show the render array used to build the page render array display.
+ 386   if (variable_get(&#039;render_example_show_page&#039;, FALSE)) {
+ 387     $form[&#039;render_example_page_fieldset&#039;] = array(
+ 388       &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 389       &#039;#title&#039; =&gt; t(&#039;Page render array&#039;),
+ 390       &#039;#collapsible&#039; =&gt; TRUE,
+ 391       &#039;#collapsed&#039; =&gt; TRUE,
+ 392     );
+ 393     $form[&#039;render_example_page_fieldset&#039;][&#039;markup&#039;] = array(
+ 394       // The kpr() function is from devel module and is here only allow us
+ 395       // to output the array in a way that&#039;s easy to explore.
+ 396       &#039;#markup&#039; =&gt; kpr($page, TRUE),
+ 397     );
+ 398     $page[&#039;content&#039;][&#039;page_render_array&#039;] = drupal_get_form(&#039;render_example_embedded_form&#039;, $form);
+ 399     $page[&#039;content&#039;][&#039;page_render_array&#039;][&#039;#weight&#039;] = -999999;
+ 400     $page[&#039;content&#039;][&#039;#sorted&#039;] = FALSE;
+ 401   }
+ 402 
+ 403   // Add render array to the bottom of each block
+ 404   if (variable_get(&#039;render_example_show_block&#039;, FALSE)) {
+ 405     foreach (element_children($page) as $region_name) {
+ 406       foreach (element_children($page[$region_name]) as $block_name) {
+ 407 
+ 408         // Push the block down a level so we can add another block after it.
+ 409         $old_block = $page[$region_name][$block_name];
+ 410         $page[$region_name][$block_name] = array(
+ 411           $block_name =&gt; $old_block,
+ 412         );
+ 413         $form = array();
+ 414         $form[&#039;render_example_block_fieldset&#039;] = array(
+ 415           &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 416           &#039;#title&#039; =&gt; t(&#039;Block render array&#039;),
+ 417           &#039;#collapsible&#039; =&gt; TRUE,
+ 418           &#039;#collapsed&#039; =&gt; TRUE,
+ 419         );
+ 420 
+ 421         $form[&#039;render_example_block_fieldset&#039;][&#039;markup&#039;] = array(
+ 422           &#039;#type&#039; =&gt; &#039;item&#039;,
+ 423           &#039;#title&#039; =&gt; t(&#039;%blockname block render array&#039;, array(&#039;%blockname&#039; =&gt; $block_name)),
+ 424           // The kpr() function is from devel module and is here only allow us
+ 425           // to output the array in a way that&#039;s easy to explore.
+ 426           &#039;#markup&#039; =&gt; kpr($old_block, TRUE),
+ 427         );
+ 428 
+ 429         // Add the new block that contains the render array.
+ 430         $page[$region_name][$block_name][&#039;render_example_block_render_array&#039;] =  drupal_get_form(&#039;render_example_embedded_form&#039;, $form);
+ 431         $page[$region_name][$block_name][&#039;render_example_block_render_array&#039;][&#039;#weight&#039;] = 999;
+ 432       }
+ 433     }
+ 434   }
+ 435 
+ 436   // Add #prefix and #suffix to a block to wrap a div around it.
+ 437   if (variable_get(&#039;render_example_prefix&#039;, FALSE)) {
+ 438     foreach (element_children($page) as $region_name) {
+ 439       foreach (element_children($page[$region_name]) as $block_name) {
+ 440         $block = &amp;$page[$region_name][$block_name];
+ 441         $block[&#039;#prefix&#039;] = &#039;&lt;div class=&quot;block-prefix&quot;&gt;&lt;p&gt;Prefixed&lt;/p&gt;&#039;;
+ 442         $block[&#039;#suffix&#039;] = &#039;&lt;span class=&quot;block-suffix&quot;&gt;Block suffix&lt;/span&gt;&lt;/div&gt;&#039;;
+ 443       }
+ 444     }
+ 445   }
+ 446   $altered_page = $page;
+ 447 
+ 448 }
+ 449 
+ 450 /**
+ 451  * Utility function to build a named form given a set of form elements.
+ 452  *
+ 453  * This is a standard form builder function that takes an additional array,
+ 454  * which is itself a form.
+ 455  *
+ 456  * @param $form
+ 457  *   The standard $form
+ 458  * @param $form_state
+ 459  *   The standard $form_state
+ 460  * @param $form_items
+ 461  *   The form items to be included in this form.
+ 462  */
+ 463 function render_example_embedded_form($form, &amp;$form_state, $form_items) {
+ 464   return $form_items;
+ 465 }
+ 466 
+ 467 /**
+ 468  * Implements hook_theme().
+ 469  */
+ 470 function render_example_theme() {
+ 471   $items = array(
+ 472     &#039;render_example_add_div&#039; =&gt; array(
+ 473       &#039;render element&#039; =&gt; &#039;element&#039;,
+ 474     ),
+ 475     &#039;render_example_add_notes&#039; =&gt; array(
+ 476       &#039;render element&#039; =&gt; &#039;element&#039;,
+ 477     ),
+ 478     &#039;render_array&#039; =&gt; array(
+ 479       &#039;render element&#039; =&gt; &#039;element&#039;,
+ 480     ),
+ 481     &#039;render_example_aggregate&#039; =&gt; array(
+ 482       &#039;render element&#039; =&gt; &#039;element&#039;,
+ 483     ),
+ 484   );
+ 485   return $items;
+ 486 }
+ 487 
+ 488 /**
+ 489  * Wraps a div around the already-rendered #children.
+ 490  */
+ 491 function theme_render_example_add_div($variables) {
+ 492   $element = $variables[&#039;element&#039;];
+ 493   $output = &#039;&lt;div class=&quot;render-example-wrapper-div&quot;&gt;&#039;;
+ 494   $output .= $element[&#039;#children&#039;];
+ 495   $output .= &#039;&lt;/div&gt;&#039;;
+ 496   return $output;
+ 497 }
+ 498 
+ 499 /**
+ 500  * Wraps a div and add a little text after the rendered #children.
+ 501  */
+ 502 function theme_render_example_add_notes($variables) {
+ 503   $element = $variables[&#039;element&#039;];
+ 504   $output = &#039;&lt;div class=&quot;render-example-notes-wrapper-div&quot;&gt;&#039;;
+ 505   $output .= $element[&#039;#children&#039;];
+ 506   $output .= &#039;&lt;em&gt;&#039; . t(&#039;This is a note added by a #theme_wrapper&#039;) . &#039;&lt;/em&gt;&#039;;
+ 507   $output .= &#039;&lt;/div&gt;&#039;;
+ 508 
+ 509   return $output;
+ 510 }
+ 511 
+ 512 /**
+ 513  * Themes the render array (from the demonstration page).
+ 514  */
+ 515 function theme_render_array($variables) {
+ 516   $heading = &#039;&lt;div class=&quot;render-header&quot;&gt;&#039; . $variables[&#039;element&#039;][&#039;#description&#039;] . &#039;&lt;/div&gt;&#039;;
+ 517 
+ 518   $rendered = &#039;&lt;div class=&quot;render-array&quot;&gt;&#039; . $heading . $variables[&#039;element&#039;][&#039;#children&#039;] . &#039;&lt;/div&gt;&#039;;
+ 519   return $rendered;
+ 520 }
+ 521 
+ 522 /**
+ 523  * Adds a #type to the element before it gets rendered.
+ 524  * In this case, changes from the default &#039;ul&#039; to &#039;ol&#039;.
+ 525  *
+ 526  * @param $element
+ 527  *   The element to be altered, in this case a list, ready for theme_item_list.
+ 528  *
+ 529  * @return
+ 530  *   The altered list (with &#039;#type&#039;)
+ 531  */
+ 532 function render_example_change_to_ol($element) {
+ 533   $element[&#039;#type&#039;] = &#039;ol&#039;;
+ 534   return $element;
+ 535 }
+ 536 
+ 537 /**
+ 538  * This #post_render function gets to alter the rendered output after all
+ 539  * theme functions have acted on it, and it receives the original data, so
+ 540  * can make decisions based on that. In this example, no use is made of the
+ 541  * passed-in $element.
+ 542  *
+ 543  * @param $markup
+ 544  *   The already-rendered data
+ 545  * @param unknown_type $element
+ 546  *   The data element that was rendered
+ 547  *
+ 548  * @return
+ 549  *   The altered data.
+ 550  */
+ 551 function render_example_add_hr($markup, $element) {
+ 552   $output = $markup . &#039;&lt;hr /&gt;&#039;;
+ 553   return $output;
+ 554 }
+ 555 /**
+ 556  * @} End of &quot;defgroup render_example&quot;.
+ 557  */</pre>
+
+</div>
+<!-- EDIT5 SECTION "render_example.module" [1350-24824] -->
+<h2 class="sectionedit6" id="render_exampletest">render_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Test for the render example module.
+   6  */
+   7 class RenderExampleTestCase extends DrupalWebTestCase {
+   8   public static function getInfo() {
+   9     return array(
+  10       &#039;name&#039; =&gt; &#039;Render example functionality&#039;,
+  11       &#039;description&#039; =&gt; &#039;Test Render Example&#039;,
+  12       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  13       &#039;dependencies&#039; =&gt; array(&#039;devel&#039;),
+  14     );
+  15   }
+  16 
+  17   /**
+  18    * Enable modules and create user with specific permissions.
+  19    */
+  20   function setUp() {
+  21     parent::setUp(&#039;devel&#039;, &#039;render_example&#039;);
+  22   }
+  23 
+  24 
+  25   /**
+  26    * Assert that all of the xpaths in the array have results.
+  27    *
+  28    * @param $xpath_array
+  29    *   An array of xpaths, each of which must return something.
+  30    */
+  31   function assertRenderResults($xpath_array) {
+  32     foreach ($xpath_array as $xpath) {
+  33       $result = $this-&gt;xpath($xpath);
+  34       $this-&gt;assertTrue(!empty($result), format_string(&#039;Found xpath %xpath&#039;, array(&#039;%xpath&#039; =&gt; $xpath)));
+  35     }
+  36   }
+  37 
+  38 
+  39   /**
+  40    * Asserts that the string value of the result is the same as the passed text.
+  41    *
+  42    * @param $xpath_array
+  43    *   Array of keyed arrays of tests to be made. Each child array consists of
+  44    *   $xpath =&gt; $expected_text
+  45    */
+  46   function assertRenderedText($xpath_array) {
+  47     foreach ($xpath_array as $xpath =&gt; $text) {
+  48       $result = $this-&gt;xpath($xpath);
+  49       $this-&gt;assertTrue((string)$result[0][0] == $text, format_string(&#039;%ary selects text %text&#039;, array(&#039;%ary&#039; =&gt; $xpath, &#039;%text&#039; =&gt; $text)));
+  50     }
+  51   }
+  52 
+  53 
+  54   /**
+  55    * Login user, create an example node, and test blog functionality through the admin and user interfaces.
+  56    */
+  57   function testRenderExampleBasic() {
+  58 
+  59     // Create a user that can access devel information and log in.
+  60     $web_user = $this-&gt;drupalCreateUser(array(&#039;access devel information&#039;, &#039;access content&#039;));
+  61     $this-&gt;drupalLogin($web_user);
+  62 
+  63     // Turn on the block render array display and make sure it shows up.
+  64     $edit = array(
+  65       &#039;render_example_show_block&#039; =&gt; TRUE,
+  66     );
+  67     $this-&gt;drupalPost(&#039;examples/render_example/altering&#039;, $edit, t(&#039;Save configuration&#039;));
+  68 
+  69     $xpath_array = array(
+  70       &quot;//div[@id=&#039;sidebar-first&#039;]//fieldset[starts-with(@id, &#039;edit-render-example-block-fieldset&#039;)]&quot;,
+  71       &#039;//*[@id=&quot;content&quot;]//fieldset[contains(@id,&quot;edit-render-example-block-fieldset&quot;)]&#039;,
+  72     );
+  73     $this-&gt;assertRenderResults($xpath_array);
+  74 
+  75 
+  76     // Turn off block render array display and turn on the page render array
+  77     // display.
+  78     $edit = array(
+  79       &#039;render_example_show_page&#039; =&gt; TRUE,
+  80       &#039;render_example_show_block&#039; =&gt; FALSE,
+  81     );
+  82     $this-&gt;drupalPost(&#039;examples/render_example/altering&#039;, $edit, t(&#039;Save configuration&#039;));
+  83 
+  84     $xpath_array = array(
+  85       &#039;//*[@id=&quot;content&quot;]//fieldset[starts-with(@id,&quot;edit-render-example-page-fieldset&quot;)]&#039;,
+  86     );
+  87     $this-&gt;assertRenderResults($xpath_array);
+  88 
+  89     // Add note about render arrays to the top of sidebar_first.
+  90     $edit = array(
+  91       &#039;render_example_note_about_render_arrays&#039; =&gt; TRUE,
+  92     );
+  93     $this-&gt;drupalPost(&#039;examples/render_example/altering&#039;, $edit, t(&#039;Save configuration&#039;));
+  94     $xpath_array = array(
+  95       &#039;//*[@id=&quot;sidebar-first&quot;]//ol//li[starts-with(.,&quot;Render arrays are everywhere&quot;)]&#039;,
+  96     );
+  97     $this-&gt;assertRenderResults($xpath_array);
+  98 
+  99     // Move the navigation menu to the top of the content area.
+ 100     $edit = array(
+ 101       &#039;render_example_move_navigation_menu&#039; =&gt; TRUE,
+ 102     );
+ 103     $this-&gt;drupalPost(&#039;examples/render_example/altering&#039;, $edit, t(&#039;Save configuration&#039;));
+ 104     $xpath_array = array(
+ 105       &#039;//*[@id=&quot;content&quot;]//h2[starts-with(.,&quot;Navigation&quot;)]&#039;,
+ 106     );
+ 107     $this-&gt;assertRenderResults($xpath_array);
+ 108 
+ 109     // Skip a test for reversing order of sidebar_first as I think it would
+ 110     // be too fragile.
+ 111 
+ 112     // Test the addition of #prefix and #suffix
+ 113     $edit = array(
+ 114       &#039;render_example_prefix&#039; =&gt; TRUE,
+ 115     );
+ 116     $this-&gt;drupalPost(&#039;examples/render_example/altering&#039;, $edit, t(&#039;Save configuration&#039;));
+ 117     $xpath_array = array(
+ 118       &#039;//*[@id=&quot;sidebar-first&quot;]//*[contains(@class, &quot;block-prefix&quot;)]/span[contains(@class, &quot;block-suffix&quot;)]&#039;,
+ 119     );
+ 120     $this-&gt;assertRenderResults($xpath_array);
+ 121 
+ 122     // Test some rendering facets of the various render examples
+ 123     $this-&gt;drupalGet(&#039;examples/render_example/arrays&#039;);
+ 124     $content = $this-&gt;xpath(&#039;//*[@class=&quot;render-array&quot;][1]&#039;);
+ 125 
+ 126     $xpath_array = array(
+ 127       &#039;//div[@class=&quot;rendered&quot;][starts-with(.,&quot;Some basic text in a #markup&quot;)]&#039; =&gt; &#039;Some basic text in a #markup (shows basic markup and how it is rendered)&#039;,
+ 128       &#039;//div[@class=&quot;rendered&quot;][starts-with(.,&quot;This is some text that should be put to&quot;)]&#039; =&gt; &#039;This is some text that should be put together | This is some more text that we need | &#039;,
+ 129       &#039;//div[@class=&quot;rendered&quot;][starts-with(.,&quot;The current time was&quot;)]&#039; =&gt; &#039;The current time was  when this was cached. Updated every  seconds&#039;,
+ 130       &#039;//div[@class=&quot;rendered&quot;]/div[text()][starts-with(.,&quot;(prefix)This one&quot;)]&#039; =&gt; &#039;(prefix)This one adds a prefix and suffix, which put a div around the item(suffix)&#039;,
+ 131       &#039;//div[@class=&quot;rendered&quot;]/div[text()][starts-with(.,&quot;markup for pre_&quot;)]&#039; =&gt; &#039;markup for pre_render and post_render example&#039;,
+ 132       &#039;//div[@class=&quot;rendered&quot;]/div[text()][starts-with(.,&quot;This markup was added&quot;)]&#039; =&gt; &#039;This markup was added after rendering by a #post_render&#039;,
+ 133       &#039;//div[@class=&quot;rendered&quot;]/div[text()][starts-with(.,&quot;This #suffix&quot;)]&#039; =&gt; &#039;This #suffix was added by a #pre_render&#039;,
+ 134     );
+ 135     $this-&gt;assertRenderedText($xpath_array);
+ 136 
+ 137   }
+ 138 }</pre>
+
+</div>
+<!-- EDIT6 SECTION "render_example.test" [24825-] -->

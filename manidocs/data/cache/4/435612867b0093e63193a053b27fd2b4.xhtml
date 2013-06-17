@@ -1,0 +1,163 @@
+
+<h1 class="sectionedit1" id="adding_a_table_to_the_database">Adding a table to the database</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Adding a table to the database" [1-46] -->
+<h1 class="sectionedit2" id="moddev-addingtables-files-start">moddev-addingtables-files-start</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT2 SECTION "moddev-addingtables-files-start" [47-93] -->
+<h2 class="sectionedit3" id="demo2info">demo2.info</h2>
+<div class="level2">
+<pre class="code">name = Demo 2
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT3 SECTION "demo2.info" [94-190] -->
+<h2 class="sectionedit4" id="demo2module">demo2.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/**
+ * Implements hook_node_view().
+ */
+function demo2_node_view($node, $view_mode = &#039;full&#039;) {
+  //only when looking at the full version, NOT the teaser
+  if ($view_mode == &#039;full&#039;) {
+
+    // Everytime a node is viewed, increment the node_views count
+    // in the user&#039;s session by one and include the result in the node content
+
+    //make sure there is a record in the session
+    if (empty($_SESSION[&#039;node_views&#039;][$node-&gt;nid])) {
+      $_SESSION[&#039;node_views&#039;][$node-&gt;nid] = 0;
+    }
+    
+    #krumo(&#039;Before: &#039;.$_SESSION[&#039;node_views&#039;][$node-&gt;nid]);
+
+    //add another to the session
+    $_SESSION[&#039;node_views&#039;][$node-&gt;nid]++;
+
+    #krumo(&#039;After: &#039;.$_SESSION[&#039;node_views&#039;][$node-&gt;nid]);
+
+
+    // Set up an array of placeholders to pass to t().
+    $t_args = array(
+      &#039;%num&#039; =&gt; $_SESSION[&#039;node_views&#039;][$node-&gt;nid],
+    );
+
+    $node-&gt;content[&#039;node_views&#039;] = array(
+      &#039;#markup&#039; =&gt; t(&#039;You have viewed this page %num times.&#039;, $t_args),
+      &#039;#weight&#039; =&gt; 10,
+    );
+  }
+}</pre>
+
+</div>
+<!-- EDIT4 SECTION "demo2.module" [191-1214] -->
+<h1 class="sectionedit5" id="moddev-addingtables-files-end">moddev-addingtables-files-end</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT5 SECTION "moddev-addingtables-files-end" [1215-1259] -->
+<h2 class="sectionedit6" id="demo2info1">demo2.info</h2>
+<div class="level2">
+<pre class="code">name = Demo 2
+description = Just a Demo module.
+core = 7.x</pre>
+
+</div>
+<!-- EDIT6 SECTION "demo2.info" [1260-1356] -->
+<h2 class="sectionedit7" id="demo2install">demo2.install</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/*
+ *Implement hook_schema().
+ */
+function demo2_schema() {
+  $schema = array();
+  $schema[&#039;demo2&#039;] = array(
+    &#039;description&#039; =&gt; &#039;Information about node views.&#039;,
+    &#039;fields&#039; =&gt; array(
+      &#039;nid&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &quot;The node&#039;s {node}.nid.&quot;,
+      ),
+      &#039;uid&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &quot;The user&#039;s {uid}.uid.&quot;,
+      ),
+      &#039;view_count&#039; =&gt; array(
+        &#039;type&#039; =&gt; &#039;int&#039;,
+        &#039;unsigned&#039; =&gt; TRUE,
+        &#039;not null&#039; =&gt; TRUE,
+        &#039;default&#039; =&gt; 0,
+        &#039;description&#039; =&gt; &#039;Simple node view counter per user.&#039;,
+      ),
+    ),
+    &#039;primary key&#039; =&gt; array(&#039;nid&#039;, &#039;uid&#039;),
+  );
+
+  return $schema;
+}
+
+/*
+ *Implements hook_update_N().
+ */
+function demo2_update_7000() {
+  drupal_install_schema(&#039;demo2&#039;);
+}</pre>
+
+</div>
+<!-- EDIT7 SECTION "demo2.install" [1357-2349] -->
+<h2 class="sectionedit8" id="demo2module1">demo2.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+/**
+ * Implements hook_node_view().
+ */
+function demo2_node_view($node, $view_mode = &#039;full&#039;) {
+  //only when looking at the full version, NOT the teaser
+  if ($view_mode == &#039;full&#039;) {
+
+    // Everytime a node is viewed, increment the node_views count
+    // in the user&#039;s session by one and include the result in the node content
+
+    //make sure there is a record in the session
+    if (empty($_SESSION[&#039;node_views&#039;][$node-&gt;nid])) {
+      $_SESSION[&#039;node_views&#039;][$node-&gt;nid] = 0;
+    }
+    
+    #krumo(&#039;Before: &#039;.$_SESSION[&#039;node_views&#039;][$node-&gt;nid]);
+
+    //add another to the session
+    $_SESSION[&#039;node_views&#039;][$node-&gt;nid]++;
+
+    #krumo(&#039;After: &#039;.$_SESSION[&#039;node_views&#039;][$node-&gt;nid]);
+
+
+    // Set up an array of placeholders to pass to t().
+    $t_args = array(
+      &#039;%num&#039; =&gt; $_SESSION[&#039;node_views&#039;][$node-&gt;nid],
+    );
+
+    $node-&gt;content[&#039;node_views&#039;] = array(
+      &#039;#markup&#039; =&gt; t(&#039;You have viewed this page %num times.&#039;, $t_args),
+      &#039;#weight&#039; =&gt; 10,
+    );
+  }
+}</pre>
+
+</div>
+<!-- EDIT8 SECTION "demo2.module" [2350-] -->

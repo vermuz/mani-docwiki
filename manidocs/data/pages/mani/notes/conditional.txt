@@ -1,0 +1,325 @@
+**Conditional Logic
+**
+
+__IF__
+
+<code>
+        if <test01> :
+            <statement_block1>
+        elif <test02>
+            <statement_block2>
+        else: #optional
+            <statement_block3> 
+</code>
+
+__SWITCH__
+
+<code>
+#!/usr/bin/python
+'''
+The first unassigned string in a module is the
+docstring! What you see above is an "exec/hack,"
+that enables if1.py instead of python if1.py in *NIX
+'''
+num = input("Enter an integer: ")
+num = int(num)
+if num < 0:
+    print("The absolute value of", num, "is", -num)
+else:
+    print("The absolute value of", num, "is", num)
+</code>
+
+**Limited Trapping of potential errors
+**
+
+<code>
+#!/usr/bin/python
+
+forms = ['animal', 'mineral', 'vegetable']
+answer = input("Are you an animal, mineral, or vegetable? ")
+
+if answer == forms[0]:
+    print("You are an animal. GRR!")
+elif answer == forms[1]:
+    print("You are a mineral. You must be healthy.")
+elif answer == forms[2]:
+    print("You are a vegetable. Do you do anything at.")
+else:
+    print("You did not give a valid response.")
+</code>
+
+**Check input - correct it and then apply conditional logic
+**
+<code>
+#!/usr/bin/python
+
+yn = input("Continue? Yes or No: ")
+yn = yn.lower()
+
+if yn[0] == 'y':
+    print("You typed 'Yes.'")
+elif yn[0] == 'n':
+    print("You typed 'No.'")
+elif yn == 'spam':
+    print("What are you doing!")
+else:
+    print("You entered an invalid response.")
+
+</code>
+
+**Boolean Logic**
+
+  * OR  - X OR Y  - IF X is F, return Y otherwise return X
+  * AND - X AND Y - IF X is F, return X otherwise return Y
+  * NOT - NOT X   - IF X is F, return 1 otherwise return 0 
+
+<code>
+>>> a = 50
+>>> b = 25
+>>> c = 'spam'
+>>> a == b
+False
+>>> a > b
+True
+>>> b <=a
+True
+>>> a != b
+True
+>>> d = 50
+>>> a is d
+True
+>>> e = 'eggs'
+>>> c
+'spam'
+>>> c is not e
+True
+</code>
+
+**Using a dictionary
+**
+<code>
+#key value pairs - float values - string keys
+fmenu = {'spam':1.50, 'ham':1.99, 'eggs':0.99}
+corder = input("What will you have today --spam, ham or eggs ")
+if corder == 'spam':
+    print("For the spam, that will be", "$", "%.2f" % fmenu.get('spam'),
+          ", please. ")
+elif corder == 'ham':
+   print("For the ham is", "$", "%.2f" % fmenu.get('spam')),
+else:
+    print("Eggs by default! your total is", "$", "%.2f" % fmenu.get('eggs'))
+</code>
+
+**Use System Call to exit if conditions not met.
+**
+
+<code>
+# run this script from an OS Shell promot
+
+while True: # run risk of infinit loop
+    s = input('Enter a string of at least 4 characters ')
+
+    if s == 'q':
+              break
+    if len(s) < 4:
+              print("Value is too small.")
+
+    print("The string was of sufficient length.")
+    # Quit the program
+    raise SystemExit # try this from from OS command line.
+</code>
+
+**For Loop
+**
+
+<code>
+for var in iterable:
+    # loop body using var
+else:
+    # invoked if no 'break'
+    
+for letter in 'Python':
+	print('Current letter is: ', letter)
+Current letter is:  P
+Current letter is:  y
+Current letter is:  t
+Current letter is:  h
+Current letter is:  o
+Current letter is:  n
+</code>
+
+**Advantages:**
+
+  * Iterable: Strings, lists, tuples, dictionaries
+  * Counting
+  * Can be nested
+  * excellent for scanning files
+
+**For magic on a list:
+**
+<code>
+for veg in ['celery','mushroom','okra']:
+	print('Current vegetable is: ', veg)
+
+Current vegetable is:  celery
+Current vegetable is:  mushroom
+Current vegetable is:  okra
+</code>
+
+**For on Specified range**
+
+<code>
+for i in range (1,5):
+	print(i)
+1
+2
+3
+4
+//**************************
+for i in range (5):
+	print(i)
+0
+1
+2
+3
+4
+</code>
+
+**For on tuples
+**
+<code>
+tuplist = [(1,2),(3,4),(5,6)]
+>>> for (a,b) in tuplist:
+	print(a,b)
+1 2
+3 4
+5 6
+</code>
+
+**Read from a File
+**
+<code>
+f = open('/home/mani/pydev/spam.txt')
+>>> for line in f:
+	print(line)
+
+This is the first line.
+This is the second line.
+This is the third line.
+</code>
+
+**Playing with a dictionary
+**
+<code>
+nm = {'Key 1':'Value 1','Key 2':'Value 2'}
+>>> for k, v in nm.items():
+	print(k,v)
+
+	
+Key 1 Value 1
+Key 2 Value 2
+</code>
+
+**Playing with a List
+**
+<code>
+i = ["abc", 123, (5,6), (4.20)]
+>>> query = [(5,6), 3.14]
+>>> for key in query:
+	if key in i:
+		print(key, "was found")
+	else:
+		print(key, "not found!")
+
+		
+(5, 6) was found
+3.14 not found!
+</code>
+
+**Use range to generate a table
+**
+<code>
+for multiplication in range(4,7): # Run iterations - 4,5,6
+	for i in range(1,11): # Going to print a single multiplication table
+		print(i, "x", multiplication, "=", i * multiplication)
+	print()
+
+1 x 4 = 4
+2 x 4 = 8
+3 x 4 = 12
+4 x 4 = 16
+5 x 4 = 20
+6 x 4 = 24
+7 x 4 = 28
+8 x 4 = 32
+9 x 4 = 36
+10 x 4 = 40
+
+1 x 5 = 5
+2 x 5 = 10
+3 x 5 = 15
+4 x 5 = 20
+5 x 5 = 25
+6 x 5 = 30
+7 x 5 = 35
+8 x 5 = 40
+9 x 5 = 45
+10 x 5 = 50
+
+1 x 6 = 6
+2 x 6 = 12
+3 x 6 = 18
+4 x 6 = 24
+5 x 6 = 30
+6 x 6 = 36
+7 x 6 = 42
+8 x 6 = 48
+9 x 6 = 54
+10 x 6 = 60
+</code>
+
+**While Loop
+**
+
+While true > Infinite loop
+             
+<code>
+while <test>: #must eval to T to continue
+     <statement_block>
+else: #optional
+     <statement_block> #run in absence of 'break'
+</code>
+
+__An infinite loop:
+__
+<code>
+>>> while True:
+	print('20 GOTO 10')
+</code>
+
+<code>
+while x < y:
+	print(x)
+	x += 1
+</code>
+
+<code>
+a = 0
+while a < 13:
+    a += 1
+    if a == 5:
+        continue
+    if a == 10:
+        break
+    print(a)
+    
+1
+2
+3
+4
+6  // 5 does not show up because on a == 5 it will go back to while 
+7
+8
+9
+   // 10 a == 10, its over mate!
+</code>

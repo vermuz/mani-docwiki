@@ -1,0 +1,83 @@
+
+<p>
+<strong>Development Workflow</strong>
+</p>
+<pre class="code">                                                    |---|
+                                                    |DEV|  ==&gt; gitdev (clone repo - check if synched and dev)
+                                           (push)   |---|     (push)
+                                      ====================================     
+                                     ||                                  ||
+                                   &lt;GIT&gt;                          &lt;SERVER-NAME&gt; </pre>
+
+<p>
+<strong>SERVER</strong>
+</p>
+<pre class="code">  - SERVER-apache-conf (Access issues)
+  - SERVER-Drupal-7-conf (SITE-FOLDER&lt;named as URL&gt;/SETTINGS.PHP)
+  - SERVER-Drupal-7-makefiles (SITE FILE&lt;named as SITE URL&gt;)     </pre>
+
+<p>
+<strong>GITDEV</strong>
+</p>
+
+<p>
+<strong>SERVER-Drupal-7-makefiles
+</strong>
+</p>
+<pre class="code">git clone SSH-ADDRESS-REPO
+git status
+git add SITE-NAME.makefile
+git diff 
+git reset HEAD //to unstage
+git diff 
+git add SITE-NAME.makefile
+git status
+git commit -m &quot;SITE-URL : MESSAGE&quot;
+git push origin master
+
+FIND .git
+ ===&gt; config
+git push origin master:master</pre>
+
+<p>
+<strong>PUSH TO LIVE
+</strong>
+</p>
+<pre class="code">Add Live
+
+git remote add live ssh:USER@HOSTNAME/REPO/SERVER-Drupal-7-makefiles
+
+git push live master:master</pre>
+
+<p>
+<strong>SERVER-Drupal-7-conf
+</strong>
+</p>
+<pre class="code">.htaccess
+SITE-FOLDER NAME (URL)/ Settings.php
+git add .htaccess
+git add Settings.php
+git commit -m &quot;SITE-URL : Initial Site Add&quot;
+
+FIND .git
+  ====&gt; config
+git push origin master:master</pre>
+
+<p>
+<strong>PUSH TO LIVE
+</strong>
+</p>
+<pre class="code">Add Live
+git remote add live ssh:USER@HOSTNAME/REPO/SERVER-Drupal-7-conf
+git push live master:master</pre>
+
+<p>
+<strong>SERVER-apache-conf
+</strong>
+</p>
+<pre class="code">cd vhosts.d
+edit SITE-URL.conf
+git diff
+git add SITE-URL.conf
+git commit -m &quot;SITE-URL : MESSAGE&quot;
+git push origin master:master</pre>

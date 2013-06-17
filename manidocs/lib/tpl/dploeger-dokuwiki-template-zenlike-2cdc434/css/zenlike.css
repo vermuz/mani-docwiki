@@ -1,0 +1,372 @@
+/**
+ * CSS adoption of the zenlike template for Dokuwiki
+ */
+
+/* Basics */
+
+html {
+
+    background: #000 url('images/bg1.jpg') !important;
+
+}
+
+body {
+
+    background: none !important;
+
+}
+
+/* ANCHORS */
+
+/* existing wikipage */
+.dokuwiki a.wikilink1 {
+    color: __existing__;
+    background-color: inherit;
+}
+/* not existing wikipage */
+.dokuwiki a.wikilink2 {
+    color: __missing__;
+    background-color: inherit;
+}
+
+a, a:link, a:visited, a.breadcrumbs:visited, a.breadcrumbs:visited {
+    color: #B96D00;
+    text-decoration: underline;
+}
+
+a:hover, a.breadcrumbs:hover {
+    text-decoration: none;
+}
+
+/* HEADINGS */
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: "georgia", "times new roman", serif;
+    color: #000;
+
+}
+
+h1,h2 {
+    display: inline;
+    font-weight: bold;
+    background: no-repeat right;
+}
+
+h1, h1#search {
+    font-size: 1.7em;
+    padding-right: 34px;
+    background-image: url('images/db1.gif');
+}
+
+h2,h3,h4,h5,h6 {
+    font-size: 1.2em;
+    line-height: 2em;
+}
+
+h2 {
+    font-size: 1.2em;
+    padding-right: 28px;
+    background-image: url('images/db2.gif');
+    line-height: 2em;
+}
+
+h3,h4,h5,h6 {
+    font-weight: normal;
+    background-image: none;
+}
+
+h1#search {
+    position: static;
+}
+
+#mediamanager__page h1 {
+    display: block;
+    background-image: none;
+}
+
+#mediamanager__page h2 {
+    display: block;
+    background-image: none;
+}
+
+#headercontent h1 {
+    font-weight: normal;
+    color: #fff;
+    font-size: 2.5em;
+    margin: 0;
+    background-image: none;
+    display: block;
+}
+
+#headercontent h2 {
+    font-weight: normal;
+    color: #aaa;
+    font-size: 1.0em;
+    margin-bottom: 0;
+    background-image: none;
+    display: block;
+}
+
+#media__manager h1, #media__manager h2 {
+    border-bottom: 0;
+}
+
+/* IMAGES */
+
+img {
+    border: 0;
+}
+
+/* FORMS */
+
+/* search input, copied from #search input.text */
+
+div#search input.edit {
+    margin-right: 0.5em;
+    vertical-align: middle;
+    border-top: 1px solid #000;
+    border-right: 0;
+    border-bottom: 1px solid #777;
+    border-left: 0;
+    padding: 0.15em;
+    width: 10.0em;
+}
+
+/* search button, copied from #search input.submit */
+
+div#search input.button {
+    background: #939B00 url('images/buttonbg.gif') repeat-x;
+    border: 1px solid #5F6800;
+    font-weight: bold;
+    padding: 0.25em;
+    font-size: 0.8em;
+    color: #F2F3DE;
+    vertical-align: middle;
+    line-height: normal;
+}
+
+/* Fixes to better fit Dokuwiki style to zenlike */
+
+.dokuwiki div.toolbar button.toolbutton {
+    width: 32px;
+    height: 24px;
+}
+
+input.button {
+    height: 24px;
+}
+
+/* MENUS */
+
+#dokuwiki__pagetools {
+    float: right;
+}
+
+#dokuwiki__pagetools ul {
+    padding: 0;
+    margin: 0;
+}
+
+#dokuwiki__pagetools ul li {
+    position: relative;
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+#dokuwiki__pagetools ul li a {
+    padding: 0.5em 1.0em 0 1.0em;
+    color: #000;
+    text-decoration: none;
+}
+
+#dokuwiki__pagetools ul li a:hover {
+    text-decoration: underline;
+}
+
+#menu #rightmenu {
+    float:right;
+}
+
+#menu #rightmenu ul {
+    position: relative;
+    top: 1.1em;
+}
+
+#menu ul {
+    padding: 0;
+}
+
+#menu ul li {
+    padding: 0;
+    margin: 0;
+    color: #fff;
+}
+
+#menu ul li.menusplit {
+    padding: 0.5em 1.0em 0 1.0em;
+}
+
+/* SPECIAL STYLES */
+
+/* Site, copied from "outer"-style */
+
+#dokuwiki__site {
+    z-index: 2;
+    position: relative;
+    width: 82%;
+    border: 7px solid #fff;
+    background-color: #fff;
+    margin: 0 auto;
+}
+
+#media__manager, #dokuwiki__detail {
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+}
+
+/* Page, copied from "#content" */
+
+.page {
+    padding: 1em 2.0em 0 2.0em;
+}
+
+div.breadcrumbs {
+    padding: 0 2.0em 0 2.0em;
+}
+
+/* Dokuwiki-Footer, copied from #footer */
+
+#dokuwiki__footer {
+    position: relative;
+    height: 2.0em;
+    clear: both;
+    padding-top: 5.0em;
+    background: #fff url('images/border2.gif') repeat-x 0 2.5em;
+    font-size: 0.8em;
+}
+
+#dokuwiki__footer .left, #dokuwiki__footer .right {
+    position: absolute;
+    bottom: 1.2em;
+}
+
+#dokuwiki__footer .left {
+    left: 2.0em;
+    max-width: 50em;
+}
+
+#dokuwiki__footer .right {
+    right: 2.0em;
+}
+
+/* TOC, copied from "box"-style */
+
+.dokuwiki div.toc, /* old, until 2012-01-25 */
+#dw__toc /* new */ {
+    float: right;
+    position: static;
+    background: #FDFCF6 url('images/boxbg.gif') repeat-x;
+    left: -1.5em;
+    top: -1.5em;
+    padding: 1.5em;
+    border-bottom: 1px solid #E1D2BD;
+    margin: 1.0em;
+    width: 16em;
+}
+
+.dokuwiki div.tocheader, /* old, until 2012-01-25 */
+#dw__toc h3 /* new */ {
+    font-size: 1.2em;
+    padding-right: 28px;
+    background: transparent url('images/db2.gif') no-repeat right;
+}
+
+.contentarea {
+    padding-top: 1.3em;
+}
+
+#config__manager td.label span.outkey {
+    background-color: #EEE;
+    font-size: 1.0em;
+    margin-top: -1.5em;
+    margin-left: -0.5em;
+}
+
+#config__manager td.label span.outkey a {
+    text-decoration: none;
+}
+
+/** Sidebar **/
+
+#dokuwiki__aside {
+    width: __sidebar_width__;
+    position: absolute;
+    display: block;
+    margin: 1em 1em;
+}
+
+.with_sidebar {
+    margin-left: __sidebar_width__;
+}
+
+.columns-plugin td {
+    border: 0;
+}
+
+#headerpic {
+    background-color: #000;
+}
+
+#toggle_usertools {
+    cursor: pointer;
+}
+
+#usertools {
+    position: absolute;
+    background: #7F8400 url('images/menubg.gif') repeat-x top left;
+    height: 3.5em;
+    right: 0;
+}
+
+/** List **/
+
+ul {
+
+    list-style: disc inside;
+    padding: 0;
+
+}
+
+/** Images **/
+
+.medialeft {
+
+    margin-right: 1em;
+
+}
+
+.mediaright {
+
+    margin-left: 1em;
+
+}
+
+/** Toolbar **/
+
+#tool__bar {
+
+    height: 30px;
+
+}
+
+/** Pickers **/
+
+.picker {
+
+    z-index: 2;
+
+}

@@ -1,0 +1,52 @@
+**For Loop, String Continuation
+**
+
+<code>
+>>> l = ['apple','tomato','oranges']
+>>> 'grape' in l
+False
+>>> 'apple' in l
+True
+>>> for i in l :
+	print (i, len(i))
+
+	
+apple 5
+tomato 6
+oranges 7
+>>> l2 = ["This is a long string", \
+      "Another one"]
+>>> l2
+['This is a long string', 'Another one']
+>>> s1 = "Super long string \
+continuing, etc."
+>>> s1
+'Super long string continuing, etc.'
+</code>
+
+**Escape Characters
+**
+
+We don`t want to confuse python by using \n,\t in a statement so just to avoid putting Python into misery of deciphering, what you are trying to talk about use escape chars.
+
+\\n \\t
+
+<code>
+>>> ls = '''The quick brown fox jumped over the lazy dog \
+all day long.
+
+More More More More .'''
+>>> ls
+'The quick brown fox jumped over the lazy dog all day long.\n\nMore More More More .'
+>>> print(ls)
+The quick brown fox jumped over the lazy dog all day long.
+
+More More More More .
+>>> print('CBT Nuggets')
+CBT Nuggets
+>>> print('CBT\nNuggets')
+CBT
+Nuggets
+>>> print('C:\\newfiles\\text.txt')
+C:\newfiles\text.txt
+</code>

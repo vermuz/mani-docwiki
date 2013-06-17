@@ -1,0 +1,327 @@
+
+<p>
+<strong>Conditional Logic
+</strong>
+</p>
+
+<p>
+<em class="u">IF</em>
+</p>
+<pre class="code">        if &lt;test01&gt; :
+            &lt;statement_block1&gt;
+        elif &lt;test02&gt;
+            &lt;statement_block2&gt;
+        else: #optional
+            &lt;statement_block3&gt; </pre>
+
+<p>
+<em class="u">SWITCH</em>
+</p>
+<pre class="code">#!/usr/bin/python
+&#039;&#039;&#039;
+The first unassigned string in a module is the
+docstring! What you see above is an &quot;exec/hack,&quot;
+that enables if1.py instead of python if1.py in *NIX
+&#039;&#039;&#039;
+num = input(&quot;Enter an integer: &quot;)
+num = int(num)
+if num &lt; 0:
+    print(&quot;The absolute value of&quot;, num, &quot;is&quot;, -num)
+else:
+    print(&quot;The absolute value of&quot;, num, &quot;is&quot;, num)</pre>
+
+<p>
+<strong>Limited Trapping of potential errors
+</strong>
+</p>
+<pre class="code">#!/usr/bin/python
+
+forms = [&#039;animal&#039;, &#039;mineral&#039;, &#039;vegetable&#039;]
+answer = input(&quot;Are you an animal, mineral, or vegetable? &quot;)
+
+if answer == forms[0]:
+    print(&quot;You are an animal. GRR!&quot;)
+elif answer == forms[1]:
+    print(&quot;You are a mineral. You must be healthy.&quot;)
+elif answer == forms[2]:
+    print(&quot;You are a vegetable. Do you do anything at.&quot;)
+else:
+    print(&quot;You did not give a valid response.&quot;)</pre>
+
+<p>
+<strong>Check input - correct it and then apply conditional logic
+</strong>
+</p>
+<pre class="code">#!/usr/bin/python
+
+yn = input(&quot;Continue? Yes or No: &quot;)
+yn = yn.lower()
+
+if yn[0] == &#039;y&#039;:
+    print(&quot;You typed &#039;Yes.&#039;&quot;)
+elif yn[0] == &#039;n&#039;:
+    print(&quot;You typed &#039;No.&#039;&quot;)
+elif yn == &#039;spam&#039;:
+    print(&quot;What are you doing!&quot;)
+else:
+    print(&quot;You entered an invalid response.&quot;)
+</pre>
+
+<p>
+<strong>Boolean Logic</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> OR  - X OR Y  - IF X is F, return Y otherwise return X</div>
+</li>
+<li class="level1"><div class="li"> AND - X AND Y - IF X is F, return X otherwise return Y</div>
+</li>
+<li class="level1"><div class="li"> NOT - NOT X   - IF X is F, return 1 otherwise return 0 </div>
+</li>
+</ul>
+<pre class="code">&gt;&gt;&gt; a = 50
+&gt;&gt;&gt; b = 25
+&gt;&gt;&gt; c = &#039;spam&#039;
+&gt;&gt;&gt; a == b
+False
+&gt;&gt;&gt; a &gt; b
+True
+&gt;&gt;&gt; b &lt;=a
+True
+&gt;&gt;&gt; a != b
+True
+&gt;&gt;&gt; d = 50
+&gt;&gt;&gt; a is d
+True
+&gt;&gt;&gt; e = &#039;eggs&#039;
+&gt;&gt;&gt; c
+&#039;spam&#039;
+&gt;&gt;&gt; c is not e
+True</pre>
+
+<p>
+<strong>Using a dictionary
+</strong>
+</p>
+<pre class="code">#key value pairs - float values - string keys
+fmenu = {&#039;spam&#039;:1.50, &#039;ham&#039;:1.99, &#039;eggs&#039;:0.99}
+corder = input(&quot;What will you have today --spam, ham or eggs &quot;)
+if corder == &#039;spam&#039;:
+    print(&quot;For the spam, that will be&quot;, &quot;$&quot;, &quot;%.2f&quot; % fmenu.get(&#039;spam&#039;),
+          &quot;, please. &quot;)
+elif corder == &#039;ham&#039;:
+   print(&quot;For the ham is&quot;, &quot;$&quot;, &quot;%.2f&quot; % fmenu.get(&#039;spam&#039;)),
+else:
+    print(&quot;Eggs by default! your total is&quot;, &quot;$&quot;, &quot;%.2f&quot; % fmenu.get(&#039;eggs&#039;))</pre>
+
+<p>
+<strong>Use System Call to exit if conditions not met.
+</strong>
+</p>
+<pre class="code"># run this script from an OS Shell promot
+
+while True: # run risk of infinit loop
+    s = input(&#039;Enter a string of at least 4 characters &#039;)
+
+    if s == &#039;q&#039;:
+              break
+    if len(s) &lt; 4:
+              print(&quot;Value is too small.&quot;)
+
+    print(&quot;The string was of sufficient length.&quot;)
+    # Quit the program
+    raise SystemExit # try this from from OS command line.</pre>
+
+<p>
+<strong>For Loop
+</strong>
+</p>
+<pre class="code">for var in iterable:
+    # loop body using var
+else:
+    # invoked if no &#039;break&#039;
+    
+for letter in &#039;Python&#039;:
+	print(&#039;Current letter is: &#039;, letter)
+Current letter is:  P
+Current letter is:  y
+Current letter is:  t
+Current letter is:  h
+Current letter is:  o
+Current letter is:  n</pre>
+
+<p>
+<strong>Advantages:</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Iterable: Strings, lists, tuples, dictionaries</div>
+</li>
+<li class="level1"><div class="li"> Counting</div>
+</li>
+<li class="level1"><div class="li"> Can be nested</div>
+</li>
+<li class="level1"><div class="li"> excellent for scanning files</div>
+</li>
+</ul>
+
+<p>
+<strong>For magic on a list:
+</strong>
+</p>
+<pre class="code">for veg in [&#039;celery&#039;,&#039;mushroom&#039;,&#039;okra&#039;]:
+	print(&#039;Current vegetable is: &#039;, veg)
+
+Current vegetable is:  celery
+Current vegetable is:  mushroom
+Current vegetable is:  okra</pre>
+
+<p>
+<strong>For on Specified range</strong>
+</p>
+<pre class="code">for i in range (1,5):
+	print(i)
+1
+2
+3
+4
+//**************************
+for i in range (5):
+	print(i)
+0
+1
+2
+3
+4</pre>
+
+<p>
+<strong>For on tuples
+</strong>
+</p>
+<pre class="code">tuplist = [(1,2),(3,4),(5,6)]
+&gt;&gt;&gt; for (a,b) in tuplist:
+	print(a,b)
+1 2
+3 4
+5 6</pre>
+
+<p>
+<strong>Read from a File
+</strong>
+</p>
+<pre class="code">f = open(&#039;/home/mani/pydev/spam.txt&#039;)
+&gt;&gt;&gt; for line in f:
+	print(line)
+
+This is the first line.
+This is the second line.
+This is the third line.</pre>
+
+<p>
+<strong>Playing with a dictionary
+</strong>
+</p>
+<pre class="code">nm = {&#039;Key 1&#039;:&#039;Value 1&#039;,&#039;Key 2&#039;:&#039;Value 2&#039;}
+&gt;&gt;&gt; for k, v in nm.items():
+	print(k,v)
+
+	
+Key 1 Value 1
+Key 2 Value 2</pre>
+
+<p>
+<strong>Playing with a List
+</strong>
+</p>
+<pre class="code">i = [&quot;abc&quot;, 123, (5,6), (4.20)]
+&gt;&gt;&gt; query = [(5,6), 3.14]
+&gt;&gt;&gt; for key in query:
+	if key in i:
+		print(key, &quot;was found&quot;)
+	else:
+		print(key, &quot;not found!&quot;)
+
+		
+(5, 6) was found
+3.14 not found!</pre>
+
+<p>
+<strong>Use range to generate a table
+</strong>
+</p>
+<pre class="code">for multiplication in range(4,7): # Run iterations - 4,5,6
+	for i in range(1,11): # Going to print a single multiplication table
+		print(i, &quot;x&quot;, multiplication, &quot;=&quot;, i * multiplication)
+	print()
+
+1 x 4 = 4
+2 x 4 = 8
+3 x 4 = 12
+4 x 4 = 16
+5 x 4 = 20
+6 x 4 = 24
+7 x 4 = 28
+8 x 4 = 32
+9 x 4 = 36
+10 x 4 = 40
+
+1 x 5 = 5
+2 x 5 = 10
+3 x 5 = 15
+4 x 5 = 20
+5 x 5 = 25
+6 x 5 = 30
+7 x 5 = 35
+8 x 5 = 40
+9 x 5 = 45
+10 x 5 = 50
+
+1 x 6 = 6
+2 x 6 = 12
+3 x 6 = 18
+4 x 6 = 24
+5 x 6 = 30
+6 x 6 = 36
+7 x 6 = 42
+8 x 6 = 48
+9 x 6 = 54
+10 x 6 = 60</pre>
+
+<p>
+<strong>While Loop
+</strong>
+</p>
+
+<p>
+While true &gt; Infinite loop
+</p>
+<pre class="code">while &lt;test&gt;: #must eval to T to continue
+     &lt;statement_block&gt;
+else: #optional
+     &lt;statement_block&gt; #run in absence of &#039;break&#039;</pre>
+
+<p>
+<em class="u">An infinite loop:
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; while True:
+	print(&#039;20 GOTO 10&#039;)</pre>
+<pre class="code">while x &lt; y:
+	print(x)
+	x += 1</pre>
+<pre class="code">a = 0
+while a &lt; 13:
+    a += 1
+    if a == 5:
+        continue
+    if a == 10:
+        break
+    print(a)
+    
+1
+2
+3
+4
+6  // 5 does not show up because on a == 5 it will go back to while 
+7
+8
+9
+   // 10 a == 10, its over mate!</pre>

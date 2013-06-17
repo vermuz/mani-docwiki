@@ -1,0 +1,247 @@
+
+<p>
+<strong>Modular Programming</strong>
+</p>
+
+<p>
+<strong>Module</strong>
+</p>
+
+<p>
+A module is a file containing Python definitions and statements. The file name is the module name with the suffix .py appended. Within a module, the module’s name (as a string) is available as the value of the global variable <em class="u">name</em>. 
+</p>
+
+<p>
+<em>Self contained namespace of names.
+</em>
+</p>
+
+<p>
+<em class="u">Components of modules
+</em>
+</p>
+
+<p>
+Classes <br/>
+
+functions <br/>
+
+global variables
+</p>
+
+<p>
+Import modules are compiled to .pyc (bytecode) files.
+</p>
+
+<p>
+<strong>Importing Modules
+</strong>
+</p>
+
+<p>
+<em class="u">Route 1
+</em>
+</p>
+<pre class="code">import os
+os.chdir()</pre>
+
+<p>
+<em class="u">Route 2
+</em>
+</p>
+<pre class="code">from os import chdir
+chdir(&#039;C:/spam&#039;)</pre>
+<pre class="code">              ------  
+              |t.py|  =&gt; Top level file
+              ------
+                ||
+          ------------------
+          |       |         |
+    module1.py    |   module2.py  =&gt; Modules
+                  |
+          Standard Library</pre>
+<pre class="code">&gt;&gt;&gt; import sys
+&gt;&gt;&gt; dir(sys)
+&gt;&gt;&gt; sys.platform
+&#039;linux2&#039;
+&gt;&gt;&gt; from os import chdir
+&gt;&gt;&gt; chdir(&#039;/home/mani/files&#039;)
+&gt;&gt;&gt; import imp
+&gt;&gt;&gt; help(imp)
+// To get a module running reload
+&gt;&gt;&gt; imp.reload(sys)
+&lt;module &#039;sys&#039; (built-in)&gt;
+Can IMPORT your own custom module as well this way</pre>
+
+<p>
+<strong>The name Trick</strong> (Run internally or as a library)
+</p>
+
+<p>
+The .py file containing our custom code can be used a module but what if you want to use it as a library. You want it cached, you don`t want it to interrupt the control flow of whatever you are doing.
+</p>
+<pre class="code">#squaremath.py
+
+def sq(x)
+    return x * x
+if __name__ == &#039;__main__&#039;:
+   # Unit testing when run from OS
+   print(&#039;Testing; Square of 2 == &#039;, sq(2))
+</pre>
+
+<p>
+<em class="u">DEMO</em>
+</p>
+<pre class="code">#!/usr/bin/python
+if __name__ == &#039;__main__&#039;:
+    print(&#039;This program is being run by itself&#039;)
+else:
+    print(&#039;I am being imported from another module&#039;)</pre>
+
+<p>
+IF we run it as a module output should be print(&#039;This program is being run by itself&#039;) <br/>
+
+IF we run it as a library for import output should be  print(&#039;I am being imported from another module&#039;)
+</p>
+
+<p>
+<em class="u">Execution
+</em>
+</p>
+
+<p>
+<em>From <abbr title="Operating System">OS</abbr>:
+</em>
+</p>
+<pre class="code">mani@mani-ubuntu:~$ cd pydev
+mani@mani-ubuntu:~/pydev$ dir
+customclass.py	if3.py	lang.txt  m9.py     mod9.py	 nugget3.py
+exception2.py	if4.py	m10.py	  mod4.py   modtest2.py  __pycache__
+if1.py		if5.py	m11.py	  mod8.py   mood2.py	 spam.txt
+if2.py		if8.py	m8.py	  mod9a.py  my11.py
+mani@mani-ubuntu:~/pydev$ python modtest2.py 
+This program is being run by itself
+mani@mani-ubuntu:~/pydev$ </pre>
+
+<p>
+<em>Python Shell as an Import Library
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; import modtest2
+I am being imported from another module
+&gt;&gt;&gt; </pre>
+
+<p>
+<strong>Reload Module into Memory
+</strong>
+</p>
+<pre class="code">&gt;&gt;&gt; import imp
+&gt;&gt;&gt; imp.reload(modtest2)
+I am being imported from another module
+&lt;module &#039;modtest2&#039; from &#039;/home/mani/pydev/modtest2.py&#039;&gt;</pre>
+<pre class="code">#!/usr/bin/python
+
+&#039;&#039;&#039;
+Name: modtest3.py
+Author: Mani
+Purpose: Test out module imports
+&#039;&#039;&#039;
+
+# We don`t want this code to run until we need it to run
+
+# Function declaration
+def square(x):
+    #returns square of given integer
+    return x * x
+
+# Name hack
+# From an OS environment it will show Testing and run the function
+if __name__ == &#039;__main__&#039;:
+    print(&#039;Testing: square of 2 == &#039;, square(2))
+
+***********   
+RUN in OS
+***********
+
+mani@mani-ubuntu:~/pydev$ python modtest3.py
+(&#039;Testing: square of 2 == &#039;, 4)
+
+********************
+RUN in Python Shell
+********************
+
+&gt;&gt;&gt; import modtest3
+&gt;&gt;&gt; help(modtest3)
+Help on module modtest3:
+
+NAME
+    modtest3
+
+DESCRIPTION
+    Name: modtest3.py
+    Author: Mani
+    Purpose: Test out module imports
+
+FUNCTIONS
+    square(x)
+        # Function declaration
+
+FILE
+    /home/mani/pydev/modtest3.py
+
+
+&gt;&gt;&gt; modtest3.square(10)
+100</pre>
+
+<p>
+<strong>Module Search Path
+</strong>
+</p>
+
+<p>
+PythonPath
+SystemPath environment variables
+</p>
+
+<p>
+How does Python really find our modules that we are able to import and use.
+</p>
+<pre class="code">import sys
+sys.path
+** Append **
+sys.path.append(&#039;/home/mani/pydev&#039;)
+sys.path
+My code is now accessible to me during //this session//</pre>
+
+<p>
+<strong>Module Packages
+</strong>
+</p>
+<pre class="code">parrot/ (Name of the package)
+   __init__.py (Main bootstrap file)
+   feeding/ (Sub directory)
+       __init__.py (subdir bootstrap)
+       eating.py
+       drinking.py
+   fighting.py
+   flying.py
+   sleeping.py
+   talking.py   </pre>
+
+<p>
+You give the user the parrot folder. User puts this folder in site-packages folder. 
+</p>
+<pre class="code">import parrot (loads init.py)
+import parrot.talking (loads parrot/talking.py)
+from parrot import sleeping
+import parrot.feeding
+from parrot.feeding.eating import eat_cracker</pre>
+
+<p>
+<strong>Module Package Distribution
+</strong>
+</p>
+
+<p>
+distutils (built-in) which is a library that gives you setup.py that users can run. For Windows and MAC uses one can create py2exe and py2app respectively.
+</p>

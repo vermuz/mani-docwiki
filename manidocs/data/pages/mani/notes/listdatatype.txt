@@ -1,0 +1,176 @@
+**Tuple**
+
+  - An ordered set of data 
+  - A single row in a DB table
+  - An immutable list : want to modify it? You will have to create a new one.
+  - A sequence (like strings + lists) -> Python
+  - Read only : used for constant data
+  - We cannot append tuples : insert a new value in that object
+
+uses:
+       - Smaller data samples
+       - Protection of data from overriding
+       - Storing constants (static data)
+       - We can pack more than one data type in tuples as illustrated in the example.
+       - Faster than lists
+       - Write protect data
+       - It can be used as dictionary keys
+
+__atuple = ('perl', 'ruby', 'python', 3.14, 4000)
+__     
+\\
+//Note: Dictionaries are not a sequence.
+//
+
+<code>
+>>> atuple = ("CBT", "Nuggets", "is", 1.0)
+>>> atuple[1:3]
+('Nuggets', 'is')
+>>> atuple[-4:-2]
+('CBT', 'Nuggets')
+########################################
+>>> newtuple = (1, "somewhat", 3.14)
+>>> ntuple2 = newtuple[0:2]
+>>> ntuple2
+(1, 'somewhat')
+########################################
+>>> newtuple.index('somewhat')
+1
+>>> newtuple.count('somewhat')
+1
+#########################################
+>>> multitup = ("time", 12, "tim", 24.34)
+>>> multitup.count("time")
+1
+</code>
+
+
+**List
+**
+
+Mutable sequence data structure
+\\
+__alist = ["Sales, 25, "Admin", 1.0]
+__
+<code>
+>>> foo = ["spam", 335, "eggs", 323, 234]
+>>> type(foo)
+<class 'list'>
+>>> foo2 = foo[0:3]
+>>> foo2
+['spam', 335, 'eggs']
+#########################################
+>>> foo2.remove
+<built-in method remove of list object at 0xb5f2608c>
+>>> foo2.remove(335)
+>>> foo2
+['spam', 'eggs']
+#########################################
+>>> footup = tuple(foo2)
+>>> footup
+('spam', 'eggs')
+>>> type(footup)
+<class 'tuple'>
+>>> foo2
+['spam', 'eggs']
+#########################################
+>>> foo2.append(3.14)
+>>> foo2
+['spam', 'eggs', 3.14]
+#########################################
+>>> foo2.count('eggs')
+1
+#########################################
+>>> foo2.insert(1, 'foo')
+>>> foo2.insert(3, 'bar')
+>>> foo2
+['spam', 'foo', 'eggs', 'bar', 3.14]
+#########################################
+>>> foo.reverse()
+>>> foo
+[234, 323, 'eggs', 335, 'spam']
+#########################################
+>>> foo[0] = str(foo[0])
+>>> foo[1] = str(foo[1])
+>>> foo[3] = str(foo[3])
+>>> type(foo)
+<class 'list'>
+#########################################
+>>> foo.sort()
+>>> foo
+['234', '323', '335', 'eggs', 'spam']
+#########################################
+>>> l1 = ["one", "two", "three", "four"]
+>>> l2 = [1,2,3,4]
+>>> l1.append(12)
+>>> l1
+['one', 'two', 'three', 'four', 12]
+>>> l1.append(l2)
+>>> l1
+['one', 'two', 'three', 'four', 12, [1, 2, 3, 4]]
+</code>
+
+**Dictionaries
+**
+
+  - Mutable unordered(not a sequence) set of key:value pairs
+  - Associative Array
+  - Hash tables
+  - Fast lookup (__keys : each key run through a hash function__)
+  - Slicing not allowed in key:value pairs due to lack of order
+
+__adict = {'one':'uno', 'two';'dos', 'three':'tres'}
+__
+\\
+Tuples as keys (YES) (Elements must be numbers or strings i.e. immutable) \\ 
+Lists as keys (NO) - //mutable// - will need rehashing everytime
+
+<code>
+>>> months = {1:"January", 2:"February", 3:"March"}
+>>> type(months)
+<class 'dict'>
+>>> months[2]
+'February'
+>>> months[4] = "April"
+>>> months
+{1: 'January', 2: 'February', 3: 'March', 4: 'April'}
+#########################################
+>>> months.keys()
+dict_keys([1, 2, 3, 4])
+>>> months.values()
+dict_values(['January', 'February', 'March', 'April'])
+#########################################
+>>> months[4]= "Something completely different"
+>>> months
+{1: 'January', 2: 'February', 3: 'March', 4: 'Something completely different'}
+>>> months[4] = "April"
+>>> months
+{1: 'January', 2: 'February', 3: 'March', 4: 'April'}
+>>> months[3] = "Spam"
+>>> months
+{1: 'January', 2: 'February', 3: 'Spam', 4: 'April'}
+#########################################
+>>> month2list = list(months)
+>>> month2list
+[1, 2, 3, 4]
+>>> month2list2 = list(months.values())
+>>> month2list2
+['January', 'February', 'Spam', 'April']
+>>> tuple = ("some", "data", "here")
+>>> months
+{1: 'January', 2: 'February', 3: 'Spam', 4: 'April'}
+>>> months[5] = tuple
+>>> months
+{1: 'January', 2: 'February', 3: 'Spam', 4: 'April', 5: ('some', 'data', 'here')}
+#########################################
+>>> adict = {"one":"uno","two":"dos","three":"tres"}
+>>> len(adict)
+3
+>>> adict
+{'three': 'tres', 'two': 'dos', 'one': 'uno'}
+#########################################
+>>> adict.pop('three')
+'tres'
+>>> adict
+{'two': 'dos', 'one': 'uno'}
+</code>

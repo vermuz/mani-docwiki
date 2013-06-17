@@ -1,0 +1,90 @@
+**Python Database Access**
+
+DB-Python Connectivity
+Using Sqlite
+
+Disparate Systems need API (Application Programming Interface) for communication \\
+
+  * ODBC
+  * JDBC
+  * ADO
+
+Python DB-API 2.0
+
+Connectivity: \\
+Mysql for Python \\
+cx_Oracle  \\
+adodbapi (MSSQL) \\
+PyGreSQL
+
+__Database Programming__
+
+http://wiki.python.org/moin/DatabaseProgramming/
+
+**SQLite**
+
+<code>
+Less than 300 KB C Library
+
+Not Client/Server system (So if we need MySQL process 
+-- daemon running on our box, to communicate with a similar 
+setup on the target machine - it will be a headache)
+
+ACID RDBMS
+Atomic Consistent Isolated Durable - Core elements of DB
+
+Usage: Firefox, Adobe Air, WebOS, iPhone OS, etc
+Lots of management add-ons
+</code>
+
+__SQLite in Python
+__
+<code>
+pysqlite: project name
+sqlite3 : std.libe module name
+
+Connection obj    -> DB handle
+Cursor obj        -> DB Object handle
+execute () method -> SQL Statements
+</code>
+
+**Database Connectivity
+**
+
+<code>
+>>> import os
+>>> import sqlite3
+>>> os.getcwd()
+'/home/mani/pydev' # This is where DB will be placed
+
+>>> con = sqlite3.connect('hrdb') #Connection String to a database
+>>> type(con)
+<class 'sqlite3.Connection'>
+
+>>> cur = con.cursor()
+
+>>> cur.execute('''CREATE TABLE emp (id integer primary key, fn varchar(20), ln varchar(20))''')
+<sqlite3.Cursor object at 0xb55bb8e0>
+
+>>> cur.execute('''INSERT INTO emp VALUES (1, 'Tim', 'Warner')''')
+<sqlite3.Cursor object at 0xb55bb8e0>
+
+>>> cur.execute('''INSERT INTO emp VALUES (2, 'Zoey', 'Harter')''')
+<sqlite3.Cursor object at 0xb55bb8e0>
+
+>>> con.commit()
+
+>>> cur.execute('SELECT * FROM emp')
+<sqlite3.Cursor object at 0xb55bb8e0>
+
+>>> print(cur.fetchall())
+[(1, 'Tim', 'Warner'), (2, 'Zoey', 'Harter')]
+
+>>> cur.execute('SELECT * from emp WHERE id = 1')
+<sqlite3.Cursor object at 0xb55bb8e0>
+
+>>> print(cur.fetchall())
+[(1, 'Tim', 'Warner')]
+
+>>> con.close()
+</code>

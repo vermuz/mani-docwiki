@@ -1,0 +1,169 @@
+====== Vagrant ======
+
+Vagrant allows developers to build, manage and share virtual development environments. Vagrant usesVirtualBox for its virtual machines and you can use Puppet or Chef as a provisioning tool. The goal ofVagrant is to offer developers the ability to build and work in a consistent virtualized environment without wasting time setting up a local version of Apache, PHP and MySQL.
+
+===== Setup ======
+
+1. First, we have to download a Vagrant box. Run the following command from your terminal.
+
+<code>
+$ vagrant box add base http://files.vagrantup.com/lucid32.box
+</code>
+
+2. Go to the Vagrant project that you just downloaded and create a public directory.
+<code>
+$ cd [vagrant project]
+$ mkdir public
+</code>
+
+<code>
+If you don't create a public directory, you will get the following error:
+There was a problem with the configuration of Vagrant. The error message(s)
+are printed below:
+ 
+vm:
+* Shared folder host path for 'public' doesn't exist: ./public
+3. We have to make one change to the Vagrantfile which gives user www-data access to the Vagrant shared folder. I couldn't install Drupal without giving the user (www-data) access to the public directory (Issue #1364008).
+</code>
+
+The Vagrantfile is used to configure Vagrant on a per-project bases. The file can be located in the root directory of any Vagrant project.
+
+Open up the Vagrantfile and replace:
+
+<code>
+config.vm.share_folder("v-root", "/vagrant", ".")
+</code>
+
+With,
+
+<code>
+config.vm.share_folder("public", "/vagrant/public", "./public", :owner => "www-data", :group => "www-data")
+</code>
+
+4. Finally, add the line below to your host file.
+
+<code>
+33.33.33.10 drupal.vbox.local dev-site.vbox.local
+</code>
+
+5. Now it's time to boot up our virtual machine. Using Terminal go to the Vagrant project and run vagrant up.
+
+<code>
+$ cd [vagrant project]
+$ vagrant up
+</code>
+
+The build process will take between 2 to 5 minutes.
+
+  * Site URL - http://drupal.vbox.local/
+  * PhpMyAdmin URL (If needed) - http://drupal.vbox.local/phpmyadmin/
+====== Configure Default Development Site ======
+
+The Vagrantfile defines two websites, drupal.vbox.local and dev-site.vbox.local. As stated earlier the drupal.vbox.local site has already been setup. However, the dev-site.vbox.local site has not been fully setup. The only configuration that has been created is the Apache vhost, and that's it. To setup the dev-site.vbox.local site, all we need to do is place a copy of Drupal into ./public/dev-site.vbox.local/www and create a database using phpMyAdmin.
+
+You may need to restart Apache, once you have created the dev-site.vbox.local/www folder. All we need to do is SSH into the virtual machine and restart Apache.
+
+1. SSH into the virtual machine by running the vagrant ssh command.
+
+<code>
+$ cd [vagrant project]
+$ vagrant ssh
+2. Restart Apache by running the $ sudo service apache2 restart command.
+</code>
+
+====== Adding New Sites ======
+
+Right now we have two sites setup, a default Drupal and development site. Both of these sites were already defined in the Vagrantfile. As developers, we tend to work with a lot more than two websites at any one time. Let's now setup another site using the d7-dev.vbox.local alias.
+
+**Steps**
+<code>
+1. Add 33.33.33.10 d7-dev.vbox.local to your hosts file.
+</code>
+
+2. Open the Vagrantfile file and add d7-dev.vbox.local to the :localhost_aliases array.
+<code>
+:localhost_aliases => ["drupal.vbox.local", "dev-site.vbox.local", "d7-dev.vbox.local"]
+</code>
+
+3. Restart the virtual machine so that the d7-dev.vbox.local site will get created. First, we must shutdown the virtual machine using vagrant halt and then boot it back up with vagrant up.
+<code>
+$ cd [vagrant project]
+$ vagrant halt
+$ vagrant up
+</code>
+
+4. SSH into the virtual machine (vagrant ssh) and download a copy of Drupal into/vagrant/public/d7-dev.vbox.local/www. You will have to create a d7-dev.vbox.local folder.
+
+5. Once you have downloaded a copy of Drupal, go to http://d7-dev.vbox.local and install the site.
+
+====== Vagrant Commands ======
+
+**Vagrant Up**
+
+This is the main command that boots or builds a virtual machine.
+<code>
+$ cd [vagrant project]
+$ vagrant up
+[default] Importing base box 'base'...
+...
+</code>
+
+**Vagrant Halt**
+
+This command will shutdown the virtual machine and when you boot it back up you won't lose any data.
+<code>
+$ cd [vagrant project]
+$ vagrant halt
+[default] Attempting graceful shutdown of VM...
+</code>
+
+**Vagrant SSH**
+
+This command will simply login you into the virtual machine via SSH.
+<code>
+$ cd [vagrant project]
+$ vagrant ssh
+Linux lucid32 2.6.32-38-generic #83-Ubuntu SMP Wed Jan 4 11:13:04 UTC 2012 i686 GNU/Linux
+Ubuntu 12.04 LTS
+
+Welcome to Ubuntu!
+ * Documentation:  https://help.ubuntu.com/
+New release 'precise' available.
+Run 'do-release-upgrade' to upgrade to it.
+ 
+Welcome to your Vagrant-built virtual machine.
+Last login: Fri Sep 14 07:26:29 2012 from 10.0.2.2
+vagrant@lucid32:~$
+<code>
+
+**Vagrant Destroy**
+
+This command will delete the virtual machine and any file and database stored within the virtual machine. Only use this command if you're certain you want to start from scratch.
+<code>
+$ cd [vagrant project]
+$ vagrant destroy
+Are you sure you want to destroy the 'default' VM? [Y/N]
+</code>
+
+**Vagrant Status**
+
+This command will give you the current state of a virtual machine. Use this command if you want to know if a virtual machine is running or shutdown.
+<code>
+$ cd [vagrant project]
+$ vagrant status
+Current VM states:
+ 
+default                  poweroff
+ 
+The VM is powered off. To restart the VM, simply run `vagrant up`
+If a virtual machine is running, then you should see the message below:
+
+Current VM states:
+ 
+default                  running
+ 
+The VM is running. To stop this VM, you can run `vagrant halt` to
+shut it down forcefully, or you can run `vagrant suspend` to simply
+suspend the virtual machine. In either case, to restart it again,
+simply run `vagrant up`.
+</code>

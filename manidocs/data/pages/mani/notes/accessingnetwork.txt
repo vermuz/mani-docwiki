@@ -1,0 +1,167 @@
+**Accessing the LAN and the Internet**
+
+**Standard Library Modules
+**
+OS Library - Access local and remote file systems\\
+Socket     - TCP/IP socket - deep control of protocols\\
+Email      - SMTP,POP,IMAP\\
+FTPlib     - FTP Client \\
+URLlib     - URL (version 2 is good) (touchy feely interface)\\
+HTTPlib    - lower abstraction than URLlib\\
+SMPTlib\\
+**
+Technologies**
+IronPython : Microsoft.net (.Net front) (LATEST)\\
+Jython     : JAVA (Tight integration with JVM)\\
+Pywin32    : Network COM (COM interface)\\
+
+**Sites**
+Pypi : Package Index\\
+Stack Overflow:  \\
+ActiveState Code:\\
+
+SHARED RESOURCES: WINDOWS concept
+in Linux SAMBA, NFS are your likely routes
+
+__Access Shared folder
+__
+<code>
+import os
+d = os.listdir('REMOTE-HOST/SHARED-FOLDER')
+type(d) -> LIST
+d -> Show Resources in SHARED-FOLDER
+</code>
+
+__Create new file
+__
+<code>
+f = open('REMOTE-HOST/SHARED-FOLDER/FILENAME', 'w')
+f.write('')
+f.close()
+</code>
+
+**BATCH COPY SCRIPT**
+
+<code>
+import os
+import shutil
+path = os.path.join("LOCAL-PATH","FOLDER")
+destination = os.path.join("REMOTE-HOST", "SHARED-FOLDER")
+for r,d,f in os.walk(path):
+      for files in f:
+         if files.endswith(".txt"):
+            try:
+               shutil.copy(os.path.join(r,files))
+             except IOError,e:
+               print e  
+</code>
+
+**PSEUDOCODE**
+
+<code>
+import os, bulk copy module
+create correct source path
+create correct destination path
+loop:
+    os.walk(source path):
+          copy txt files to destination
+</code>
+
+
+**ACCESS WEB PAGES**
+
+urllib.urlopen() -> R/O access \\
+httplib -> client interface (post) \\
+Twisted -> Event driven networking framework \\
+
+**URI, URL, URN
+**
+
+URI can be classified as URLs (locators) or URNs (names) \\
+URN functions like a person`s name. \\
+URL functions like a person`s street address. \\
+
+{{:mani:notes:uri_euler_diagram_no_lone_uris.png|}}
+
+<code>
+>>> wp = urllib.urlopen('http://news.bbc.co.uk/2/hi/business/7915443.stm')
+>>> for line in wp:
+	sys.stdout.write(line)
+>>> print wp.info()
+Server: Apache
+Vary: X-CDN
+Cache-Control: max-age=0
+Content-Type: text/html
+Date: Thu, 21 Feb 2013 19:22:47 GMT
+Expires: Thu, 21 Feb 2013 19:22:47 GMT
+</code>
+
+**REDIRECT URL**
+
+<code>
+>>> redirect = urllib.urlopen('http://microsoft.org')
+>>> redirect.geturl()
+'http://www.microsoft.com/en-us/default.aspx'
+</code>
+
+**RETRIEVE PAGE (minus Images)
+**
+<code>
+>>> urllib.urlretrieve('http://www.python.org', '/home/mani/files/py.html')
+('/home/mani/files/py.html', <httplib.HTTPMessage instance at 0xb57143cc>)
+</code>
+
+
+<code>
+import httplib
+*** CREATE A LIST
+*** PASS IN COMMA SEPARATED LIST OF PAGES YOU WANT TO HIT
+files = ['/index.html','/doc/index.html']
+//PASS in URL AND CONNECTION
+h = httplib.HTTPConnection('www.python.org',80)
+//OPEN
+h.connect()
+RUN ITERATOR
+for f in files:
+       h.request('GET', f)
+       r = h.getresponse()
+       if r.status == httplib.OK:
+       GRAB ENTIRE CONTENT
+          data = r.read()
+          print ':::: %s ::::' % f
+          print data
+          
+h.close()
+</code>
+
+**FTP Client**
+
+Chilkat module
+
+<code>
+>>> ftp = FTP('ftp.redhat.com')
+>>> type(ftp)
+<type 'instance'>
+** Provide login username and password credentials
+ftp.login('user1\\anon', 'pswrd20')
+>>> ftp.login()
+'230 Login successful.'
+>>> d = 'redhat/linux'
+>>> ftp.cwd(d)
+'250 Directory successfully changed.'
+>>> print ftp.dir()
+-rw-r--r--    1 ftp      ftp           131 Dec 20  2005 README
+drwxr-xr-x    8 ftp      ftp          4096 Dec 06 04:16 beta
+drwxr-xr-x    6 ftp      ftp          4096 Jun 14  2007 eal
+drwxrwsr-x   14 ftp      ftp          4096 Jul 25  2011 enterprise
+drwxr-xr-x    2 ftp      ftp          4096 Feb 12  2006 preview
+drwxr-xr-x    2 ftp      ftp          4096 Dec 03  2008 rawhide
+drwxrwsr-x    4 ftp      ftp          4096 Sep 26  2008 updates
+None
+</code>
+
+http://effbot.org/librarybook/ftplib.htm
+
+**Python Lambda Functions**
+
+http://www.secnetix.de/olli/Python/lambda_functions.hawk

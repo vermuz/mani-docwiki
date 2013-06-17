@@ -1,0 +1,147 @@
+
+
+**Strings** 
+
+
+**Length of a String** 
+<code>
+len(s)
+</code>
+
+
+<code>
+n = "nuggets"
+n * 5  (nuggets 5 times)
+</code>
+
+
+**Integer to String Type Casting** 
+<code>
+number = 14.4
+stt = str(number)
+stt -> is a string now
+type(stt)
+</code>
+
+
+**String Slicing** 
+<code>
+                       0   1   2   3  4  5  6  7  8  9  10
+                       ------------------------------------
+                       C   B   T      N  U  G  G  E  T  S
+                       ------------------------------------
+                      -11 -10 -9  -8 -7 -6 -5 -4 -3 -2 -1 
+
+                       O[4] = O[-6] = N
+                       O[-11:-7] => CBT
+                       Starting from 6 and less than 10
+                       O[6:10]   => GGET
+</code>
+
+
+**Slicing Exercise ** 
+<code>
+Python 3.2.3 (default, Oct 19 2012, 20:13:42) 
+[GCC 4.6.3] on linux2
+Type "help", "copyright", "credits" or "license" for more information.>>> corp = 'CBT Nuggets'>>> corp[6:10]
+'gget'>>> corp[0:3]
+'CBT'>>> corp[-10:-7]
+'BT '>>> corp[4:]
+'Nuggets'
+</code>
+
+
+**Object Concepts** 
+<code>
+a = 'abc' <Variable a, abc string object assigned to variable a' 
+
+<String immutable so if you try to change b in abc to d - that will fail.
+
+BUT, we can try to do this:
+
+a = a + 'abc'>>> a --- 'abcabc'
+
+What Python does is: it keeps track of objects and their "ref" counts. 
+If the ref count becomes zero, python uses garbage collection to get rid of it.
+</code>
+
+
+**Capitalize** 
+<code>
+>>> str1 = "This is a sample string">>> str1.capitalize()
+'This is a sample string'
+</code>
+
+
+**Count and Find** 
+<code>
+str2 = "this is a just a sample string">>> str2.count('is')
+2>>> str2.count(' is ')
+1>>> str2.find('amp')
+18
+</code>
+
+
+**Operations** 
+<code>
+>>> str2.upper()
+'THIS IS A JUST A SAMPLE STRING'>>> str2
+'this is a just a sample string'>>> str2.isupper()
+False>>> str2.lower()
+'this is a just a sample string'>>> str2.islower()
+True>>> strcap = str2.upper()>>> strcap
+'THIS IS A JUST A SAMPLE STRING'>>> strcap.isupper()
+True>>> str2.title()
+'This Is A Just A Sample String'
+</code>
+
+
+**Strip** 
+<code>
+>>> str3 = "                               This is a string full of whitespace                               ">>> str3.lstrip()
+'This is a string full of whitespace                               '>>> str3.rstrip()
+'                               This is a string full of whitespace'>>> str3.strip()
+'This is a string full of whitespace'>>> str3.replace
+<built-in method replace of str object at 0xa444340>>>> str3.replace('string', 'test')
+'                               This is a test full of whitespace                               '>>> str3
+'                               This is a string full of whitespace                               '>>> str3.strip()
+'This is a string full of whitespace'
+</code>
+
+
+**Split and Join** 
+<code>
+>>> str4 = '1,2,,4,5'>>> str4.split(',')
+['1', '2', '', '4', '5']
+</code>
+
+
+<code>
+days = ['Monday', 'Tuesday', 'Wednesday']
+</code>
+
+
+<code>
+>>> week2 = ' '.join(days)>>> week2
+'Monday Tuesday Wednesday'
+</code>
+
+
+**String Formatting** 
+
+
+__Python-2 style__ 
+<code>
+>>> sc = '%s has studied %d CBTN products'%('pat',12)>>> sc
+'pat has studied 12 CBTN products'
+
+>>> r = 'the rest'>>> t = 'the weary'>>> csc = 'No %s for %s' % (r,t)>>> csc
+'No the rest for the weary'
+</code>
+
+
+__Python-3 style__ 
+<code>
+>>> sc = '{0} has studied {1} CBTN products'.format('pat',12)>>> sc
+'pat has studied 12 CBTN products'
+</code>

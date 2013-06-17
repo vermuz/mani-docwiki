@@ -1,0 +1,217 @@
+
+<h1 class="sectionedit1" id="form_api">Form API</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Form API" [1-24] -->
+<h2 class="sectionedit2" id="form_funcakeinc">form_fun.cake.inc</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+function form_fun_cake_page() {
+  return drupal_get_form(&#039;form_fun_cake&#039;);
+}
+
+function form_fun_cake(&amp;$form_state) {
+  $form = array();
+
+  $form[&#039;choice&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;select&#039;,
+    &#039;#title&#039; =&gt; t(&#039;Cake or pie?&#039;),
+    &#039;#description&#039; =&gt; t(&#039;Would you like cake or pie?&#039;),
+    &#039;#options&#039; =&gt; array(
+      &#039;cake&#039; =&gt; t(&#039;Cake please&#039;),
+      &#039;pie&#039; =&gt; t(&#039;Pie I guess&#039;),
+    ),
+    &#039;#default_value&#039; =&gt; &#039;cake&#039;,
+    &#039;#required&#039; =&gt; TRUE,
+  );
+
+  $form[&#039;buttons&#039;][&#039;submit&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;submit&#039;,
+    &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+  );
+  $form[&#039;buttons&#039;][&#039;unsure&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;submit&#039;,
+    &#039;#value&#039; =&gt; t(&#039;Equivocate&#039;),
+    &#039;#submit&#039; =&gt; array(&#039;form_fun_cake_unsure&#039;),
+    &#039;#validate&#039; =&gt; array(),
+  );
+
+  return $form;
+}
+
+function form_fun_cake_validate(&amp;$form, &amp;$form_state) {
+  if ($form_state[&#039;values&#039;][&#039;choice&#039;] == &#039;cake&#039;) {
+    form_set_error(&#039;choice&#039;, t(&#039;We are out of cake.&#039;));
+  }
+}
+
+function form_fun_cake_submit(&amp;$form, &amp;$form_state) {
+  dsm($form_state[&#039;values&#039;]);
+  $form_state[&#039;redirect&#039;] = &#039;&#039;;
+}
+
+function form_fun_cake_unsure(&amp;$form, &amp;$form_state) {
+  drupal_set_message(t(&#039;Make up your mind.&#039;), &#039;warning&#039;);
+}
+
+
+</pre>
+
+<p>
+<strong>Notes</strong>
+</p>
+<pre class="code"></pre>
+
+</div>
+<!-- EDIT2 SECTION "form_fun.cake.inc" [25-1248] -->
+<h2 class="sectionedit3" id="form_funinfo">form_fun.info</h2>
+<div class="level2">
+<pre class="code">name = FormAPI Fun
+description = Crazy, crazy form tricks.
+core = 7.x
+package = Lullabot Examples
+dependencies[] = devel</pre>
+
+</div>
+<!-- EDIT3 SECTION "form_fun.info" [1249-1411] -->
+<h2 class="sectionedit4" id="form_funmodule">form_fun.module</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+function form_fun_menu() {
+  $items = array();
+  $items[&#039;form_fun/cake&#039;] = array(
+    &#039;title&#039; =&gt; &#039;Cake or Pie?&#039;,
+    &#039;page callback&#039; =&gt; &#039;form_fun_cake_page&#039;,
+    &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+    &#039;file&#039; =&gt; &#039;form_fun.cake.inc&#039;,
+    &#039;weight&#039; =&gt; 1,
+  );
+
+  $items[&#039;form_fun/tree&#039;] = array(
+    &#039;title&#039; =&gt; &quot;I&#039;m lost!&quot;,
+    &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+    &#039;page arguments&#039; =&gt; array(&#039;form_fun_tree&#039;),
+    &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+    &#039;file&#039; =&gt; &#039;form_fun.tree.inc&#039;,
+    &#039;weight&#039; =&gt; 3,
+  );
+
+  $items[&#039;form_fun/states&#039;] = array(
+    &#039;title&#039; =&gt; &quot;Partners!&quot;,
+    &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+    &#039;page arguments&#039; =&gt; array(&#039;form_fun_states_form&#039;),
+    &#039;access arguments&#039; =&gt; array(&#039;access content&#039;),
+    &#039;file&#039; =&gt; &#039;form_fun.states.inc&#039;,
+    &#039;weight&#039; =&gt; 4,
+  );
+
+  return $items;
+}
+</pre>
+
+</div>
+<!-- EDIT4 SECTION "form_fun.module" [1412-2290] -->
+<h2 class="sectionedit5" id="form_funstatesinc">form_fun.states.inc</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+function form_fun_states_form(&amp;$form) {
+  $form = array();
+
+  $form[&#039;name&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;textfield&#039;,
+    &#039;#title&#039; =&gt; t(&#039;My name&#039;),
+  );
+
+  // Demonstrate the use of the new #states FAPI property. When a user clicks
+  // the status checkbox display an additional set of fields.
+  $form[&#039;status&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+    &#039;#title&#039; =&gt; t(&#039;I have a partner in crime&#039;),
+  );
+
+  // The &#039;Container&#039; element type is handy for controlling multiple elements&#039;
+  // states at once.
+  $form[&#039;partner&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;container&#039;,
+    &#039;#states&#039; =&gt; array(
+      &#039;visible&#039; =&gt; array(
+        &#039;:input[name=&quot;status&quot;]&#039; =&gt; array(&#039;checked&#039; =&gt; TRUE),
+      ),
+    ),
+  );
+  
+  $form[&#039;partner&#039;][&#039;name&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;textfield&#039;,
+    &#039;#title&#039; =&gt; t(&#039;My partner\&#039;s name&#039;),
+  );
+
+  $form[&#039;partner&#039;][&#039;modus_operandi&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;select&#039;,
+    &#039;#title&#039; =&gt; t(&#039;My partner\&#039;s M.O.&#039;),
+    &#039;#options&#039; =&gt; array(
+      1 =&gt; t(&#039;Lock picking&#039;),
+      2 =&gt; t(&#039;Barbed repartee&#039;),
+      3 =&gt; t(&#039;Super-villainy&#039;),
+      4 =&gt; t(&#039;Novelty modules&#039;),
+    ),
+  );
+
+  return $form;
+}
+</pre>
+
+</div>
+<!-- EDIT5 SECTION "form_fun.states.inc" [2291-3440] -->
+<h2 class="sectionedit6" id="form_funtreeinc">form_fun.tree.inc</h2>
+<div class="level2">
+<pre class="code">&lt;?php
+
+function form_fun_tree(&amp;$form_state) {
+  $form = array();
+
+  $form[&#039;#tree&#039;] = TRUE;
+
+  $form[&#039;home&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+    &#039;#title&#039; =&gt; t(&#039;Home address&#039;),
+  );
+  $form[&#039;home&#039;][&#039;street&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;textfield&#039;,
+    &#039;#title&#039; =&gt; t(&#039;Street Address&#039;),
+  );
+  $form[&#039;home&#039;][&#039;city&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;textfield&#039;,
+    &#039;#title&#039; =&gt; t(&#039;City&#039;),
+  );
+
+  $form[&#039;work&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+    &#039;#title&#039; =&gt; t(&#039;Work address&#039;),
+  );
+  $form[&#039;work&#039;][&#039;street&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;textfield&#039;,
+    &#039;#title&#039; =&gt; t(&#039;Street Address&#039;),
+  );
+  $form[&#039;work&#039;][&#039;city&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;textfield&#039;,
+    &#039;#title&#039; =&gt; t(&#039;City&#039;),
+  );
+
+  $form[&#039;submit&#039;] = array(
+    &#039;#type&#039; =&gt; &#039;submit&#039;,
+    &#039;#value&#039; =&gt; t(&#039;Submit&#039;),
+  );
+
+  return $form;
+}
+
+function form_fun_tree_submit(&amp;$form, &amp;$form_state) {
+  dsm($form_state);
+}</pre>
+
+</div>
+<!-- EDIT6 SECTION "form_fun.tree.inc" [3441-] -->

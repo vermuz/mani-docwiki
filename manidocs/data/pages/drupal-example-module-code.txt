@@ -1,0 +1,50 @@
+====== Drupal Examples ======
+
+This project aims to provide high-quality, well-documented API examples for a broad range of Drupal core functionality.
+
+The Examples project contains many modules which hopefully illustrate best practices for implementing various Drupal APIs. These modules can be enabled individually, and will typically add menu items to your site, which should guide you through their features. You can then look through the code to see what they are doing.
+
+Developers can learn how to use a particular API quickly by experimenting with the examples, and adapt them for their own use.
+
+You can also browse through the documentation and code on the Drupal API site, here: Examples Project. You can also browse the file tree on drupalcode.org/project/examples.git.
+
+Note also that these modules demonstrate internals for Drupal development in PHP (and some JavaScript). Not all Drupal users will need these examples. There are many contributed modules which will do the majority of what a Drupal site-builder could need. For instance, you could use the Entity Construction Kit module, rather than spend time with the entity API example.
+
+
+
+  - [[action-example| Action Example]]
+  - [[ajax-example| Ajax Example]]
+  - [[batch-example| Batch Example]]
+  - [[block-example| Block Example]]
+  - [[cache-example| Cache Example]]
+  - [[contextual-links-example| Contextual Links Example]]
+  - [[cron-example| Cron Example]]
+  - [[db-tng-example| Dbting Example]]
+  - [[email-example| Email Example]]
+  - [[entity_example| Entity Example]]
+  - [[field_example| Field Example]]
+  - [[field_permission_example| Field Permission Example]]
+  - [[file_example| File Example]]
+  - [[filter_example| Filter Example]]
+  - [[form_example| Form Example]]
+  - [[image_example| Image Example]]
+  - [[js_example| JS Example]]
+  - [[menu_example| Menu Example]]
+  - [[node_access_example| Node Access Example]]
+  - [[node_example| Node Example]]
+  - [[nodeapi_example| Node API Example]]
+  - [[page_example| Page Example]]
+  - [[pager_example| Pager Example]]
+  - [[queue_example| Queue Example]]
+  - [[rdf_example| RDF Example]]
+  - [[render_example| Render Example]]
+  - [[simpletest_example| Simpletest Example]]
+  - [[tabledrag_example| Table Drag Example]]
+  - [[tablesort_example| Table Sort Example]]
+  - [[theming_example| Theming Example]]
+  - [[token_example| Token Example]]
+  - [[trigger_example| Trigger Example]]
+  - [[vertical_tabs_example| Vertical Tabs Example]]
+  - [[xmlrpc_example| XMLRPC Example]]
+
+{{ :examples.png |}}

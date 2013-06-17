@@ -1,0 +1,238 @@
+
+<p>
+<strong>Drupal Site Development Notes</strong>
+</p>
+
+<p>
+1- ssh to etcdev.hil.unb.ca <br/>
+
+2- cd public_html <br/>
+
+3- Create folder <br/>
+
+4- cp tar <br/>
+
+5- tar -xzvf ().tar <br/>
+
+6- cd to the folder 
+7- Move everything up to the main dir: 
+</p>
+<pre class="code">      mv * ..</pre>
+
+<p>
+7- .htaccess (hidden file) Use ls -ah<br/>
+
+8- .htaccess:
+</p>
+<pre class="code">  RewriteBase /drupal
+  RewriteBase /~server-alias(user)/
+  </pre>
+
+<p>
+9- settings.php:
+</p>
+<pre class="code">        $db_url = &#039;mysqli://username:password@localhost/db_name&#039;;
+        $db_prefix = &#039;sitename&#039;;
+        </pre>
+
+<p>
+10- Clear Cache:
+</p>
+<pre class="code">              drush cc all
+              </pre>
+
+<p>
+11- Find the Db Script <br/>
+
+12- Rebuilding a DB :
+</p>
+<pre class="code">         user@server:~&gt; mysql-u username -p db_name &lt; ~/dbscript.txt</pre>
+
+<p>
+13- Drush registry rebuild:
+</p>
+<pre class="code">                       drush rr
+                      </pre>
+
+<p>
+14- Access site without username:
+</p>
+<pre class="code">                       drush uli 
+                       </pre>
+
+<p>
+15- Download Core:
+</p>
+<pre class="code">               drush dl drupal
+               </pre>
+
+<p>
+16- Symbolic Link:
+</p>
+<pre class="code">              site/all/site_name_folder
+              ln -s /site/all/site_name_folder default
+              Delete default              
+              </pre>
+
+<p>
+17- Drupal Site Install:
+</p>
+<pre class="code">      drush si --db-url = mysql://username:password@host:port/db_name --account-pass = admin password
+      </pre>
+
+<p>
+18- Creating a Database for Use With Drupal:
+Drupal requires not only UTF-8 encoded tables, but additionally a UTF-8 encoded database
+</p>
+<pre class="code">CREATE DATABASE **DBNAME** DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci</pre>
+
+<p>
+Create Symbolic link <br/>
+
+</p>
+<pre class="code">ln -s [TARGET DIRECTORY OR FILE] ./[SHORTCUT]</pre>
+
+<p>
+19- Theme Change for illustrative purposes <br/>
+
+</p>
+
+<p>
+mani@etcdev:~/public_html/freethought/sites/etc.lib.unb.ca.freethought/themes/etcfreethought/templates/overrides&gt; cat node-issue.tpl.php
+</p>
+<pre class="code">&lt;?php 
+	if (user_is_logged_in()) {
+		$issuePdfLink=$node-&gt;field_restrictedissuepdf[0][filepath];
+	} else {
+		$issuePdfLink=$node-&gt;field_fullissuepdf[0][filepath];
+	}
+
+	$issueVolume=$node-&gt;field_issuevolume[0][&#039;value&#039;];
+	$issueNo=$node-&gt;field_issuenumber[0][&#039;value&#039;];
+	$monthValue=$node-&gt;field_issuemonthvalue[0][&#039;value&#039;];
+
+	// Build Breadcrumbs
+	$breadcrumb = array();
+	$breadcrumb[] = l(&#039;Home&#039;, &#039;&lt;front&gt;&#039;);
+	$breadcrumb[] = l(&#039;All Issues&#039;, &#039;issues&#039;);
+	$breadcrumb[] = l(&quot;Volume $issueVolume&quot;, &quot;issues/volume-$issueVolume&quot;);
+	$breadcrumb[] = l(&#039;Issue &#039;.$issueNo.&#039; (&#039;.$monthValue.&#039;)&#039;, &#039;node/&#039;.$node-&gt;nid); // Link to current URL
+
+	// Set Breadcrumbs
+	drupal_set_breadcrumb($breadcrumb);
+
+	$titleTextToUse=&#039;Volume &#039;.$issueVolume.&#039;, Issue &#039;.$issueNo.&#039; (&#039;.$monthValue.&#039;)&#039;;
+	drupal_set_title($titleTextToUse);
+
+	$bodyToUse=$node-&gt;content[&#039;body&#039;][&#039;#value&#039;];
+	$imgSrc=theme(&#039;imagecache&#039;, &#039;large_cover_preview&#039;, $node-&gt;field_issuecover[0][filepath], &#039;&#039;, &#039;&#039;, array(&#039;style&#039;=&gt;&#039;border:2px solid #BBB;&#039;));
+
+	$htmlToOutput=&lt;&lt;&lt;EOT
+		&lt;p&gt;$bodyToUse&lt;/p&gt;
+		&lt;div style=&#039;text-align:center;&#039;&gt;&lt;a href=&#039;/~mani/freethought/$issuePdfLink&#039;&gt;$imgSrc&lt;/a&gt;&lt;/div&gt;
+EOT;
+
+	echo $htmlToOutput;
+?&gt;</pre>
+
+<p>
+<strong>Direct access to admin</strong>
+</p>
+<pre class="code">http://localhost/drupal-7.19/?q=admin</pre>
+
+<p>
+<strong>Drupal Coder
+</strong>
+</p>
+<pre class="code">http://drupal.org/project/coder</pre>
+
+<p>
+<strong>Content indexing using Drupal 7 search <abbr title="Application Programming Interface">API</abbr></strong><br/>
+
+Submitted by skip on Mon, 2012-06-11 20:06<br/>
+
+</p>
+
+<p>
+A few years ago we worked on a Classifieds website, and one of the requirements was an Apache Solr search engine. Now with Drupal 6, it was dark and alone, that place.<br/>
+
+</p>
+
+<p>
+With Drupal 7 there is now the search <abbr title="Application Programming Interface">API</abbr>. Apart from the existing database (that uses the same DB as drupal to index with) and Solr integration there are a few other backend options available too. As the open source community is quite prolific, a few supporting modules to allow fuzzy searching, multi index searching, saved searches, autocompletion, attachment indexing and more have sprung up. See the Search <abbr title="Application Programming Interface">API</abbr> project page for more detail.<br/>
+
+</p>
+
+<p>
+When we started working on the Kamusi project - a dictionary for african languages - early in 2012, we decided to aim lower at first and set up plain old database indexing. The joy being that when the userbase, database of dictionary terms and thus the load increases, we can simply plug in a new server. Like Solr. Joy!<br/>
+
+</p>
+
+<p>
+Here&#039;s how we set up the database indexing <br/>
+
+</p>
+
+<p>
+Download and Install the Search <abbr title="Application Programming Interface">API</abbr> module. It requires the Entity <abbr title="Application Programming Interface">API</abbr> module as well as Views to build your search results with - That&#039;s right, no more hacking the Search results page to get pretty! To be able to use your database as an index, also download and install Database search.<br/>
+
+</p>
+
+<p>
+Enable the Search <abbr title="Application Programming Interface">API</abbr>, Database Search and Search views modules.<br/>
+
+</p>
+
+<p>
+Go to admin/config/search/search_api. This is where your search servers and indexes are listed. The servers dictate where and how indexes reside, while indexes are the where the actual search data reside. We decided to create two indexes: one for word definition, and another for translation. We keep seperate nodes for each translation of a word, as Drupal multi-language is still a bit of a battlefield.<br/>
+
+</p>
+
+<p>
+Click “Add server”. Enter a name for your server (“Default database” is as good as any, I guess). Select “Database service” as the Service class and click “Create server”.<br/>
+
+</p>
+
+<p>
+Go back to admin/config/search/search_api and click “Add index”. Enter the name of the index (Eg. “Definition index”) and select the entity type you would like to index. Node is generally a good bet. Select the server we&#039;ve created in the previous step, and leave the rest as is. If you have a large dataset, only enable “Index items immediately” after you&#039;ve got your first set of data manually indexed. Set the chron batch size, careful not to make it too big and crash your cron runs (about 1000). Rather leave it at 50, for now. Click “Create index”. <br/>
+
+</p>
+
+<p>
+Select the fields you would like to index. You can index other details of a field by using the “Add related fields” fieldset below the form, particularly useful if you are using relations, or node references. Click “Save”. <br/>
+
+</p>
+
+<p>
+Index your existing data by running cron (in our case, a LOT), or on admin/config/search/search_api click edit&gt;status and clicking “Index now” a few times (in our case, a LOT). Edit your index and enable “Index items immediately”. <br/>
+
+</p>
+
+<p>
+Go to admin/structure/views/add and create your search view (You know the drill) by selecting your index in the “Show” dropdown. <br/>
+
+</p>
+
+<p>
+This view will now show everything that is in your index. Add filter criteria to the view and expose some to the user. This this will become your search form. <br/>
+
+</p>
+
+<p>
+Add a page display so that your users may view search results. Edit the exposed form settings and change your submit button text. You may add a search block to your site by setting “Expose form in block” to “yes” under the exposed form settings. <br/>
+
+</p>
+
+<p>
+Joy! Hopefully you will now have a pretty search form that will serve your users with pretty and relevant results!
+</p>
+
+<p>
+<strong>Drupal Generic Login
+</strong>
+</p>
+<pre class="code">The generic login url link assuming your site runs Drupal should be
+
+http://www.your-website-name.com/?q=user/login
+
+</pre>

@@ -1,0 +1,5 @@
+name <span class="sy0">=</span> FormAPI Fun
+description <span class="sy0">=</span> Crazy<span class="sy0">,</span> crazy form tricks<span class="sy0">.</span>
+core <span class="sy0">=</span> <span class="nu0">7</span><span class="sy0">.</span>x
+package <span class="sy0">=</span> Lullabot Examples
+dependencies<span class="br0">&#91;</span><span class="br0">&#93;</span> <span class="sy0">=</span> devel

@@ -1,0 +1,412 @@
+
+<h1 class="sectionedit1" id="queue_example">Queue Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Queue Example" [1-29] -->
+<h2 class="sectionedit2" id="queue_examplecss">queue_example.css</h2>
+<div class="level2">
+<pre class="code">   1 .form-item-string-to-add, div.form-item-claim-time { 
+   2   display: inline;
+   3 }</pre>
+
+</div>
+<!-- EDIT2 SECTION "queue_example.css" [30-164] -->
+<h2 class="sectionedit3" id="queue_exampleinfo">queue_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Queue example
+   2 description = Examples of using the Drupal Queue API.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = queue_example.test</pre>
+
+</div>
+<!-- EDIT3 SECTION "queue_example.info" [165-376] -->
+<h2 class="sectionedit4" id="queue_examplemodule">queue_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Examples demonstrating the Drupal Queue API.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup queue_example Example: Queue
+  10  * @ingroup examples
+  11  * @{
+  12  * Demonstrating the Queue API
+  13  *
+  14  * The Queue API provides a traditional FIFO (first-in-first-out) queue,
+  15  * but also provides the concepts of:
+  16  * - &quot;Creating&quot; a queued item, which means inserting it into a queue.
+  17  * - &quot;Claiming&quot; a queued item, which essentially means requesting the next item
+  18  *   from the queue and holding a lock on that item for a specified period of
+  19  *   time.
+  20  * - &quot;Releasing&quot; an item, which means giving up a claim but leaving the item in
+  21  *   the queue.
+  22  * - &quot;Deleting&quot; an item, which means finally removing it from the queue.
+  23  *
+  24  * This example demonstrates only basic queue functionality, and will use the
+  25  * default queue implementation, which is SystemQueue, managed using
+  26  * persistent database storage.
+  27  *
+  28  * @see system.queue.inc
+  29  *
+  30  * Further resources include the limited @link queue @endlink documentation and
+  31  * @link http://www.ent.iastate.edu/it/Batch_and_Queue.pdf Batch vs Queue Presentation slides by John VanDyk @endlink
+  32  * and @link http://sf2010.drupal.org/conference/sessions/batch-vs-queue-api-smackdown session video. @endlink
+  33  */
+  34 
+  35 /**
+  36  * Implements hook_menu().
+  37  */
+  38 function queue_example_menu() {
+  39   $items = array();
+  40   $items[&#039;queue_example/insert_remove&#039;] = array(
+  41     &#039;title&#039; =&gt; &#039;Queue Example: Insert and remove&#039;,
+  42     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  43     &#039;page arguments&#039; =&gt; array(&#039;queue_example_add_remove_form&#039;),
+  44     &#039;access callback&#039; =&gt; TRUE,
+  45   );
+  46 
+  47   return $items;
+  48 }
+  49 
+  50 /**
+  51  * Provides an interface to add items to the queue, to retrieve (claim)
+  52  * an item from the head of the queue, and to claim and delete. Also
+  53  * allows the user to run cron manually, so that claimed items can be
+  54  * released.
+  55  */
+  56 function queue_example_add_remove_form($form, &amp;$form_state) {
+  57   // Simple counter that makes it possible to put auto-incrementing default
+  58   // string into the string to insert.
+  59   if (empty($form_state[&#039;storage&#039;][&#039;insert_counter&#039;])) {
+  60     $form_state[&#039;storage&#039;][&#039;insert_counter&#039;] = 1;
+  61   }
+  62 
+  63   $queue_name = !empty($form_state[&#039;values&#039;][&#039;queue_name&#039;]) ? $form_state[&#039;values&#039;][&#039;queue_name&#039;] : &#039;queue_example_first_queue&#039;;
+  64   $items = queue_example_retrieve_queue($queue_name);
+  65 
+  66   // Add CSS to make the form a bit denser.
+  67   $form[&#039;#attached&#039;][&#039;css&#039;] = array(drupal_get_path(&#039;module&#039;, &#039;queue_example&#039;) . &#039;/queue_example.css&#039;);
+  68 
+  69   $form[&#039;help&#039;] = array(
+  70     &#039;#type&#039; =&gt; &#039;markup&#039;,
+  71     &#039;#markup&#039; =&gt; &#039;&lt;div&gt;&#039; . t(&#039;This page is an interface on the Drupal queue API. You can add new items to the queue, &quot;claim&quot; one (retrieve the next item and keep a lock on it), and delete one (remove it from the queue). Note that claims are not expired until cron runs, so there is a special button to run cron to perform any necessary expirations.&#039;) . &#039;&lt;/div&gt;&#039;,
+  72   );
+  73 
+  74   $form[&#039;queue_name&#039;] = array(
+  75     &#039;#type&#039; =&gt; &#039;select&#039;,
+  76     &#039;#title&#039; =&gt; t(&#039;Choose queue to examine&#039;),
+  77     &#039;#options&#039; =&gt; drupal_map_assoc(array(&#039;queue_example_first_queue&#039;, &#039;queue_example_second_queue&#039;)),
+  78     &#039;#default_value&#039; =&gt; $queue_name,
+  79   );
+  80   $form[&#039;queue_show&#039;] = array(
+  81     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  82     &#039;#value&#039; =&gt; t(&#039;Show queue&#039;),
+  83     &#039;#submit&#039; =&gt; array(&#039;queue_example_show_queue&#039;),
+  84   );
+  85   $form[&#039;status_fieldset&#039;] = array(
+  86     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  87     &#039;#title&#039; =&gt; t(&#039;Queue status for @name&#039;, array(&#039;@name&#039; =&gt; $queue_name)),
+  88     &#039;#collapsible&#039; =&gt; TRUE,
+  89   );
+  90   $form[&#039;status_fieldset&#039;][&#039;status&#039;] = array(
+  91     &#039;#type&#039; =&gt; &#039;markup&#039;,
+  92     &#039;#markup&#039; =&gt; theme(&#039;queue_items&#039;, array(&#039;items&#039; =&gt; $items)),
+  93   );
+  94   $form[&#039;insert_fieldset&#039;] = array(
+  95     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+  96     &#039;#title&#039; =&gt; t(&#039;Insert into @name&#039;, array(&#039;@name&#039; =&gt; $queue_name)),
+  97   );
+  98   $form[&#039;insert_fieldset&#039;][&#039;string_to_add&#039;] = array(
+  99     &#039;#type&#039; =&gt; &#039;textfield&#039;,
+ 100     &#039;#size&#039; =&gt; 10,
+ 101     &#039;#default_value&#039; =&gt; t(&#039;item @counter&#039;, array(&#039;@counter&#039; =&gt; $form_state[&#039;storage&#039;][&#039;insert_counter&#039;])),
+ 102   );
+ 103   $form[&#039;insert_fieldset&#039;][&#039;add_item&#039;] = array(
+ 104     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 105     &#039;#value&#039; =&gt; t(&#039;Insert into queue&#039;),
+ 106     &#039;#submit&#039; =&gt; array(&#039;queue_example_add_remove_form_insert&#039;),
+ 107   );
+ 108   $form[&#039;claim_fieldset&#039;] = array(
+ 109     &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 110     &#039;#title&#039; =&gt; t(&#039;Claim from queue&#039;),
+ 111     &#039;#collapsible&#039; =&gt; TRUE,
+ 112   );
+ 113 
+ 114   $form[&#039;claim_fieldset&#039;][&#039;claim_time&#039;] = array(
+ 115     &#039;#type&#039; =&gt; &#039;radios&#039;,
+ 116     &#039;#title&#039; =&gt; t(&#039;Claim time, in seconds&#039;),
+ 117     &#039;#options&#039; =&gt; array(0 =&gt; t(&#039;none&#039;), 5 =&gt; t(&#039;5 seconds&#039;), 60 =&gt; t(&#039;60 seconds&#039;)),
+ 118     &#039;#description&#039; =&gt; t(&#039;This time is only valid if cron runs during this time period. You can run cron manually below.&#039;),
+ 119     &#039;#default_value&#039; =&gt; !empty($form_state[&#039;values&#039;][&#039;claim_time&#039;]) ? $form_state[&#039;values&#039;][&#039;claim_time&#039;] : 5,
+ 120   );
+ 121   $form[&#039;claim_fieldset&#039;][&#039;claim_item&#039;] = array(
+ 122     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 123     &#039;#value&#039; =&gt; t(&#039;Claim the next item from the queue&#039;),
+ 124     &#039;#submit&#039; =&gt; array(&#039;queue_example_add_remove_form_claim&#039;),
+ 125   );
+ 126   $form[&#039;claim_fieldset&#039;][&#039;claim_and_delete_item&#039;] = array(
+ 127     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 128     &#039;#value&#039; =&gt; t(&#039;Claim the next item and delete it&#039;),
+ 129     &#039;#submit&#039; =&gt; array(&#039;queue_example_add_remove_form_delete&#039;),
+ 130   );
+ 131   $form[&#039;claim_fieldset&#039;][&#039;run_cron&#039;] = array(
+ 132     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 133     &#039;#value&#039; =&gt; t(&#039;Run cron manually to expire claims&#039;),
+ 134     &#039;#submit&#039; =&gt; array(&#039;queue_example_add_remove_form_run_cron&#039;),
+ 135   );
+ 136   $form[&#039;delete_queue&#039;] = array(
+ 137     &#039;#type&#039; =&gt; &#039;submit&#039;,
+ 138     &#039;#value&#039; =&gt; t(&#039;Delete the queue and items in it&#039;),
+ 139     &#039;#submit&#039; =&gt; array(&#039;queue_example_add_remove_form_clear_queue&#039;),
+ 140   );
+ 141   return $form;
+ 142 }
+ 143 
+ 144 /**
+ 145  * Submit function for the insert-into-queue button.
+ 146  */
+ 147 function queue_example_add_remove_form_insert($form, &amp;$form_state) {
+ 148   // Get a queue (of the default type) called &#039;queue_example_queue&#039;.
+ 149   // If the default queue class is SystemQueue this creates a queue that stores
+ 150   // its items in the database.
+ 151   $queue = DrupalQueue::get($form_state[&#039;values&#039;][&#039;queue_name&#039;]);
+ 152   $queue-&gt;createQueue();  // There is no harm in trying to recreate existing.
+ 153 
+ 154   // Queue the string.
+ 155   $queue-&gt;createItem($form_state[&#039;values&#039;][&#039;string_to_add&#039;]);
+ 156   $count = $queue-&gt;numberOfItems();
+ 157   drupal_set_message(t(&#039;Queued your string (@string_to_add). There are now @count items in the queue.&#039;, array(&#039;@count&#039; =&gt; $count, &#039;@string_to_add&#039; =&gt; $form_state[&#039;values&#039;][&#039;string_to_add&#039;])));
+ 158   $form_state[&#039;rebuild&#039;] = TRUE;  // Allows us to keep information in $form_state.
+ 159   // Unsetting the string_to_add allows us to set the incremented default value
+ 160   // for the user so they don&#039;t have to type anything.
+ 161   unset($form_state[&#039;input&#039;][&#039;string_to_add&#039;]);
+ 162   $form_state[&#039;storage&#039;][&#039;insert_counter&#039;]++;
+ 163 }
+ 164 
+ 165 /**
+ 166  * Submit function for the show-queue button.
+ 167  */
+ 168 function queue_example_show_queue($form, &amp;$form_state) {
+ 169   $queue = DrupalQueue::get($form_state[&#039;values&#039;][&#039;queue_name&#039;]);
+ 170   $queue-&gt;createQueue();  // There is no harm in trying to recreate existing.
+ 171 
+ 172   // Get the number of items.
+ 173   $count = $queue-&gt;numberOfItems();
+ 174 
+ 175   // Update the form item counter.
+ 176   $form_state[&#039;storage&#039;][&#039;insert_counter&#039;] = $count +1;
+ 177 
+ 178   // Unset the string_to_add textbox.
+ 179   unset($form_state[&#039;input&#039;][&#039;string_to_add&#039;]);
+ 180 
+ 181   $form_state[&#039;rebuild&#039;] = TRUE;
+ 182 }
+ 183 
+ 184 /**
+ 185  * Submit function for the &quot;claim&quot; button. Claims (retrieves) an item from
+ 186  * the queue and reports the results.
+ 187  */
+ 188 function queue_example_add_remove_form_claim($form, &amp;$form_state) {
+ 189   $queue = DrupalQueue::get($form_state[&#039;values&#039;][&#039;queue_name&#039;]);
+ 190   $queue-&gt;createQueue();  // There is no harm in trying to recreate existing.
+ 191   $item = $queue-&gt;claimItem($form_state[&#039;values&#039;][&#039;claim_time&#039;]);
+ 192   $count = $queue-&gt;numberOfItems();
+ 193   if (!empty($item)) {
+ 194     drupal_set_message(t(&#039;Claimed item id=@item_id string=@string for @seconds seconds. There are @count items in the queue.&#039;, array(&#039;@count&#039; =&gt; $count, &#039;@item_id&#039; =&gt; $item-&gt;item_id, &#039;@string&#039; =&gt; $item-&gt;data, &#039;@seconds&#039; =&gt; $form_state[&#039;values&#039;][&#039;claim_time&#039;])));
+ 195   }
+ 196   else {
+ 197     drupal_set_message(t(&#039;There were no items in the queue available to claim. There are @count items in the queue.&#039;, array(&#039;@count&#039; =&gt; $count)));
+ 198   }
+ 199   $form_state[&#039;rebuild&#039;] = TRUE;
+ 200 }
+ 201 
+ 202 /**
+ 203  * Submit function for &quot;Claim and delete&quot; button.
+ 204  */
+ 205 function queue_example_add_remove_form_delete($form, &amp;$form_state) {
+ 206   $queue = DrupalQueue::get($form_state[&#039;values&#039;][&#039;queue_name&#039;]);
+ 207   $queue-&gt;createQueue();  // There is no harm in trying to recreate existing.
+ 208   $count = $queue-&gt;numberOfItems();
+ 209   $item = $queue-&gt;claimItem(60);
+ 210   if (!empty($item)) {
+ 211     drupal_set_message(t(&#039;Claimed and deleted item id=@item_id string=@string for @seconds seconds. There are @count items in the queue.&#039;, array(&#039;@count&#039; =&gt; $count, &#039;@item_id&#039; =&gt; $item-&gt;item_id, &#039;@string&#039; =&gt; $item-&gt;data, &#039;@seconds&#039; =&gt; $form_state[&#039;values&#039;][&#039;claim_time&#039;])));
+ 212     $queue-&gt;deleteItem($item);
+ 213     $count = $queue-&gt;numberOfItems();
+ 214     drupal_set_message(t(&#039;There are now @count items in the queue.&#039;, array(&#039;@count&#039; =&gt; $count)));
+ 215   }
+ 216   else {
+ 217     $count = $queue-&gt;numberOfItems();
+ 218     drupal_set_message(t(&#039;There were no items in the queue available to claim/delete. There are currently @count items in the queue.&#039;, array(&#039;@count&#039; =&gt; $count)));
+ 219   }
+ 220   $form_state[&#039;rebuild&#039;] = TRUE;
+ 221 }
+ 222 
+ 223 /**
+ 224  * Submit function for &quot;run cron&quot; button.
+ 225  *
+ 226  * Runs cron (to release expired claims) and reports the results.
+ 227  */
+ 228 function queue_example_add_remove_form_run_cron($form, &amp;$form_state) {
+ 229   drupal_cron_run();
+ 230   $queue = DrupalQueue::get($form_state[&#039;values&#039;][&#039;queue_name&#039;]);
+ 231   $queue-&gt;createQueue();  // There is no harm in trying to recreate existing.
+ 232   $count = $queue-&gt;numberOfItems();
+ 233   drupal_set_message(t(&#039;Ran cron. If claimed items expired, they should be expired now. There are now @count items in the queue&#039;, array(&#039;@count&#039; =&gt; $count)));
+ 234   $form_state[&#039;rebuild&#039;] = TRUE;
+ 235 }
+ 236 
+ 237 /**
+ 238  * Submit handler for clearing/deleting the queue.
+ 239  */
+ 240 function queue_example_add_remove_form_clear_queue($form, &amp;$form_state) {
+ 241   $queue = DrupalQueue::get($form_state[&#039;values&#039;][&#039;queue_name&#039;]);
+ 242   $queue-&gt;deleteQueue();
+ 243   drupal_set_message(t(&#039;Deleted the @queue_name queue and all items in it&#039;, array(&#039;@queue_name&#039; =&gt; $form_state[&#039;values&#039;][&#039;queue_name&#039;])));
+ 244 }
+ 245 
+ 246 /**
+ 247  * Retrieves the queue from the database for display purposes only.
+ 248  *
+ 249  * It is not recommended to access the database directly, and this is only here
+ 250  * so that the user interface can give a good idea of what&#039;s going on in the
+ 251  * queue.
+ 252  *
+ 253  * @param $queue_name
+ 254  *   The name of the queue from which to fetch items.
+ 255  */
+ 256 function queue_example_retrieve_queue($queue_name) {
+ 257   $items = array();
+ 258   $result = db_query(&quot;SELECT item_id, data, expire, created FROM {queue} WHERE name = :name ORDER BY item_id&quot;,
+ 259     array(&#039;:name&#039; =&gt; $queue_name),
+ 260     array(&#039;fetch&#039; =&gt; PDO::FETCH_ASSOC));
+ 261   foreach ($result as $item) {
+ 262     $items[] = $item;
+ 263   }
+ 264   return $items;
+ 265 }
+ 266 
+ 267 /**
+ 268  * Themes the queue display.
+ 269  *
+ 270  * Again, this is not part of the demonstration of the queue API, but is here
+ 271  * just to make the user interface more understandable.
+ 272  *
+ 273  * @param $variables
+ 274  */
+ 275 function theme_queue_items($variables) {
+ 276   $items = $variables[&#039;items&#039;];
+ 277   $rows = array();
+ 278   foreach ($items as &amp;$item) {
+ 279     if ($item[&#039;expire&#039;] &gt; 0) {
+ 280       $item[&#039;expire&#039;] = t(&quot;Claimed: expires %expire&quot;, array(&#039;%expire&#039; =&gt; date(&#039;r&#039;, $item[&#039;expire&#039;])));
+ 281     }
+ 282     else {
+ 283       $item[&#039;expire&#039;] = t(&#039;Unclaimed&#039;);
+ 284     }
+ 285     $item[&#039;created&#039;] = date(&#039;r&#039;, $item[&#039;created&#039;]);
+ 286     $item[&#039;content&#039;] = check_plain(unserialize($item[&#039;data&#039;]));
+ 287     unset($item[&#039;data&#039;]);
+ 288     $rows[] = $item;
+ 289   }
+ 290   if (!empty($rows)) {
+ 291     $header = array(t(&#039;Item ID&#039;), t(&#039;Claimed/Expiration&#039;), t(&#039;Created&#039;), t(&#039;Content/Data&#039;));
+ 292     $output = theme(&#039;table&#039;, array(&#039;header&#039; =&gt; $header, &#039;rows&#039; =&gt; $rows));
+ 293     return $output;
+ 294   }
+ 295   else {
+ 296     return t(&#039;There are no items in the queue.&#039;);
+ 297   }
+ 298 }
+ 299 
+ 300 /**
+ 301  * Implements hook_theme().
+ 302  */
+ 303 function queue_example_theme() {
+ 304   return array(
+ 305     &#039;queue_items&#039; =&gt; array(
+ 306       &#039;variables&#039; =&gt; array(&#039;items&#039; =&gt; NULL),
+ 307     ),
+ 308   );
+ 309 }
+ 310 /**
+ 311  * @} End of &quot;defgroup queue_example&quot;.
+ 312  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "queue_example.module" [377-13867] -->
+<h2 class="sectionedit5" id="queue_exampletest">queue_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Test the queue example module.
+   6  */
+   7 class QueueExampleTestCase extends DrupalWebTestCase {
+   8 
+   9   public static function getInfo() {
+  10     return array(
+  11       &#039;name&#039; =&gt; &#039;Queue Example functionality&#039;,
+  12       &#039;description&#039; =&gt; &#039;Test Queue Example functionality&#039;,
+  13       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  14     );
+  15   }
+  16 
+  17   /**
+  18    * Enable modules and create user with specific permissions.
+  19    */
+  20   function setUp() {
+  21     parent::setUp(&#039;queue_example&#039;);
+  22   }
+  23 
+  24   /**
+  25    * Login user, create an example node, and test blog functionality through the admin and user interfaces.
+  26    */
+  27   function testQueueExampleBasic() {
+  28 
+  29     // Load the queue with 5 items.
+  30     for ($i = 1; $i &lt;= 5; $i++) {
+  31       $edit = array(&#039;queue_name&#039; =&gt; &#039;queue_example_first_queue&#039;, &#039;string_to_add&#039; =&gt; &quot;boogie$i&quot;);
+  32       $this-&gt;drupalPost(&#039;queue_example/insert_remove&#039;, $edit, t(&#039;Insert into queue&#039;));
+  33       $this-&gt;assertText(t(&#039;There are now @number items in the queue&#039;, array(&#039;@number&#039; =&gt; $i)));
+  34     }
+  35     // Claim each of the 5 items with a claim time of 0 seconds.
+  36     for ($i = 1; $i &lt;= 5; $i++) {
+  37       $edit = array(&#039;queue_name&#039; =&gt; &#039;queue_example_first_queue&#039;, &#039;claim_time&#039; =&gt; 0);
+  38       $this-&gt;drupalPost(NULL, $edit, t(&#039;Claim the next item from the queue&#039;));
+  39       $this-&gt;assertPattern(t(&#039;%Claimed item id=.*string=@string for 0 seconds.%&#039;, array(&#039;@string&#039; =&gt; &quot;boogie$i&quot;)));
+  40     }
+  41     $edit = array(&#039;queue_name&#039; =&gt; &#039;queue_example_first_queue&#039;, &#039;claim_time&#039; =&gt; 0);
+  42     $this-&gt;drupalPost(NULL, $edit, t(&#039;Claim the next item from the queue&#039;));
+  43     $this-&gt;assertText(t(&#039;There were no items in the queue available to claim&#039;));
+  44 
+  45     // Sleep a second so we can make sure that the timeouts actually time out.
+  46     // Local systems work fine with this but apparently the PIFR server is so
+  47     /// fast that it needs a sleep before the cron run.
+  48     sleep(1);
+  49 
+  50     // Run cron to release expired items.
+  51     $this-&gt;drupalPost(NULL, array(), t(&#039;Run cron manually to expire claims&#039;));
+  52 
+  53     $queue_items = queue_example_retrieve_queue(&#039;queue_example_first_queue&#039;);
+  54 
+  55     // Claim and delete each of the 5 items which should now be available.
+  56     for ($i = 1; $i &lt;= 5; $i++) {
+  57       $edit = array(&#039;queue_name&#039; =&gt; &#039;queue_example_first_queue&#039;, &#039;claim_time&#039; =&gt; 0);
+  58       $this-&gt;drupalPost(NULL, $edit, t(&#039;Claim the next item and delete it&#039;));
+  59       $this-&gt;assertPattern(t(&#039;%Claimed and deleted item id=.*string=@string for 0 seconds.%&#039;, array(&#039;@string&#039; =&gt; &quot;boogie$i&quot;)));
+  60     }
+  61     // Verify that nothing is left to claim.
+  62     $edit = array(&#039;queue_name&#039; =&gt; &#039;queue_example_first_queue&#039;, &#039;claim_time&#039; =&gt; 0);
+  63     $this-&gt;drupalPost(NULL, $edit, t(&#039;Claim the next item from the queue&#039;));
+  64     $this-&gt;assertText(t(&#039;There were no items in the queue available to claim&#039;));
+  65   }
+  66 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "queue_example.test" [13868-] -->

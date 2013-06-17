@@ -1,0 +1,113 @@
+a:8:{i:0;a:3:{i:0;s:14:"document_start";i:1;a:0:{}i:2;i:0;}i:1;a:3:{i:0;s:6:"p_open";i:1;a:0:{}i:2;i:0;}i:2;a:3:{i:0;s:11:"strong_open";i:1;a:0:{}i:2;i:1;}i:3;a:3:{i:0;s:5:"cdata";i:1;a:1:{i:0;s:24:"GIT Installation Session";}i:2;i:3;}i:4;a:3:{i:0;s:12:"strong_close";i:1;a:0:{}i:2;i:27;}i:5;a:3:{i:0;s:7:"p_close";i:1;a:0:{}i:2;i:29;}i:6;a:3:{i:0;s:4:"code";i:1;a:3:{i:0;s:5565:"
+mani@mani-ubu12x:~$ sudo apt-get install git-core
+[sudo] password for mani: 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  linux-headers-3.5.0-17 linux-headers-3.5.0-17-generic
+Use 'apt-get autoremove' to remove them.
+The following extra packages will be installed:
+  git git-man liberror-perl
+Suggested packages:
+  git-daemon-run git-daemon-sysvinit git-doc git-el git-arch git-cvs git-svn
+  git-email git-gui gitk gitweb
+The following NEW packages will be installed:
+  git git-core git-man liberror-perl
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Need to get 6,704 kB of archives.
+After this operation, 15.4 MB of additional disk space will be used.
+Do you want to continue [Y/n]? y
+Get:1 http://ca.archive.ubuntu.com/ubuntu/ quantal/main liberror-perl all 0.17-1 [23.8 kB]
+Get:2 http://ca.archive.ubuntu.com/ubuntu/ quantal/main git-man all 1:1.7.10.4-1ubuntu1 [634 kB]
+Get:3 http://ca.archive.ubuntu.com/ubuntu/ quantal/main git i386 1:1.7.10.4-1ubuntu1 [6,045 kB]
+Get:4 http://ca.archive.ubuntu.com/ubuntu/ quantal/main git-core all 1:1.7.10.4-1ubuntu1 [1,374 B]
+Fetched 6,704 kB in 27s (248 kB/s)                                             
+Selecting previously unselected package liberror-perl.
+(Reading database ... 181485 files and directories currently installed.)
+Unpacking liberror-perl (from .../liberror-perl_0.17-1_all.deb) ...
+Selecting previously unselected package git-man.
+Unpacking git-man (from .../git-man_1%3a1.7.10.4-1ubuntu1_all.deb) ...
+Selecting previously unselected package git.
+Unpacking git (from .../git_1%3a1.7.10.4-1ubuntu1_i386.deb) ...
+Selecting previously unselected package git-core.
+Unpacking git-core (from .../git-core_1%3a1.7.10.4-1ubuntu1_all.deb) ...
+Processing triggers for man-db ...
+Setting up liberror-perl (0.17-1) ...
+Setting up git-man (1:1.7.10.4-1ubuntu1) ...
+Setting up git (1:1.7.10.4-1ubuntu1) ...
+Setting up git-core (1:1.7.10.4-1ubuntu1) ...
+mani@mani-ubu12x:~$ git config --list
+mani@mani-ubu12x:~$ git config --list
+mani@mani-ubu12x:~$ git config --global user.name "Chaudhry Usman Ali"
+mani@mani-ubu12x:~$ git config --global user.email maniali@gmail.com
+mani@mani-ubu12x:~$ git config --list
+user.name=Chaudhry Usman Ali
+user.email=maniali@gmail.com
+mani@mani-ubu12x:~$ git config user.name
+Chaudhry Usman Ali
+mani@mani-ubu12x:~$ cd ~/.ssh
+mani@mani-ubu12x:~/.ssh$ ls
+known_hosts
+mani@mani-ubu12x:~/.ssh$ ssh -keygen
+Bad escape character 'ygen'.
+mani@mani-ubu12x:~/.ssh$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/mani/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/mani/.ssh/id_rsa.
+Your public key has been saved in /home/mani/.ssh/id_rsa.pub.
+The key fingerprint is:
+1d:f6:7d:9b:2e:5c:ec:73:94:7b:1c:11:75:d2:19:4e mani@mani-ubu12x
+The key's randomart image is:
++--[ RSA 2048]----+
+|              .E*|
+|              o+o|
+|          o    ..|
+|         o o . . |
+|        S . . o +|
+|               *+|
+|            . o=o|
+|             o.++|
+|              ..+|
++-----------------+
+mani@mani-ubu12x:~/.ssh$ ls
+id_rsa  id_rsa.pub  known_hosts
+mani@mani-ubu12x:~/.ssh$ cat id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD7G5sOpAWYkdNo3fjw+TV5Aapp4iktuHoUY6ugEY+6U5kzoT9b6LoQ7GI72QwN28W5Q30O1rf6BuBRm49B3uZMpAuM3gQ/qcz3K7PCSbwH/E5JK5iYyTXXV5FrQ4pvG1I2V5JWnQRb3u1zRJhMH/rg7JaoIRSio/UM2PWXgzp7AUDj3HMgm3fVUBoFcyj9nRZHgdr0J2hiP6ZtCimATXFH0d1l2R21KdGCKddZBfqlfuerfxcPk2A+3mFKPQQPYYJjeR7rCp/MjCS85XbgJeuamR/BagEu+/A692pu6QbgBDr98qMSP1Gc2VLCv45vZt3kXHuS9o6Ztze0PnhMy121 mani@mani-ubu12x
+mani@mani-ubu12x:~/.ssh$ sudo apt-get install xclip
+[sudo] password for mani: 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  linux-headers-3.5.0-17 linux-headers-3.5.0-17-generic
+Use 'apt-get autoremove' to remove them.
+The following NEW packages will be installed:
+  xclip
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 18.5 kB of archives.
+After this operation, 67.6 kB of additional disk space will be used.
+Get:1 http://ca.archive.ubuntu.com/ubuntu/ quantal/universe xclip i386 0.12+svn84-2 [18.5 kB]
+Fetched 18.5 kB in 0s (45.7 kB/s)
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend requires a screen at least 13 lines tall and 31 columns wide.)
+debconf: falling back to frontend: Readline
+Selecting previously unselected package xclip.
+(Reading database ... 182148 files and directories currently installed.)
+Unpacking xclip (from .../xclip_0.12+svn84-2_i386.deb) ...
+Processing triggers for man-db ...
+debconf: unable to initialize frontend: Dialog
+debconf: (Dialog frontend requires a screen at least 13 lines tall and 31 columns wide.)
+debconf: falling back to frontend: Readline
+Setting up xclip (0.12+svn84-2) ...
+mani@mani-ubu12x:~/.ssh$ xclip -sel clip < ~/.ssh/id_rsa.pub
+mani@mani-ubu12x:~/.ssh$ ssh -T git@github.com
+The authenticity of host 'github.com (207.97.227.239)' can't be established.
+RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'github.com,207.97.227.239' (RSA) to the list of known hosts.
+Hi vermuz! You've successfully authenticated, but GitHub does not provide shell access.
+mani@mani-ubu12x:~/.ssh$ 
+";i:1;N;i:2;N;}i:2;i:36;}i:7;a:3:{i:0;s:12:"document_end";i:1;a:0:{}i:2;i:36;}}

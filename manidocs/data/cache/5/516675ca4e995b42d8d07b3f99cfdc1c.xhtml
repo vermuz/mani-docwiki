@@ -1,0 +1,438 @@
+
+<h1 class="sectionedit1" id="batch_example">Batch Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Batch Example" [1-29] -->
+<h2 class="sectionedit2" id="batch_exampleinfo">batch_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Batch example
+   2 description = An example outlining how a module can define batch operations.
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = batch_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "batch_example.info" [30-265] -->
+<h2 class="sectionedit3" id="batch_exampleinstall">batch_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Install, update, and uninstall functions for the batch_example module.
+   6  */
+   7 
+   8 /**
+   9  * Example of batch-driven update function.
+  10  *
+  11  * Because some update functions may require the batch API, the $sandbox
+  12  * provides a place to store state. When $standbox[&#039;#finished&#039;] == TRUE,
+  13  * calls to this update function are completed.
+  14  *
+  15  * The $sandbox param provides a way to store data during multiple invocations.
+  16  * When the $sandbox[&#039;#finished&#039;] == 1, execution is complete.
+  17  *
+  18  * This dummy &#039;update&#039; function changes no state in the system. It simply
+  19  * loads each node.
+  20  *
+  21  * To make this update function run again and again, execute the query
+  22  * &quot;update system set schema_version = 0 where name = &#039;batch_example&#039;;&quot;
+  23  * and then run /update.php.
+  24  *
+  25  * @ingroup batch_example
+  26  */
+  27 function batch_example_update_7100(&amp;$sandbox) {
+  28   $ret = array();
+  29 
+  30   // Use the sandbox at your convenience to store the information needed
+  31   // to track progression between successive calls to the function.
+  32   if (!isset($sandbox[&#039;progress&#039;])) {
+  33     $sandbox[&#039;progress&#039;] = 0;  // The count of nodes visited so far.
+  34     // Total nodes that must be visited.
+  35     $sandbox[&#039;max&#039;] = db_query(&#039;SELECT COUNT(nid) FROM {node}&#039;)-&gt;fetchField();
+  36     // A place to store messages during the run.
+  37     $sandbox[&#039;messages&#039;] = array();
+  38     $sandbox[&#039;current_node&#039;] = -1; // Last node read via the query.
+  39   }
+  40 
+  41   // Process nodes by groups of 10 (arbitrary value).
+  42   // When a group is processed, the batch update engine determines
+  43   // whether it should continue processing in the same request or provide
+  44   // progress feedback to the user and wait for the next request.
+  45   $limit = 10;
+  46 
+  47   // Retrieve the next group of nids.
+  48   $result = db_select(&#039;node&#039;, &#039;n&#039;)
+  49     -&gt;fields(&#039;n&#039;, array(&#039;nid&#039;))
+  50     -&gt;orderBy(&#039;n.nid&#039;, &#039;ASC&#039;)
+  51     -&gt;where(&#039;n.nid &gt; :nid&#039;, array(&#039;:nid&#039; =&gt; $sandbox[&#039;current_node&#039;]))
+  52     -&gt;extend(&#039;PagerDefault&#039;)
+  53     -&gt;limit($limit)
+  54     -&gt;execute();
+  55   foreach ($result as $row) {
+  56     // Here we actually perform a dummy &#039;update&#039; on the current node.
+  57     $node = db_query(&#039;SELECT nid FROM {node} WHERE nid = :nid&#039;, array(&#039;:nid&#039; =&gt; $row-&gt;nid))-&gt;fetchField();
+  58 
+  59     // Update our progress information.
+  60     $sandbox[&#039;progress&#039;]++;
+  61     $sandbox[&#039;current_node&#039;] = $row-&gt;nid;
+  62   }
+  63 
+  64   // Set the &quot;finished&quot; status, to tell batch engine whether this function
+  65   // needs to run again. If you set a float, this will indicate the progress
+  66   // of the batch so the progress bar will update.
+  67   $sandbox[&#039;#finished&#039;] = ($sandbox[&#039;progress&#039;] &gt;= $sandbox[&#039;max&#039;]) ? TRUE : ($sandbox[&#039;progress&#039;] / $sandbox[&#039;max&#039;]);
+  68 
+  69   // Set up a per-run message; Make a copy of $sandbox so we can change it.
+  70   // This is simply a debugging stanza to illustrate how to capture status
+  71   // from each pass through hook_update_N().
+  72   $sandbox_status = $sandbox;
+  73   unset($sandbox_status[&#039;messages&#039;]);  // Don&#039;t want them in the output.
+  74   $sandbox[&#039;messages&#039;][] = t(&#039;$sandbox=&#039;) . print_r($sandbox_status, TRUE);
+  75 
+  76   if ($sandbox[&#039;#finished&#039;]) {
+  77     // hook_update_N() may optionally return a string which will be displayed
+  78     // to the user.
+  79     $final_message = &#039;&lt;ul&gt;&lt;li&gt;&#039; . implode(&#039;&lt;/li&gt;&lt;li&gt;&#039;, $sandbox[&#039;messages&#039;]) . &quot;&lt;/li&gt;&lt;/ul&gt;&quot;;
+  80     return t(&#039;The batch_example demonstration update did what it was supposed to do: @message&#039;, array(&#039;@message&#039; =&gt; $final_message));
+  81   }
+  82 }</pre>
+
+</div>
+<!-- EDIT3 SECTION "batch_example.install" [266-4046] -->
+<h2 class="sectionedit4" id="batch_examplemodule">batch_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Outlines how a module can use the Batch API.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup batch_example Example: Batch API
+  10  * @ingroup examples
+  11  * @{
+  12  * Outlines how a module can use the Batch API.
+  13  *
+  14  * Batches allow heavy processing to be spread out over several page
+  15  * requests, ensuring that the processing does not get interrupted
+  16  * because of a PHP timeout, while allowing the user to receive feedback
+  17  * on the progress of the ongoing operations. It also can prevent out of memory
+  18  * situations.
+  19  *
+  20  * The @link batch_example.install .install file @endlink also shows how the
+  21  * Batch API can be used to handle long-running hook_update_N() functions.
+  22  *
+  23  * Two harmless batches are defined:
+  24  * - batch 1: Load the node with the lowest nid 100 times.
+  25  * - batch 2: Load all nodes, 20 times and uses a progressive op, loading nodes
+  26  *   by groups of 5.
+  27  * @see batch
+  28  */
+  29 
+  30 /**
+  31  * Implements hook_menu().
+  32  */
+  33 function batch_example_menu() {
+  34   $items = array();
+  35   $items[&#039;examples/batch_example&#039;] = array(
+  36     &#039;title&#039; =&gt; &#039;Batch example&#039;,
+  37     &#039;description&#039; =&gt; &#039;Example of Drupal batch processing&#039;,
+  38     &#039;page callback&#039; =&gt; &#039;drupal_get_form&#039;,
+  39     &#039;page arguments&#039; =&gt; array(&#039;batch_example_simple_form&#039;),
+  40     &#039;access callback&#039; =&gt; TRUE,
+  41   );
+  42 
+  43   return $items;
+  44 }
+  45 
+  46 /**
+  47  * Form builder function to allow choice of which batch to run.
+  48  */
+  49 function batch_example_simple_form() {
+  50   $form[&#039;description&#039;] = array(
+  51     &#039;#type&#039; =&gt; &#039;markup&#039;,
+  52     &#039;#markup&#039; =&gt; t(&#039;This example offers two different batches. The first does 1000 identical operations, each completed in on run; the second does 20 operations, but each takes more than one run to operate if there are more than 5 nodes.&#039;),
+  53   );
+  54   $form[&#039;batch&#039;] = array(
+  55     &#039;#type&#039; =&gt; &#039;select&#039;,
+  56     &#039;#title&#039; =&gt; &#039;Choose batch&#039;,
+  57     &#039;#options&#039; =&gt; array(
+  58       &#039;batch_1&#039; =&gt; t(&#039;batch 1 - 1000 operations, each loading the same node&#039;),
+  59       &#039;batch_2&#039; =&gt; t(&#039;batch 2 - 20 operations. each one loads all nodes 5 at a time&#039;),
+  60     ),
+  61   );
+  62   $form[&#039;submit&#039;] = array(
+  63     &#039;#type&#039; =&gt; &#039;submit&#039;,
+  64     &#039;#value&#039; =&gt; &#039;Go&#039;,
+  65   );
+  66 
+  67   // If no nodes, prevent submission.
+  68   // Find out if we have a node to work with. Otherwise it won&#039;t work.
+  69   $nid = batch_example_lowest_nid();
+  70   if (empty($nid)) {
+  71     drupal_set_message(t(&quot;You don&#039;t currently have any nodes, and this example requires a node to work with. As a result, this form is disabled.&quot;));
+  72     $form[&#039;submit&#039;][&#039;#disabled&#039;] = TRUE;
+  73   }
+  74   return $form;
+  75 }
+  76 
+  77 function batch_example_simple_form_submit($form, &amp;$form_state) {
+  78   $function = &#039;batch_example_&#039; . $form_state[&#039;values&#039;][&#039;batch&#039;];
+  79 
+  80   $_SESSION[&#039;http_request_count&#039;] = 0; // reset counter for debug information.
+  81 
+  82   // Execute the function named batch_example_1 or batch_example_2.
+  83   $batch = $function();
+  84   batch_set($batch);
+  85 }
+  86 
+  87 
+  88 /**
+  89  * Batch 1 definition: Load the node with the lowest nid 1000 times.
+  90  * This creates an operations array defining what batch 1 should do, including
+  91  * what it should do when it&#039;s finished. In this case, each operation is the
+  92  * same and by chance even has the same $nid to operate on, but we could have
+  93  * a mix of different types of operations in the operations array.
+  94  */
+  95 function batch_example_batch_1() {
+  96   $nid = batch_example_lowest_nid();
+  97   $num_operations = 1000;
+  98   drupal_set_message(t(&#039;Creating an array of @num operations&#039;, array(&#039;@num&#039; =&gt; $num_operations)));
+  99 
+ 100   $operations = array();
+ 101   // Set up an operations array with 1000 elements, each doing function
+ 102   // batch_example_op_1.
+ 103   // Each operation in the operations array means at least one new HTTP request,
+ 104   // running Drupal from scratch to accomplish the operation. If the operation
+ 105   // returns with $context[&#039;finished&#039;] != TRUE, then it will be called again.
+ 106   // In this example, $context[&#039;finished&#039;] is always TRUE.
+ 107   for ($i = 0; $i&lt;$num_operations; $i++) {
+ 108 
+ 109     // Each operation is an array consisting of
+ 110     // - the function to call
+ 111     // - An array of arguments to that function
+ 112     $operations[] = array(&#039;batch_example_op_1&#039;, array($nid, t(&#039;(Operation @operation)&#039;, array(&#039;@operation&#039; =&gt; $i))));
+ 113   }
+ 114   $batch = array(
+ 115     &#039;operations&#039; =&gt; $operations,
+ 116     &#039;finished&#039; =&gt; &#039;batch_example_finished&#039;,
+ 117   );
+ 118   return $batch;
+ 119 }
+ 120 
+ 121 /**
+ 122  * Batch operation for batch 1: load a node.
+ 123  * This is the function that is called on each operation in batch 1.
+ 124  */
+ 125 function batch_example_op_1($nid, $operation_details, &amp;$context) {
+ 126   $node = node_load($nid, NULL, TRUE);
+ 127 
+ 128   // Store some results for post-processing in the &#039;finished&#039; callback.
+ 129   // The contents of &#039;results&#039; will be available as $results in the
+ 130   // &#039;finished&#039; function (in this example, batch_example_finished()).
+ 131   $context[&#039;results&#039;][] = $node-&gt;nid . &#039; : &#039; . check_plain($node-&gt;title);
+ 132 
+ 133   // Optional message displayed under the progressbar.
+ 134   $context[&#039;message&#039;] = t(&#039;Loading node &quot;@title&quot;&#039;, array(&#039;@title&#039; =&gt; $node-&gt;title)) . &#039; &#039; . $operation_details;
+ 135 
+ 136   _batch_example_update_http_requests();
+ 137 }
+ 138 
+ 139 /**
+ 140  * Batch 2 : Prepare a batch definition that will load all nodes 20 times.
+ 141  */
+ 142 function batch_example_batch_2() {
+ 143   $num_operations = 20;
+ 144 
+ 145   // Give helpful information about how many nodes are being operated on.
+ 146   $node_count = db_query(&#039;SELECT COUNT(DISTINCT nid) FROM {node}&#039;)-&gt;fetchField();
+ 147   drupal_set_message(t(&#039;There are @node_count nodes so each of the @num operations will require @count HTTP requests.&#039;, array(&#039;@node_count&#039; =&gt; $node_count, &#039;@num&#039; =&gt; $num_operations, &#039;@count&#039; =&gt; ceil($node_count / 5))));
+ 148 
+ 149   $operations = array();
+ 150   // 20 operations, each one loads all nodes.
+ 151   for ($i = 0; $i &lt; $num_operations; $i++) {
+ 152     $operations[] = array(&#039;batch_example_op_2&#039;, array(t(&#039;(Operation @operation)&#039;, array(&#039;@operation&#039; =&gt; $i))));
+ 153   }
+ 154   $batch = array(
+ 155     &#039;operations&#039; =&gt; $operations,
+ 156     &#039;finished&#039; =&gt; &#039;batch_example_finished&#039;,
+ 157     // Message displayed while processing the batch. Available placeholders are:
+ 158     // @current, @remaining, @total, @percentage, @estimate and @elapsed.
+ 159     // These placeholders are replaced with actual values in _batch_process(),
+ 160     // using strtr() instead of t(). The values are determined based on the
+ 161     // number of operations in the &#039;operations&#039; array (above), NOT by the number
+ 162     // of nodes that will be processed. In this example, there are 20
+ 163     // operations, so @total will always be 20, even though there are multiple
+ 164     // nodes per operation.
+ 165     // Defaults to t(&#039;Completed @current of @total.&#039;).
+ 166     &#039;title&#039; =&gt; t(&#039;Processing batch 2&#039;),
+ 167     &#039;init_message&#039; =&gt; t(&#039;Batch 2 is starting.&#039;),
+ 168     &#039;progress_message&#039; =&gt; t(&#039;Processed @current out of @total.&#039;),
+ 169     &#039;error_message&#039; =&gt; t(&#039;Batch 2 has encountered an error.&#039;),
+ 170   );
+ 171   return $batch;
+ 172 }
+ 173 
+ 174 /**
+ 175  * Batch operation for batch 2 : load all nodes, 5 by five
+ 176  * After each group of 5 control is returned to the batch API for later
+ 177  * continuation.
+ 178  */
+ 179 function batch_example_op_2($operation_details, &amp;$context) {
+ 180   // Use the $context[&#039;sandbox&#039;] at your convenience to store the
+ 181   // information needed to track progression between successive calls.
+ 182   if (empty($context[&#039;sandbox&#039;])) {
+ 183     $context[&#039;sandbox&#039;] = array();
+ 184     $context[&#039;sandbox&#039;][&#039;progress&#039;] = 0;
+ 185     $context[&#039;sandbox&#039;][&#039;current_node&#039;] = 0;
+ 186 
+ 187     // Save node count for the termination message.
+ 188     $context[&#039;sandbox&#039;][&#039;max&#039;] = db_query(&#039;SELECT COUNT(DISTINCT nid) FROM {node}&#039;)-&gt;fetchField();
+ 189   }
+ 190 
+ 191   // Process nodes by groups of 5 (arbitrary value).
+ 192   // When a group of five is processed, the batch update engine determines
+ 193   // whether it should continue processing in the same request or provide
+ 194   // progress feedback to the user and wait for the next request.
+ 195   // That way even though we&#039;re already processing at the operation level
+ 196   // the operation itself is interruptible.
+ 197   $limit = 5;
+ 198 
+ 199   // Retrieve the next group of nids.
+ 200   $result = db_select(&#039;node&#039;, &#039;n&#039;)
+ 201     -&gt;fields(&#039;n&#039;, array(&#039;nid&#039;))
+ 202     -&gt;orderBy(&#039;n.nid&#039;, &#039;ASC&#039;)
+ 203     -&gt;where(&#039;n.nid &gt; :nid&#039;, array(&#039;:nid&#039; =&gt; $context[&#039;sandbox&#039;][&#039;current_node&#039;]))
+ 204     -&gt;extend(&#039;PagerDefault&#039;)
+ 205     -&gt;limit($limit)
+ 206     -&gt;execute();
+ 207   foreach ($result as $row) {
+ 208     // Here we actually perform our dummy &#039;processing&#039; on the current node.
+ 209     $node = node_load($row-&gt;nid, NULL, TRUE);
+ 210 
+ 211     // Store some results for post-processing in the &#039;finished&#039; callback.
+ 212     // The contents of &#039;results&#039; will be available as $results in the
+ 213     // &#039;finished&#039; function (in this example, batch_example_finished()).
+ 214     $context[&#039;results&#039;][] = $node-&gt;nid . &#039; : &#039; . check_plain($node-&gt;title) . &#039; &#039; . $operation_details;
+ 215 
+ 216     // Update our progress information.
+ 217     $context[&#039;sandbox&#039;][&#039;progress&#039;]++;
+ 218     $context[&#039;sandbox&#039;][&#039;current_node&#039;] = $node-&gt;nid;
+ 219     $context[&#039;message&#039;] = check_plain($node-&gt;title);
+ 220   }
+ 221 
+ 222   // Inform the batch engine that we are not finished,
+ 223   // and provide an estimation of the completion level we reached.
+ 224   if ($context[&#039;sandbox&#039;][&#039;progress&#039;] != $context[&#039;sandbox&#039;][&#039;max&#039;]) {
+ 225     $context[&#039;finished&#039;] = ($context[&#039;sandbox&#039;][&#039;progress&#039;] &gt;= $context[&#039;sandbox&#039;][&#039;max&#039;]);
+ 226   }
+ 227   _batch_example_update_http_requests();
+ 228 }
+ 229 
+ 230 /**
+ 231  * Batch &#039;finished&#039; callback used by both batch 1 and batch 2.
+ 232  */
+ 233 function batch_example_finished($success, $results, $operations) {
+ 234   if ($success) {
+ 235     // Here we could do something meaningful with the results.
+ 236     // We just display the number of nodes we processed...
+ 237     drupal_set_message(t(&#039;@count results processed in @requests HTTP requests.&#039;, array(&#039;@count&#039; =&gt; count($results), &#039;@requests&#039; =&gt; _batch_example_get_http_requests())));
+ 238     drupal_set_message(t(&#039;The final result was &quot;%final&quot;&#039;, array(&#039;%final&#039; =&gt; end($results))));
+ 239   }
+ 240   else {
+ 241     // An error occurred.
+ 242     // $operations contains the operations that remained unprocessed.
+ 243     $error_operation = reset($operations);
+ 244     drupal_set_message(t(&#039;An error occurred while processing @operation with arguments : @args&#039;, array(&#039;@operation&#039; =&gt; $error_operation[0], &#039;@args&#039; =&gt; print_r($error_operation[0], TRUE))));
+ 245   }
+ 246 }
+ 247 
+ 248 /**
+ 249  * Utility function - simply queries and loads the lowest nid.
+ 250  * @return A nid or NULL if there are no nodes.
+ 251  */
+ 252 function batch_example_lowest_nid() {
+ 253   $select = db_select(&#039;node&#039;, &#039;n&#039;)
+ 254   -&gt;fields(&#039;n&#039;, array(&#039;nid&#039;))
+ 255   -&gt;orderBy(&#039;n.nid&#039;, &#039;ASC&#039;)
+ 256   -&gt;extend(&#039;PagerDefault&#039;)
+ 257   -&gt;limit(1);
+ 258   $nid = $select-&gt;execute()-&gt;fetchField();
+ 259   return $nid;
+ 260 }
+ 261 
+ 262 /**
+ 263  * Utility function to count the HTTP requests in a session variable.
+ 264  */
+ 265 function _batch_example_update_http_requests() {
+ 266   $_SESSION[&#039;http_request_count&#039;]++;
+ 267 }
+ 268 
+ 269 function _batch_example_get_http_requests() {
+ 270   return !empty($_SESSION[&#039;http_request_count&#039;]) ? $_SESSION[&#039;http_request_count&#039;] : 0;
+ 271 }
+ 272 /**
+ 273  * @} End of &quot;defgroup batch_example&quot;.
+ 274  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "batch_example.module" [4047-16001] -->
+<h2 class="sectionedit5" id="batch_exampletest">batch_example.test</h2>
+<div class="level2">
+<pre class="code">  1 &lt;?php
+   2 /**
+   3  * @file
+   4  * Test case for Testing the batch example module.
+   5  *
+   6  * This file contains the test cases to check if module is performing as
+   7  * expected.
+   8  */
+   9 class BatchExampleTestCase extends DrupalWebTestCase {
+  10   protected $web_user;
+  11 
+  12   public static function getInfo() {
+  13     return array(
+  14       &#039;name&#039; =&gt; &#039;Batch example functionality&#039;,
+  15       &#039;description&#039; =&gt; &#039;Verify the defined batches.&#039;,
+  16       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  17     );
+  18   }
+  19 
+  20   /**
+  21    * Enable modules and create user with specific permissions.
+  22    */
+  23   function setUp() {
+  24     parent::setUp(&#039;batch_example&#039;);
+  25     // Create user.
+  26     $this-&gt;web_user = $this-&gt;drupalCreateUser();
+  27   }
+  28 
+  29   /**
+  30    * Login user, create 30 nodes and test both batch examples.
+  31    */
+  32   function testBatchExampleBasic() {
+  33     // Login the admin user.
+  34     $this-&gt;drupalLogin($this-&gt;web_user);
+  35 
+  36     // Create 30 nodes
+  37     for ($count = 0; $count &lt; 30; $count++) {
+  38       $node = $this-&gt;drupalCreateNode();
+  39     }
+  40 
+  41     // Launch Batch 1
+  42     $result = $this-&gt;drupalPost(&#039;examples/batch_example&#039;, array(&#039;batch&#039; =&gt; &#039;batch_1&#039;), t(&#039;Go&#039;));
+  43     // Check that 1000 operations were performed.
+  44     $this-&gt;assertText(&#039;1000 results processed&#039;);
+  45 
+  46     // Launch Batch 2
+  47     $result = $this-&gt;drupalPost(&#039;examples/batch_example&#039;, array(&#039;batch&#039; =&gt; &#039;batch_2&#039;), t(&#039;Go&#039;));
+  48     // Check that 600 operations were performed.
+  49     $this-&gt;assertText(&#039;600 results processed&#039;);
+  50   }
+  51 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "batch_example.test" [16002-] -->

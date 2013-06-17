@@ -1,0 +1,335 @@
+
+<p>
+<strong>Script  to play with list data types</strong>
+</p>
+<pre class="code"># String
+value1 = input(&quot;Enter str element 1/3: &quot;)
+# Integer
+value2 = int(input(&quot;Enter int element 2/3: &quot;))
+# Float
+value3 = float(input(&quot;Enter float element 3/3: &quot;))
+
+lst = [value1,value2,value3]
+tpl = (value1,value2,value3)
+dict = {&quot;First element: &quot;: value1, &quot;Second element: &quot;:value2,
+        &quot;Third element: &quot;: value3}
+
+print(&quot;\n&quot;)
+print(&quot;Here is your new list: &quot;, lst)
+print(&quot;Here is your new tuple: &quot;, tpl)
+print(&quot;Here is your new dictionary: &quot;, dict)
+print(&quot;\n&quot;)
+value4 = input(&quot;Add a new str list element: &quot;)
+lst.append(value4)
+print(&quot;Here is your new list: &quot;, lst)</pre>
+
+<p>
+<strong>Execution</strong>
+</p>
+<pre class="code">Enter str element 1/3: spam
+Enter int element 2/3: 4000
+Enter float element 3/3: 3.232
+
+Here is your new list:  [&#039;spam&#039;, 4000, 3.232]
+Here is your new tuple:  (&#039;spam&#039;, 4000, 3.232)
+Here is your new dictionary:  {&#039;Second element: &#039;: 4000, &#039;Third element: &#039;: 3.232, &#039;First element: &#039;: &#039;spam&#039;}
+
+Add a new str list element: eggs
+Here is your new list:  [&#039;spam&#039;, 4000, 3.232, &#039;eggs&#039;]</pre>
+
+<p>
+<strong>Clear the Screen Script</strong>
+</p>
+<pre class="code">&#039;&#039;&#039;
+Module name: wiper.py
+Author: Mani
+Contact: sss@sss
+Desc: The w() function clears the interpreter screen
+&#039;&#039;&#039;
+def w() :
+    print (&quot;\n&quot; * 100)
+
+*****************************************************</pre>
+<pre class="code">dir(wiper)
+[&#039;__builtins__&#039;, &#039;__cached__&#039;, &#039;__doc__&#039;, &#039;__file__&#039;, &#039;__name__&#039;, &#039;__package__&#039;, &#039;w&#039;]
+help(wiper)
+Help on module wiper:
+
+NAME
+wiper
+DESCRIPTION
+
+Module name: wiper.py
+Author: Mani
+Contact: sss@sss
+Desc: The w() function clears the interpreter screen
+FUNCTIONS
+w()
+FILE
+/home/mani/Downloads/wiper.py
+print(wiper._doc_)
+Traceback (most recent call last):
+File &quot;&lt;string&gt;&quot;, line 1, in &lt;fragment&gt;
+builtins.AttributeError: &#039;module&#039; object has no attribute &#039;_doc_&#039;
+print(wiper.__doc__)
+Module name: wiper.py
+Author: Mani
+Contact: sss@sss
+Desc: The w() function clears the interpreter screen</pre>
+
+<p>
+<strong>Generate multiplication table for an input range</strong>
+</p>
+<pre class="code"># input would have returned string so we embed it into an int
+lb = int(input(&quot;Enter lower bound: &quot;))
+ub = int(input(&quot;Enter upper bound: &quot;))
+
+print(&quot;\nYou chose {0} as your lower bound, \
+and {1} as your upper bound.&quot;.format(lb,ub))
+
+verif = input(&quot;\nProceed? (y/n): &quot;)
+response = verif.lower()
+
+if response == &#039;y&#039;:
+    # iterate from lower bound to the upper bound + 1
+    # for loop not inclusive of the upper bound of the range
+    # hence upper bound + 1 - want to iterate to whatever the
+    # the user inputs
+    for multiplier in range (lb, (ub+1)):
+        for i in range (1,11):
+            print(i, &quot;x&quot;, multiplier, &quot;=&quot;, i*multiplier)
+
+else:
+    print(&quot;We are done!&quot;)</pre>
+
+<p>
+<code></code><strong>Execution:</strong>
+</p>
+<pre class="code">mani@mani-ubu:~/Downloads$ python3 kinput.py 
+Enter lower bound: 2
+Enter upper bound: 4
+
+You chose 2 as your lower bound, and 4 as your upper bound.
+
+Proceed? (y/n): y
+1 x 2 = 2
+2 x 2 = 4
+3 x 2 = 6
+4 x 2 = 8
+5 x 2 = 10
+6 x 2 = 12
+7 x 2 = 14
+8 x 2 = 16
+9 x 2 = 18
+10 x 2 = 20
+1 x 3 = 3
+2 x 3 = 6
+3 x 3 = 9
+4 x 3 = 12
+5 x 3 = 15
+6 x 3 = 18
+7 x 3 = 21
+8 x 3 = 24
+9 x 3 = 27
+10 x 3 = 30
+1 x 4 = 4
+2 x 4 = 8
+3 x 4 = 12
+4 x 4 = 16
+5 x 4 = 20
+6 x 4 = 24
+7 x 4 = 28
+8 x 4 = 32
+9 x 4 = 36
+10 x 4 = 40</pre>
+
+<p>
+<strong>Get Environment Variables
+</strong>
+</p>
+
+<p>
+Dump of all the environment variables for the logged user.
+</p>
+<pre class="code">&gt;&gt;&gt; import os
+&gt;&gt;&gt; for k, v in os.environ.items(): #-&gt; iterate through all the environment variables 
+	print(&#039;%s = %s&#039; % (k,v)) #-&gt; print the variables one for one using string formatting
+
+	
+XAUTHORITY = /var/run/gdm/auth-for-mani-lkUcLi/database
+GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+GJS_DEBUG_OUTPUT = stderr
+LESSOPEN = | /usr/bin/lesspipe %s
+LOGNAME = mani
+USER = mani
+GNOME_KEYRING_CONTROL = /tmp/keyring-0brMGJ
+PATH = /usr/local/bin:/usr/bin:/bin:/usr/games
+WINDOWPATH = 7
+SSH_AGENT_PID = 2067
+LANG = en_CA.UTF-8
+TERM = xterm
+SHELL = /bin/bash
+XDG_SESSION_COOKIE = fad4bcfdf20df03c400858e60000000b-1360588278.549257-1007191275
+LANGUAGE = en_CA:en
+SESSION_MANAGER = local/mani-ubuntu:@/tmp/.ICE-unix/2019,unix/mani-ubuntu:/tmp/.ICE-unix/2019
+SHLVL = 1
+MANDATORY_PATH = /usr/share/gconf/cinnamon.mandatory.path
+DISPLAY = :0
+WINDOWID = 52431704
+GPG_AGENT_INFO = /tmp/keyring-0brMGJ/gpg:0:1
+HOME = /home/mani
+USERNAME = mani
+SSH_AUTH_SOCK = /tmp/keyring-0brMGJ/ssh
+GDMSESSION = cinnamon
+LESSCLOSE = /usr/bin/lesspipe %s %s
+XDG_CURRENT_DESKTOP = GNOME
+DBUS_SESSION_BUS_ADDRESS = unix:abstract=/tmp/dbus-26RkM6bhGt,guid=dcbfa856ea4c23ff5ec5340b00000039
+_ = /usr/bin/idle3
+DEFAULTS_PATH = /usr/share/gconf/cinnamon.default.path
+DESKTOP_SESSION = cinnamon
+XDG_CONFIG_DIRS = /etc/xdg/xdg-cinnamon:/etc/xdg
+GNOME_KEYRING_PID = 2002
+UBUNTU_MENUPROXY = libappmenu.so
+OLDPWD = /home/mani
+GDM_LANG = en_CA
+XDG_DATA_DIRS = /usr/share/cinnamon:/usr/share/gnome:/usr/local/share/:/usr/share/
+PWD = /home/mani/pydev
+COLORTERM = gnome-terminal
+LS_COLORS = rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:
+GJS_DEBUG_TOPICS = JS ERROR;JS LOG</pre>
+
+<p>
+<strong>Random Number Generator - Guess a Number
+</strong>
+</p>
+<pre class="code">&#039;&#039;&#039;
+Title: Guess the Numbers game
+Adapted from: inventwithpython.com
+Purpose: Demo a live Python program
+&#039;&#039;&#039;
+
+#random module
+import random
+guessesTaken = 0
+print(&#039;Hello! What is your name?&#039;)
+myName = input()
+# Generate a sudo random number
+number = random.randint(1, 20)
+print(&#039;Well, &#039; + myName + &#039;, I am thinking of a number between 1 and 20&#039;)
+while guessesTaken &lt; 6:
+      print(&#039;Take a guess.&#039;)
+      guess = input()
+      guess = int(guess)
+      guessesTaken = guessesTaken + 1
+
+      if guess &lt; number:
+          print(&#039;Your guess is too low.&#039;)
+      if guess &gt; number:
+          print(&#039;Your guess is too high.&#039;)
+      if guess == number:
+          break
+
+if guess == number:
+    guessesTaken = str(guessesTaken)
+    print(&#039;Good job, &#039; + myName + &#039;! You guessed my number in &#039; + guessesTaken
+          + &#039; guesses!&#039;)
+    
+if guess != number:
+    number = str(number)
+    print(&#039;Nope you didn`t get it right, I was thinking of &#039; + number)</pre>
+
+<p>
+<strong>Multiple function calls and Comprehension</strong>
+</p>
+<pre class="code">#!/usr/bin/python #SHEBANG!!!
+
+#Variable Scope
+#Exponentiate an integer in the range 0-9
+S = [x**2 for x in range(10)] #global name
+
+def choice_a(x):
+    print(S)
+    return
+# 2 to the power 
+def choice_b(x):
+    V = [2**i for i in range(x)]
+    print(V)
+    return
+#Modulus
+def choice_c(y):
+    M = [x for x in range(y) if x % 2 == 0]
+    print(M)
+
+def choice_d():
+    raise SystemExit
+
+print(&#039;Which operation do you want to perform?\n&#039;)
+print(&#039;&#039;&#039;
+a: x to the second power
+b: 2 the xth power
+c: mod 2
+d: quit program
+&#039;&#039;&#039;)
+
+resp = input(&#039;Choice: &#039;)
+resp2 = int(input(&#039;Upper limit? &#039;))
+
+if resp == &#039;a&#039;:
+    choice_a(resp2)
+elif resp == &#039;b&#039;:
+    choice_b(resp2)
+elif resp == &#039;c&#039;:
+    choice_c(resp2)
+else:
+    choice_d()
+
+//******************
+mani@mani-ubuntu:~/pydev$ python3 mod9.py
+Which operation do you want to perform?
+
+
+a: x to the second power
+b: 2 the xth power
+c: mod 2
+d: quit program
+
+Choice: a
+Upper limit? 10
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+</pre>
+
+<p>
+<strong>Connecting to MySQL with Python</strong>
+</p>
+<pre class="code">#!/usr/bin/python
+# version.py – Fetch and display the MySQL database server version.
+
+# import the MySQLdb and sys modules
+import MySQLdb
+import sys
+
+# open a database connection
+# be sure to change the host IP address, username, password and database name to match your own
+connection = MySQLdb.connect (host = “192.168.1.1″, user = “username”, passwd = “password”, db = “database_name”)
+
+# prepare a cursor object using cursor() method
+cursor = connection.cursor ()
+
+# execute the SQL query using execute() method.
+cursor.execute (“SELECT VERSION()”)
+
+# fetch a single row using fetchone() method.
+row = cursor.fetchone ()
+
+# print the row[0]
+# (Python starts the first row in an array with the number zero – instead of one)
+print “Server version:”, row[0]
+
+# close the cursor object
+cursor.close ()
+
+# close the connection
+connection.close ()
+
+# exit the program
+sys.exit()</pre>

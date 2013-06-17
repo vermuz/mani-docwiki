@@ -1,0 +1,94 @@
+====== Creating a configuration settings form for your module ======
+
+===== demo.info =====
+<code>
+name = Demo
+description = Just a Demo module.
+core = 7.x
+</code>
+===== demo.module =====
+<code>
+<?php
+
+/*
+ * Implements hook_menu().
+ */
+function demo_menu() {
+  $items = array();
+  $items['admin/config/people/passwords'] = array(
+    'title' => 'Bad Passwords Lists',
+    'description' => t('Configure a list of passwords that are not allowed.'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('demo_passwords_form'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'demo_passwords_form.inc',
+  ); 
+  return $items; 
+}
+
+
+/*
+ * Implements hook_form_alter().
+ */
+function demo_form_alter(&$form, &$form_state, $form_id) {
+  #krumo($form_id);
+  switch ($form_id) {
+    case 'user_profile_form' :
+      
+      $form['account']['pass']['#description'] = t('To change the current user password, enter the new password in both fields. Please do not use common passwords like "password", "12345", "love".');
+      $form['#validate'][] = 'demo_validate_password';
+
+      #krumo($form);
+
+    break;
+  }
+}
+
+
+/*
+ * Implement hook_form_FORM_ID_alter().
+ */
+function demo_form_user_register_form_alter(&$form, &$form_state, $form_id) {
+
+  $form['account']['pass']['#description'] = t('To change the current user password, enter the new password in both fields. Please do not use common passwords like "password", "12345", "love".');
+  $form['#validate'][] = 'demo_validate_password';
+  #krumo($form);
+}
+
+
+/*
+ * Custom password validation
+ */
+function demo_validate_password($form, &$form_state) {
+  //$badpasswords = array('password', '12345', 'love');
+  $badpasswords = variable_get('demo_badpasswords');
+  $badpasswords_array = explode(', ', $badpasswords);
+  #krumo($badpasswords_array);
+
+  if (in_array($form_state['values']['pass'],  $badpasswords_array)) {
+    form_set_error('pass', t('Please use a more secure password.'));
+  }
+
+  #krumo($form_state);
+}
+</code>
+===== demo_passwords_form.inc =====
+<code>
+<?php
+
+/*
+ * Sytems settings form for blacklisting passwords
+ */
+function demo_passwords_form($form, &$form_state) {
+
+  $form['demo_badpasswords'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Bad Passwords'),
+    '#default_value' => variable_get('demo_badpasswords'),
+    '#description' => t('Enter a list of "bad passwords" separated by commas.  If a user tries to enter one of these passwords either on account creation or when editing their account, the form will display an error message.'),
+  );
+
+  return(system_settings_form($form));
+
+}
+</code>

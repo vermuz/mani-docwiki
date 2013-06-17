@@ -1,0 +1,228 @@
+
+<p>
+<strong>Exception Handling</strong>
+</p>
+
+<p>
+When Python experiences an exceptional event. This is throwing an exception or raising an exception <br/>
+
+Raise: We invoke these to trigger exceptions on our terms <br/>
+
+Throw: Exceptions which were not handled. <br/>
+
+</p>
+
+<p>
+Raise statement: Manually generate an exception.
+</p>
+
+<p>
+Try-Except Block
+</p>
+<pre class="code">try:
+   CODE
+except __:
+   HANDLER CODE
+   
+finally:
+    CLEAN UP</pre>
+<pre class="code">**Instantiating an instance of the exception object
+raise Exception
+** Add extra message
+&gt;&gt;&gt; raise Exception(&#039;The flux capacitor is broken&#039;)
+Traceback (most recent call last):
+  File &quot;&lt;pyshell#3&gt;&quot;, line 1, in &lt;module&gt;
+    raise Exception(&#039;The flux capacitor is broken&#039;)
+Exception: The flux capacitor is broken</pre>
+
+<p>
+<strong>Call Stack
+</strong>
+</p>
+
+<p>
+In computer science, a call stack is a stack data structure that stores information about the active subroutines of a computer program. This kind of stack is also known as an execution stack, control stack, run-time stack, or machine stack, and is often shortened to just “the stack”.
+</p>
+
+<p>
+<a href="/manidocs/lib/exe/detail.php?id=mani%3Anotes%3Aexceptionhandling&amp;media=mani:notes:callstack.png" class="media" title="mani:notes:callstack.png"><img src="/manidocs/lib/exe/fetch.php?media=mani:notes:callstack.png" class="media" alt="" /></a>
+</p>
+
+<p>
+<strong>Exception Handling Demo
+</strong>
+</p>
+<pre class="code">&#039;&#039;&#039;
+# Division by zero
+# Input always comes back with a string object
+# We are converting the input string into int
+a = int(input(&#039;First number, please: &#039;))
+b = int(input(&#039;Second number: &#039;))
+print(&#039;You result is &#039;, a/b)
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+Try- Except block
+&#039;&#039;&#039;
+&#039;&#039;&#039;
+try:
+    a = int(input(&#039;First number, please: &#039;))
+    b = int(input(&#039;Second number: &#039;))
+    print(&#039;Your result is &#039;, a/b)
+except ZeroDivisionError:
+    print(&#039;Error: Division by zero will not work.&#039;)
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+# Multi-exception handler
+&#039;&#039;&#039;
+&#039;&#039;&#039;
+try:
+    a = float(input(&#039;First number, please: &#039;))
+    b = float(input(&#039;Second number: &#039;))
+    print(&#039;Your result is &#039;, a/b)
+except ZeroDivisionError:
+    print(&#039;Error: Division by zero will not work.&#039;)
+except ValueError:
+    print(&#039;Error: You used an incorrect data type.&#039;)
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+# Print more dynamic exception message text
+&#039;&#039;&#039;
+&#039;&#039;&#039;
+try:
+    a = float(input(&#039;First number, please: &#039;))
+    b = float(input(&#039;Second number: &#039;))
+    print(&#039;Your result is &#039;, a/b)
+    # Order of operations - Python treats the
+    # following line as a tuple
+except (ZeroDivisionError, ValueError, TypeError) : 
+    print(&#039;Error: Invalid input provided.&#039;)
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+# Print more dynamic exception message text
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+try:
+    a = float(input(&#039;First number, please: &#039;))
+    b = float(input(&#039;Second number: &#039;))
+    print(&#039;Your result is &#039;, a/b)
+except (ZeroDivisionError, ValueError, TypeError) as e:
+    print(&#039;Error: &#039;, e)
+
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+# Keep program running after an exception
+&#039;&#039;&#039;
+&#039;&#039;&#039;
+# Keep asking for inputs and throwing exceptions
+# if the inputs are wrong
+while True:
+    try:
+        a = float(input(&#039;First number, please: &#039;))
+        b = float(input(&#039;Second number: &#039;))
+        print(&#039;Your result is &#039;, a/b)
+    except :
+        print(&#039;Invalid input. Please retry&#039;,)
+# If you get the right input: end!
+    else:
+        break
+
+&#039;&#039;&#039;
+
+&#039;&#039;&#039;
+Use Finally to cleann up after an exception
+&#039;&#039;&#039;
+# Take two args x and y and divide
+def divlog(x,y):
+    try:
+        # Open a file for appending
+        f = open(&#039;/home/mani/files/sub/ccna domains.txt&#039;, &#039;a&#039;)
+        # Braces positional formatting
+        # g -&gt; general floating point presentation type
+        # print number as a fixed point number
+        # Third element x/y
+        f.write(&#039;{0:g} / {1:g} = {2:g}\n&#039;.format(x, y, (x/y)))
+#Unhandled exception will result in abort
+    except ZeroDivisionError:
+        f.write(&#039;Error: Zero division not allowed\n&#039;)
+        raise
+# Finally runs regardless of whether an exception occurs
+# Finally runs regarless of the final status of try
+    finally:
+        f.close()
+
+divlog(100,21)
+divlog(20,5)
+divlog(10,0)
+</pre>
+
+<p>
+<strong>Custom Exceptions
+</strong>
+</p>
+
+<p>
+We can use base classes to raise custom exceptions as a sub-class of the std.ex.classes.
+</p>
+
+<p>
+Note: classes are TEMPLATES.
+</p>
+
+<p>
+By creating a custom class that inherits from an already existing class, we have immediate access to all of the methods and classes of that class, we inherited from.
+We can make changes to the Base classes and let our custom classes inherit those changes from the base classes. Although, we should not tinker with the base classes though.
+Encapsulation will allow us to ride herd with the classes and their methods are available to use using the dot notation.
+</p>
+<pre class="code">class CustomError(Exception)
+# pass: null, placeholder statement
+# You haven`t done anything in a function but you want to keep it alive
+# It will run just fine but will not do anything
+      pass
+# To use your custom error: you have to import the module containing
+# the base class
+raise CustomError(&#039;Something went kerflunky.&#039;)</pre>
+<pre class="code">&gt;&gt;&gt; class CustomError(Exception):
+	pass
+
+&gt;&gt;&gt; raise CustomError(&#039;Something went kerflunky.&#039;)
+Traceback (most recent call last):
+  File &quot;&lt;pyshell#9&gt;&quot;, line 1, in &lt;module&gt;
+    raise CustomError(&#039;Something went kerflunky.&#039;)
+CustomError: Something went kerflunky.</pre>
+<pre class="code"># Class Definition for a custom error
+class MyError(Exception):
+    # INIT function
+    # Constructor
+    # Constructor is the engine for creating
+    # an instance of the class
+    # self - python (private)
+    # value - user supplied
+    def __init__(self, value):
+        # Value of our input parameter
+        self.value = value
+    # STR - String representation of an object
+    # if we run string function against an instance
+    # of the MyError class.
+    # To make the information provided to us
+    # helpful to us, we need to avoid information
+    # like this is an object of my error.
+    # We are returning a representation.
+    def __str__(self):
+        # Representation
+        # We will represent what was given by the user
+        # as a value
+        return repr(self.value)
+
+try:
+    # Value being passed to the instance is 2*2
+    raise MyError(2*2)
+# Capture MyError as name e
+except MyError as e:
+    print(&#039;My Error occurred, value:&#039;, e.value)
+</pre>

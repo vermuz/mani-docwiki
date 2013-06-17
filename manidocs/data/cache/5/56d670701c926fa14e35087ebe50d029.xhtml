@@ -1,0 +1,382 @@
+
+<p>
+<strong>Functions</strong>
+</p>
+<ul>
+<li class="level1"><div class="li"> Code reuse</div>
+</li>
+<li class="level2"><div class="li"> Easier to maintain</div>
+</li>
+<li class="level2"><div class="li"> Increase readability</div>
+</li>
+<li class="level2"><div class="li"> Hide complexity from user</div>
+</li>
+</ul>
+
+<p>
+<strong>Duck Typing </strong>
+</p>
+
+<p>
+In computer programming with object-oriented programming languages, duck typing is a style of dynamic typing in which an object&#039;s methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface. The name of the concept refers to the duck test, attributed to James Whitcomb Riley, which may be phrased as follows: When I see a bird that walks like a duck and swims like a duck and quacks like a duck, I call that bird a duck.
+</p>
+<pre class="code">                          
+                   def adder(x,y) :
+                       print(x,y)
+                   **HIT ENTER TWICE**
+                   Test: adder(2,4)  
+                             
+                   def power(p):
+                   &#039;&#039;&#039;
+                   Calculates 2 to the power of p
+                   &#039;&#039;&#039;
+                   r = 2 ** p
+                   return r
+                   print(&#039;2 to the power of 2 is&#039;, power(2))</pre>
+
+<p>
+<strong>Function Syntax</strong>
+</p>
+<pre class="code">name = my_func(arg1, arg2, arg = &#039;Default&#039;)</pre>
+
+<p>
+<em class="u">parameters → Design time placeholders argument → runtime data object</em>
+</p>
+
+<p>
+Without name: my_func loses its data immediately.
+</p>
+
+<p>
+<strong>Python 3 (builtins) </strong>
+</p>
+<pre class="code">&gt;&gt;&gt; import builtins&gt;&gt;&gt; dir(builtins)
+[&#039;ArithmeticError&#039;, &#039;AssertionError&#039;, &#039;AttributeError&#039;, &#039;BaseException&#039;, &#039;BufferError&#039;, &#039;BytesWarning&#039;, &#039;DeprecationWarning&#039;, &#039;EOFError&#039;, &#039;Ellipsis&#039;, &#039;EnvironmentError&#039;, &#039;Exception&#039;, &#039;False&#039;, &#039;FloatingPointError&#039;, &#039;FutureWarning&#039;, &#039;GeneratorExit&#039;, &#039;IOError&#039;, &#039;ImportError&#039;, &#039;ImportWarning&#039;, &#039;IndentationError&#039;, &#039;IndexError&#039;, &#039;KeyError&#039;, &#039;KeyboardInterrupt&#039;, &#039;LookupError&#039;, &#039;MemoryError&#039;, &#039;NameError&#039;, &#039;None&#039;, &#039;NotImplemented&#039;, &#039;NotImplementedError&#039;, &#039;OSError&#039;, &#039;OverflowError&#039;, &#039;PendingDeprecationWarning&#039;, &#039;ReferenceError&#039;, &#039;ResourceWarning&#039;, &#039;RuntimeError&#039;, &#039;RuntimeWarning&#039;, &#039;StopIteration&#039;, &#039;SyntaxError&#039;, &#039;SyntaxWarning&#039;, &#039;SystemError&#039;, &#039;SystemExit&#039;, &#039;TabError&#039;, &#039;True&#039;, &#039;TypeError&#039;, &#039;UnboundLocalError&#039;, &#039;UnicodeDecodeError&#039;, &#039;UnicodeEncodeError&#039;, &#039;UnicodeError&#039;, &#039;UnicodeTranslateError&#039;, &#039;UnicodeWarning&#039;, &#039;UserWarning&#039;, &#039;ValueError&#039;, &#039;Warning&#039;, &#039;ZeroDivisionError&#039;, &#039;__build_class__&#039;, &#039;__debug__&#039;, &#039;__doc__&#039;, &#039;__import__&#039;, &#039;__name__&#039;, &#039;__package__&#039;, &#039;abs&#039;, &#039;all&#039;, &#039;any&#039;, &#039;ascii&#039;, &#039;bin&#039;, &#039;bool&#039;, &#039;bytearray&#039;, &#039;bytes&#039;, &#039;callable&#039;, &#039;chr&#039;, &#039;classmethod&#039;, &#039;compile&#039;, &#039;complex&#039;, &#039;copyright&#039;, &#039;credits&#039;, &#039;delattr&#039;, &#039;dict&#039;, &#039;dir&#039;, &#039;divmod&#039;, &#039;enumerate&#039;, &#039;eval&#039;, &#039;exec&#039;, &#039;exit&#039;, &#039;filter&#039;, &#039;float&#039;, &#039;format&#039;, &#039;frozenset&#039;, &#039;getattr&#039;, &#039;globals&#039;, &#039;hasattr&#039;, &#039;hash&#039;, &#039;help&#039;, &#039;hex&#039;, &#039;id&#039;, &#039;input&#039;, &#039;int&#039;, &#039;isinstance&#039;, &#039;issubclass&#039;, &#039;iter&#039;, &#039;len&#039;, &#039;license&#039;, &#039;list&#039;, &#039;locals&#039;, &#039;map&#039;, &#039;max&#039;, &#039;memoryview&#039;, &#039;min&#039;, &#039;next&#039;, &#039;object&#039;, &#039;oct&#039;, &#039;open&#039;, &#039;ord&#039;, &#039;pow&#039;, &#039;print&#039;, &#039;property&#039;, &#039;quit&#039;, &#039;range&#039;, &#039;repr&#039;, &#039;reversed&#039;, &#039;round&#039;, &#039;set&#039;, &#039;setattr&#039;, &#039;slice&#039;, &#039;sorted&#039;, &#039;staticmethod&#039;, &#039;str&#039;, &#039;sum&#039;, &#039;super&#039;, &#039;tuple&#039;, &#039;type&#039;, &#039;vars&#039;, &#039;zip&#039;]</pre>
+
+<p>
+<strong>Functions and Methods </strong>       <br/>
+<em>Function:</em>      Standalone code block which is called independently.     <br/>
+<em>Method:</em>      Function that is bound to an object
+</p>
+
+<p>
+To ensure that our functions and classes don`t collide → we use namespaces.      <br/>
+We have to two modules M1 and M2 both containing a T() function. When we call the T() function how does Python know whether we are calling the M1.T() or M2.T(). Yep, there we need namespaces. Python wants you to import the builtins before using them both in commandline and scripting.
+</p>
+<pre class="code">&gt;&gt;&gt; randint(1,10)
+Traceback (most recent call last):
+  File &quot;&lt;pyshell#5&gt;&quot;, line 1, in &lt;module&gt;
+    randint(1,10)
+NameError: name &#039;randint&#039; is not defined&gt;&gt;&gt; import random&gt;&gt;&gt; random.randint(1,10)
+7
+To be able to keep the value 
+you need a variable 7 will just get lost.&gt;&gt;&gt; result = random.randint(1,10)&gt;&gt;&gt; result
+4</pre>
+
+<p>
+<strong>Return values</strong>      If you don`t return anything from a function - your data just evaporates.     <br/>
+If no return value    - Python function returns a special value (NONE)      <br/>
+Single return value   - return x
+</p>
+<pre class="code">def uc(a):
+ a = a.upper()
+ print (a)
+ return a 
+uc(&#039;Hello There&#039;)
+HELLO THERE&gt;&gt;&gt; resp2= uc(&#039;guido van rossum&#039;)
+GUIDO VAN ROSSUM&gt;&gt;&gt; resp2
+&#039;GUIDO VAN ROSSUM&#039;</pre>
+
+<p>
+<strong>Return Data Type Script </strong>
+</p>
+<pre class="code"># no return value
+m8.py
+def typer(x):
+    &#039;&#039;&#039;
+    return datatype for x (limited use)
+    &#039;&#039;&#039;
+    if type(x) == int:
+        print(&#039;This is an integer&#039;)
+    elif type(x) == str:
+        print(&#039;This is a string&#039;)
+    else:
+        print(&#039;This is neither a string nor an int&#039;)
+print(typer(200))&gt;&gt;&gt; import m8
+This is an integer
+None&gt;&gt;&gt; dir(m8)
+[&#039;__builtins__&#039;, &#039;__cached__&#039;, &#039;__doc__&#039;, &#039;__file__&#039;, &#039;__name__&#039;, &#039;__package__&#039;, &#039;typer&#039;]&gt;&gt;&gt; m8.typer(200)
+This is an integer</pre>
+
+<p>
+Multiple return value - return x,y –&gt; Python puts it in a tuple
+</p>
+<pre class="code">def name(fn, ln=&#039;Warner&#039;):
+    # return value, default value
+    r = print(&#039;Your name  is&#039;, fn, ln)
+    return r
+If I take&gt;&gt;&gt; import m9&gt;&gt;&gt; dir(m9)
+[&#039;__builtins__&#039;, &#039;__cached__&#039;, &#039;__doc__&#039;, &#039;__file__&#039;, &#039;__name__&#039;, &#039;__package__&#039;, &#039;name&#039;]
+
+** JUST PASS one name&quot;&gt;&gt;&gt; fullname = m9.name(&#039;Mani&#039;)
+Your name  is Mani Warner&gt;&gt;&gt; fullname
+
+** JUST PASS two names&quot;&gt;&gt;&gt; m9.name(&#039;Mani&#039;,&#039;Ali&#039;)
+Your name  is Mani Ali
+
+** JUST PASS nothing&quot;&gt;&gt;&gt; m9.name()
+Traceback (most recent call last):
+  File &quot;&lt;pyshell#33&gt;&quot;, line 1, in &lt;module&gt;
+    m9.name()
+TypeError: name() takes at least 1 argument (0 given)&gt;&gt;&gt;</pre>
+
+<p>
+<strong>Passing Order in Functions </strong>
+</p>
+<pre class="code">m10.py
+def fun(name, location, year=2010):
+    # from www.java2s.com
+    nly = &quot;%s/%s/%d&quot; % (name, location, year)
+    print (nly)
+    return nly
+
+#- No worries for order is explicit
+#fun(location=&quot;L.A.&quot;, year=2004, name=&quot;Guido&quot;)
+#Order is important if not explicit in the call
+#fun(&quot;Guido&quot;, &quot;L.A&quot;, year=2004)&gt;&gt;&gt; import m10&gt;&gt;&gt; rz = m10.fun(location=&quot;L.A.&quot;, year=2004, name=&quot;Caleb&quot;)
+Caleb/L.A./2004&gt;&gt;&gt; rz
+&#039;Caleb/L.A./2004&#039;
+Note: rz is immutable now. So if you change something in fun- it will not effect rz</pre>
+
+<p>
+<strong>Arbitrary # of Arguments</strong>
+</p>
+
+<p>
+The special syntax, *args and **kwargs in function definitions is used to pass a variable number of arguments to a function. The single asterisk form (*args) is used to pass a non-keyworded, variable-length argument list, and the double asterisk form is used to pass a keyworded, variable-length argument list.
+</p>
+<pre class="code">&gt;&gt;&gt; def foo(a,b, *args) :
+	#simple example of arbitrary argument
+	print(&quot;Here is &#039;a&#039;&quot;, a)
+	print(&quot;Here is &#039;b&#039;&quot;, b)
+	print(&quot;Here is &#039;*args&#039;&quot;, *args)&gt;&gt;&gt; print(foo(&#039;spam&#039;, &#039;eggs&#039;, &#039;arb1&#039;, &#039;arb2&#039;, &#039;arb3&#039;))
+Here is &#039;a&#039; spam
+Here is &#039;b&#039; eggs
+Here is &#039;*args&#039; arb1 arb2 arb3
+None</pre>
+<pre class="code">def test_var_args(farg, *args):
+    print &quot;formal arg:&quot;, farg
+    for arg in args:
+        print &quot;another arg:&quot;, arg
+
+test_var_args(1, &quot;two&quot;, 3)
+formal arg: 1
+another arg: two
+another arg: 3
+
+def test_var_kwargs(farg, **kwargs):
+    print &quot;formal arg:&quot;, farg
+    for key in kwargs:
+        print &quot;another keyword arg: %s: %s&quot; % (key, kwargs[key])
+
+test_var_kwargs(farg=1, myarg2=&quot;two&quot;, myarg3=3)
+formal arg: 1
+another keyword arg: myarg2: two
+another keyword arg: myarg3: 3
+
+Using *args and **kwargs when calling a function
+************************************************
+def test_var_args_call(arg1, arg2, arg3):
+    print &quot;arg1:&quot;, arg1
+    print &quot;arg2:&quot;, arg2
+    print &quot;arg3:&quot;, arg3
+
+args = (&quot;two&quot;, 3)
+test_var_args_call(1, *args)
+arg1: 1
+arg2: two
+arg3: 3
+
+def test_var_args_call(arg1, arg2, arg3):
+    print &quot;arg1:&quot;, arg1
+    print &quot;arg2:&quot;, arg2
+    print &quot;arg3:&quot;, arg3
+
+kwargs = {&quot;arg3&quot;: 3, &quot;arg2&quot;: &quot;two&quot;}
+test_var_args_call(1, **kwargs)
+
+arg1: 1
+arg2: two
+arg3: 3</pre>
+<pre class="code">def foo(a, b, *args, **kwargs):
+    print(&quot;Here is &#039;a&#039;&quot;, a)
+    print(&quot;Here is &#039;b&#039;&quot;, b)
+    print(&quot;Here is &#039;*args&#039;&quot;, *args)
+print(foo(&#039;spam&#039;,&#039;eggs&#039;,&#039;arb1&#039;,&#039;arb2&#039;,&#039;arb3&#039;))
+
+Argument   Latch
+*****************
+spam       a 
+eggs       b
+arb1       *args
+arb2       *args
+arb3       *args</pre>
+
+<p>
+<strong>Variable Scope </strong>
+</p>
+
+<p>
+Global variables are accessible inside and outside of functions. Local variables are only accessible inside the function.
+</p>
+<pre class="code">def demo (f_in):
+    global somevar # shared with main code
+    demo.tom = 16  # An attribute accessible from main code
+    somevar += 1
+    another = 12   # A local variable, independent of main code
+    res = f_in+14  # Value passed in (f_in)
+    return res     # Return object
+
+somevar = 27  # accessed in function via global    
+another = 17  # not accessed in function
+pval = 16     # accessed in function via parameter
+
+print demo (pval)
+
+print demo.tom  # function attribute
+print somevar
+print another</pre>
+
+<p>
+<strong>Advanced Topics </strong>
+</p>
+
+<p>
+<strong>Generators: 
+</strong>
+</p>
+<pre class="code">      - Resumable function (We can save state)
+      - It returns results one at a time
+      - We can suspend state.
+      - We can resume state.
+Generator Expressions: return results on demand instead of a full list
+Purpose: Save memory, computing cycles</pre>
+
+<p>
+<em>Generator Function:</em>
+</p>
+<pre class="code">def gensq(n):
+    for i in range(n): # range is iterable
+        yield i ** 2 # creates generator object
+a = gensq(6)
+next(a) # invoked automatically</pre>
+<pre class="code">&gt;&gt;&gt; def gensq(n):
+	for i in range(n):
+		yield i ** 2
+
+		
+&gt;&gt;&gt; a = gensq(4)
+&gt;&gt;&gt; a
+&lt;generator object gensq at 0xb5ec1cd4&gt;
+&gt;&gt;&gt; type(a)
+&lt;class &#039;generator&#039;&gt;
+&gt;&gt;&gt; next(a)
+0
+&gt;&gt;&gt; next(a)
+1
+&gt;&gt;&gt; next(a)
+4
+&gt;&gt;&gt; next(a)
+9
+&gt;&gt;&gt; next(a)
+Traceback (most recent call last):
+  File &quot;&lt;pyshell#12&gt;&quot;, line 1, in &lt;module&gt;
+    next(a)
+StopIteration
+&gt;&gt;&gt; </pre>
+<pre class="code">&gt;&gt;&gt; def itsq(n):
+	result = []
+	for i in range(n):
+		result.append(i ** 2)
+	return result
+
+&gt;&gt;&gt; b = itsq(4)
+&gt;&gt;&gt; b
+[0, 1, 4, 9]
+&gt;&gt;&gt; type(b)
+&lt;class &#039;list&#039;&gt;</pre>
+
+<p>
+<strong>Generator Expressions
+</strong>
+</p>
+
+<p>
+<em>List Comprehension
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; 
+ls = [i ** 2 for i in range(10)]
+&gt;&gt;&gt; ls
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]</pre>
+
+<p>
+<em class="u">Generator Expression - (Paren instead of ]
+</em>
+</p>
+<pre class="code">&gt;&gt;&gt; gx = (i ** 2 for i in range(1,11))
+&gt;&gt;&gt; gx
+&lt;generator object &lt;genexpr&gt; at 0xb55abaf4&gt;</pre>
+<pre class="code">&gt;&gt;&gt; ml = [1,2,4,8,16,32,64]
+&gt;&gt;&gt; genx= (i for i in ml if i &gt; 10)
+&gt;&gt;&gt; genx
+&lt;generator object &lt;genexpr&gt; at 0xb554fd4c&gt;
+&gt;&gt;&gt; next(genx)
+16
+&gt;&gt;&gt; next(genx)
+32
+&gt;&gt;&gt; next(genx)
+64
+# Generators cannot be rewound
+# this will not work
+&gt;&gt;&gt; for j in genx: 
+	print(j)</pre>
+
+<p>
+<strong>Decorators</strong>
+</p>
+<pre class="code">Meta Programming: Metaprogramming is the writing of computer programs that 
+write or manipulate other programs (or themselves) as their data, or that 
+do part of the work at compile time that would otherwise be done at runtime. 
+In some cases, this allows programmers to minimize the number of lines of code 
+to express a solution (hence reducing development time), or it gives programs 
+greater flexibility to efficiently handle new situations without recompilation.
+
+Functions to wrap other functions in.
+
+A function that takes another function as an argument.</pre>
+<pre class="code">&gt;&gt;&gt; def et(myfunc):
+	def innerf(*args):
+		for i in range(8):
+			myfunc(*args)
+	return innerf
+
+&gt;&gt;&gt; def nondec1():
+	print(&#039;eggs&#039;)
+
+	
+&gt;&gt;&gt; nondec1()
+eggs
+&gt;&gt;&gt; @et # Attach et
+def decl():
+	print(&#039;spam&#039;)
+
+&gt;&gt;&gt; decl()
+spam
+spam
+spam
+spam
+spam
+spam
+spam
+spam</pre>

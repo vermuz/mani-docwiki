@@ -1,0 +1,700 @@
+
+<h1 class="sectionedit1" id="node_access_example">Node Access Example</h1>
+<div class="level1">
+
+</div>
+<!-- EDIT1 SECTION "Node Access Example" [1-35] -->
+<h2 class="sectionedit2" id="node_access_exampleinfo">node_access_example.info</h2>
+<div class="level2">
+<pre class="code">   1 name = Node access example
+   2 description = Demonstrates how a module can use Drupal&#039;s node access system
+   3 package = Example modules
+   4 core = 7.x
+   5 files[] = node_access_example.test</pre>
+
+</div>
+<!-- EDIT2 SECTION "node_access_example.info" [36-287] -->
+<h2 class="sectionedit3" id="node_access_exampleinstall">node_access_example.install</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Install, update, and uninstall functions for the node_access_example module.
+   6  */
+   7 
+   8 /**
+   9  * Implements hook_schema().
+  10  */
+  11 function node_access_example_schema() {
+  12   $schema[&#039;node_access_example&#039;] = array(
+  13     &#039;description&#039; =&gt; &#039;Example table for node_access_example module&#039;,
+  14     &#039;fields&#039; =&gt; array(
+  15       &#039;nid&#039;     =&gt; array(&#039;type&#039; =&gt; &#039;int&#039;, &#039;unsigned&#039; =&gt; TRUE, &#039;not null&#039; =&gt; TRUE, &#039;default&#039; =&gt; 0),
+  16       &#039;private&#039; =&gt; array(&#039;type&#039; =&gt; &#039;int&#039;, &#039;not null&#039; =&gt; TRUE, &#039;default&#039; =&gt; 0),
+  17     ),
+  18     &#039;primary key&#039; =&gt; array(&#039;nid&#039;),
+  19   );
+  20 
+  21   return $schema;
+  22 }</pre>
+
+</div>
+<!-- EDIT3 SECTION "node_access_example.install" [288-1014] -->
+<h2 class="sectionedit4" id="node_access_examplemodule">node_access_example.module</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Module file illustrating API-based node access.
+   6  */
+   7 
+   8 /**
+   9  * @defgroup node_access_example Example: Node Access
+  10  * @ingroup examples
+  11  * @{
+  12  * Demonstrates node access.
+  13  *
+  14  * This is an example demonstrating how to grant or deny access to nodes
+  15  * using the Drupal core API node access system.
+  16  *
+  17  * This module will add a &#039;private&#039; flag for each node, which the node&#039;s
+  18  * author can manage. Nodes marked private can only be viewed, edited,
+  19  * or deleted by the author. However, not everything is as private as it
+  20  * seems on the internet, and so we need to implement some ways to allow
+  21  * other users to manage this &#039;private&#039; content.
+  22  *
+  23  * We will use the node grant system to specify which users
+  24  * are allowed to view, edit, or delete &#039;private&#039; content. We will also
+  25  * allow a user named &#039;foobar&#039; to have edit privileges on private content
+  26  * as well.
+  27  *
+  28  * In addition, we will provide a page which will show some minimal
+  29  * instructions, and statistics on private nodes on the site.
+  30  *
+  31  * We use NodeAPI hooks to put a single marker on a node, called
+  32  * &#039;private&#039;. The marker is implemented by a database table which has one
+  33  * row per node simply indicating that the node is private. If the &quot;private&quot;
+  34  * marker is set, users other than the owner and privileged users are denied
+  35  * access.
+  36  *
+  37  * Standard permissions are defined which allow users with
+  38  * &#039;access any private content&#039; or &#039;edit any private content&#039; to override
+  39  * the &#039;private&#039; node access restrictions.
+  40  *
+  41  * A separate access realm grants privileges to each node&#039;s author, so that
+  42  * they can always view, edit, and delete their own private nodes.
+  43  *
+  44  * The only page provided by this module gives a rundown of how many nodes
+  45  * are marked private, and how many of those are accessible to the current
+  46  * user. This demonstrates the use of the &#039;node_access&#039; tag in node queries,
+  47  * preventing disclosure of information which should not be shown to users
+  48  * who don&#039;t have the proper permissions.
+  49  *
+  50  * Most relevant functions:
+  51  * - node_access_example_permission()
+  52  * - node_access_example_node_access()
+  53  * - node_access_example_node_access_records()
+  54  * - node_access_example_node_grants()
+  55  *
+  56  * Drupal&#039;s node access system has three layers.
+  57  * - Overall override permissions. User 1 and any user with &#039;bypass node
+  58  *   access&#039; permission are automatically granted access.
+  59  * - hook_node_access() gives each module the opportunity to approve or deny
+  60  *   access. Any module that returns NODE_ACCESS_DENY from hook_node_access()
+  61  *   will result in denial of access. If no module denies access and one or
+  62  *   more modules allow access, then access is granted. hook_node_access() was
+  63  *   introduced in Drupal 7.
+  64  * - If no resolution has yet been reached, then the node_access table is used
+  65  *   along with hook_node_grants(). (Drupal updates the node_access table when
+  66  *   nodes are saved, by calling hook_node_access_records().)
+  67  *
+  68  * Note that the hook_node_grants()/hook_node_access_records() layer is a
+  69  * first-grant-wins system, which means a module using it can&#039;t deny access to
+  70  * a node. Contributed modules have been developed to overcome this
+  71  * shortcoming, with their own APIs, such as
+  72  * @link http://drupal.org/project/acl ACL. @endlink ACL, in fact, has emerged
+  73  * as the more-or-less standard solution for fine-grained access control, and
+  74  * you really should be reading up on it. Many modules use it, and if your
+  75  * module implements another node access system, there could be chaos.
+  76  *
+  77  * A list of the many node access modules (and differing APIs) is here:
+  78  * @link http://drupal.org/node/270000 Overview of Node Access Modules. @endlink
+  79  * Note that this is Drupal 6 documentation, linked here so the reader can
+  80  * understand the historical reasons for using contributed node access modules
+  81  * such as ACL.
+  82  *
+  83  * @see node_access()
+  84  * @see hook_node_access()
+  85  * @see hook_node_grants()
+  86  * @see hook_node_access_records()
+  87  */
+  88 
+  89 /**
+  90  * Implements hook_menu().
+  91  *
+  92  * This path provides a page, with some instructions for the user, and some
+  93  * statistics about node access changes implemented by this module.
+  94  *
+  95  * @see hook_menu()
+  96  */
+  97 function node_access_example_menu() {
+  98   $items[&#039;examples/node_access&#039;] = array(
+  99     &#039;title&#039; =&gt; &#039;Node Access Example&#039;,
+ 100     &#039;page callback&#039; =&gt; &#039;node_access_example_private_node_listing&#039;,
+ 101     &#039;access callback&#039; =&gt; TRUE,
+ 102   );
+ 103   return $items;
+ 104 }
+ 105 
+ 106 /**
+ 107  * Our hook_menu() page callback function.
+ 108  *
+ 109  * Information for the user about what nodes are marked private on the system
+ 110  * and which of those the user has access to.
+ 111  *
+ 112  * The queries showing what is accessible to the current user demonstrate the
+ 113  * use of the &#039;node_access&#039; tag to make sure that we don&#039;t show inappropriate
+ 114  * information to unprivileged users.
+ 115  *
+ 116  * @return Page content.
+ 117  *
+ 118  * @see page_example
+ 119  */
+ 120 function node_access_example_private_node_listing() {
+ 121   $content = &#039;&lt;div&gt;&#039; . t(&#039;This example shows how a module can use the Drupal node access system to allow access to specific nodes. You will need to look at the code and then experiment with it by creating nodes, marking them private, and accessing them as various users.&#039;) . &#039;&lt;/div&gt;&#039;;
+ 122 
+ 123   // Find out how many nodes are marked private.
+ 124   $query = db_select(&#039;node&#039;, &#039;n&#039;);
+ 125   $query-&gt;addExpression(&#039;COUNT(n.nid)&#039;, &#039;private_count&#039;);
+ 126   $query-&gt;join(&#039;node_access_example&#039;, &#039;nae&#039;, &#039;nae.nid = n.nid&#039;);
+ 127   $num_private = $query
+ 128   -&gt;condition(&#039;nae.private&#039;, 1)-&gt;execute()-&gt;fetchField();
+ 129 
+ 130   // Find out how many nodes owned by this user are marked private.
+ 131   $query = db_select(&#039;node&#039;, &#039;n&#039;);
+ 132   $query-&gt;addExpression(&#039;COUNT(n.nid)&#039;, &#039;private_count&#039;);
+ 133   $query-&gt;join(&#039;node_access_example&#039;, &#039;nae&#039;, &#039;nae.nid = n.nid&#039;);
+ 134   $num_personal = $query
+ 135   -&gt;condition(&#039;n.uid&#039;, $GLOBALS[&#039;user&#039;]-&gt;uid)
+ 136   -&gt;condition(&#039;nae.private&#039;, 1)
+ 137   -&gt;execute()-&gt;fetchfield();
+ 138 
+ 139   $content .= &#039;&lt;div&gt;&#039; . t(&#039;There are currently @num private nodes in the system @num_personal are yours.&#039;, array(&#039;@num&#039; =&gt; $num_private, &#039;@num_personal&#039; =&gt; $num_personal)) . &#039;&lt;/div&gt;&#039;;
+ 140 
+ 141   // Use a &#039;node_access&#039; tag with a query to find out how many this user has
+ 142   // access to. This will be the standard way to make lists while respecting
+ 143   // node access restrictions.
+ 144   $query = db_select(&#039;node&#039;, &#039;n&#039;);
+ 145   $query-&gt;addExpression(&#039;COUNT(n.nid)&#039;, &#039;private_count&#039;);
+ 146   $query-&gt;addTag(&#039;node_access&#039;);
+ 147   $query-&gt;join(&#039;node_access_example&#039;, &#039;nae&#039;, &#039;nae.nid = n.nid&#039;);
+ 148   $num_private_accessible = $query-&gt;condition(&#039;nae.private&#039;, 1)-&gt;execute()-&gt;fetchField();
+ 149   $content .= &#039;&lt;div&gt;&#039; . t(&#039;You have access to @num private nodes.&#039;, array(&#039;@num&#039; =&gt; $num_private_accessible)) . &#039;&lt;/div&gt;&#039;;
+ 150 
+ 151   // Use the key &#039;node_access&#039; tag to get the key data from the nodes this
+ 152   // has access to.
+ 153   $query = db_select(&#039;node&#039;, &#039;n&#039;, array(&#039;fetch&#039; =&gt; PDO::FETCH_ASSOC));
+ 154   $query-&gt;addTag(&#039;node_access&#039;);
+ 155   $query-&gt;join(&#039;node_access_example&#039;, &#039;nae&#039;, &#039;nae.nid = n.nid&#039;);
+ 156   $query-&gt;join(&#039;users&#039;, &#039;u&#039;, &#039;u.uid = n.uid&#039;);
+ 157   $result = $query-&gt;fields(&#039;n&#039;, array(&#039;nid&#039;, &#039;title&#039;, &#039;uid&#039;))
+ 158   -&gt;fields(&#039;u&#039;, array(&#039;name&#039;))
+ 159   -&gt;condition(&#039;nae.private&#039;, 1)-&gt;execute();
+ 160 
+ 161   $rows = array();
+ 162   foreach ($result as $node) {
+ 163     $node[&#039;nid&#039;] = l($node[&#039;nid&#039;], &#039;node/&#039; . $node[&#039;nid&#039;]);
+ 164     $rows[] = array(&#039;data&#039; =&gt; $node,  &#039;class&#039; =&gt; array(&#039;accessible&#039;));
+ 165   }
+ 166   $content .= &#039;&lt;div&gt;&#039; . t(&#039;Accessible rows:&#039;) . theme(&#039;table&#039;, array(&#039;header&#039; =&gt; array(&#039;nid&#039;, &#039;title&#039;, &#039;uid&#039;, &#039;username&#039;), &#039;rows&#039; =&gt; $rows)) . &#039;&lt;/div&gt;&#039;;
+ 167 
+ 168   return array(&#039;#markup&#039; =&gt; $content);
+ 169 }
+ 170 
+ 171 /**
+ 172  * Implements hook_permission().
+ 173  *
+ 174  * We create two permissions, which we can use as a base for our grant/deny
+ 175  * decision:
+ 176  *
+ 177  * - &#039;access any private content&#039; allows global access to content marked
+ 178  *   private by other users.
+ 179  * - &#039;edit any private content&#039; allows global edit
+ 180  *   privileges, basically overriding the node access system.
+ 181  *
+ 182  * Note that the &#039;edit any * content&#039; and &#039;delete any * content&#039; permissions
+ 183  * will allow edit or delete permissions to the holder, regardless of what
+ 184  * this module does.
+ 185  *
+ 186  * @see hook_permissions()
+ 187  */
+ 188 function node_access_example_permission() {
+ 189   return array(
+ 190     &#039;access any private content&#039; =&gt; array(
+ 191       &#039;title&#039; =&gt; t(&#039;Access any private content&#039;),
+ 192       &#039;description&#039; =&gt; t(&#039;May view posts of other users even though they are marked private.&#039;),
+ 193     ),
+ 194     &#039;edit any private content&#039; =&gt; array(
+ 195       &#039;title&#039; =&gt; t(&#039;Edit any private content&#039;),
+ 196       &#039;description&#039; =&gt; t(&#039;May edit posts of other users even though they are marked private.&#039;),
+ 197     ),
+ 198   );
+ 199 }
+ 200 
+ 201 /**
+ 202  * Implements hook_node_access().
+ 203  *
+ 204  * Allows view and edit access to private nodes, when the account requesting
+ 205  * access has the username &#039;foobar&#039;.
+ 206  *
+ 207  * hook_node_access() was introduced in Drupal 7. We use it here to demonstrate
+ 208  * allowing certain privileges to an arbitrary user.
+ 209  *
+ 210  * @see hook_node_access()
+ 211  */
+ 212 function node_access_example_node_access($node, $op, $account) {
+ 213   // If $node is a string, the node has not yet been created. We don&#039;t care
+ 214   // about that case.
+ 215   if (is_string($node)) {
+ 216     return NODE_ACCESS_IGNORE;
+ 217   }
+ 218   if (($op == &#039;view&#039; || $op == &#039;update&#039;) &amp;&amp; (!empty($account-&gt;name) &amp;&amp; $account-&gt;name == &#039;foobar&#039;) &amp;&amp; !empty($node-&gt;private)) {
+ 219     drupal_set_message(t(&#039;Access to node @nid allowed because requester name (@name) is specifically allowed&#039;, array(&#039;@name&#039; =&gt; $node-&gt;name, &#039;@uid&#039; =&gt; $account-&gt;uid)));
+ 220     return NODE_ACCESS_ALLOW;
+ 221   }
+ 222   return NODE_ACCESS_IGNORE;
+ 223 }
+ 224 
+ 225 /**
+ 226  * Here we define a constant for our node access grant ID, for the
+ 227  * node_access_example_view and node_access_example_edit realms. This ID could
+ 228  * be any integer, but here we choose 23, because it is this author&#039;s favorite
+ 229  * number.
+ 230  */
+ 231 define(&#039;NODE_ACCESS_EXAMPLE_GRANT_ALL&#039;, 23);
+ 232 
+ 233 /**
+ 234  * Implements hook_node_grants().
+ 235  *
+ 236  * Tell the node access system what grant IDs the user belongs to for each
+ 237  * realm, based on the operation being performed.
+ 238  *
+ 239  * When the user tries to perform an operation on the node, Drupal calls
+ 240  * hook_node_grants() to determine grant ID and realm for the user. Drupal
+ 241  * looks up the grant ID and realm for the node, and compares them to the
+ 242  * grant ID and realm provided here. If grant ID and realm match for both
+ 243  * user and node, then the operation is allowed.
+ 244  *
+ 245  * Grant ID and realm are both determined per node, by your module in
+ 246  * hook_node_access_records().
+ 247  *
+ 248  * In our example, we&#039;ve created three access realms: One for authorship, and
+ 249  * two that track with the permission system.
+ 250  *
+ 251  * We always add node_access_example_author to the list of grants, with a grant
+ 252  * ID equal to their user ID. We do this because in our model, authorship
+ 253  * always gives you permission to edit or delete your nodes, even if they&#039;re
+ 254  * marked private.
+ 255  *
+ 256  * Then we compare the user&#039;s permissions to the operation to determine whether
+ 257  * the user falls into the other two realms: node_access_example_view, and/or
+ 258  * node_access_example_edit. If the user has the &#039;access any private content&#039;
+ 259  * permission we defined in hook_permission(), they&#039;re declared as belonging to
+ 260  * the node_access_example_realm. Similarly, if they have the &#039;edit any private
+ 261  * content&#039; permission, we add the node_access_example_edit realm to the list
+ 262  * of grants they have.
+ 263  *
+ 264  * @see node_access_example_permission()
+ 265  * @see node_access_example_node_access_records()
+ 266  */
+ 267 function node_access_example_node_grants($account, $op) {
+ 268   // First grant a grant to the author for own content.
+ 269   $grants[&#039;node_access_example_author&#039;] = array($account-&gt;uid);
+ 270 
+ 271   // Then, if &quot;access any private content&quot; is allowed to the account,
+ 272   // grant view, update, or delete as necessary.
+ 273   if ($op == &#039;view&#039; &amp;&amp; user_access(&#039;access any private content&#039;, $account)) {
+ 274     $grants[&#039;node_access_example_view&#039;] = array(NODE_ACCESS_EXAMPLE_GRANT_ALL);
+ 275   }
+ 276 
+ 277   if (($op == &#039;update&#039; || $op == &#039;delete&#039;) &amp;&amp; user_access(&#039;edit any private content&#039;, $account)) {
+ 278     $grants[&#039;node_access_example_edit&#039;] = array(NODE_ACCESS_EXAMPLE_GRANT_ALL);
+ 279   }
+ 280 
+ 281   return $grants;
+ 282 }
+ 283 
+ 284 /**
+ 285  * Implements hook_node_access_records().
+ 286  *
+ 287  * All node access modules must implement this hook. If the module is
+ 288  * interested in the privacy of the node passed in, return a list
+ 289  * of node access values for each grant ID we offer.
+ 290  *
+ 291  * In this example, for each node which is marked &#039;private,&#039; we define
+ 292  * three realms:
+ 293  *
+ 294  * The first and second are realms are &#039;node_access_example_view&#039; and
+ 295  * &#039;node_access_example_edit,&#039; which have a single grant ID, 1. The
+ 296  * user is either a member of these realms or not, depending upon the
+ 297  * operation and the access permission set.
+ 298  *
+ 299  * The third is node_access_example_author. It gives the node
+ 300  * author special privileges. node_access_example_author has one grant ID for
+ 301  * every UID, and each user is automatically a member of the group where
+ 302  * GID == UID. This has the effect of giving each user their own grant ID
+ 303  * for nodes they authored, within this realm.
+ 304  *
+ 305  * Drupal calls this hook when a node is saved, or when access permissions
+ 306  * change in order to rebuild the node access database table(s).
+ 307  *
+ 308  * The array you return will define the realm and the grant ID for the
+ 309  * given node. This is stored in the {node_access} table for subsequent
+ 310  * comparison against the user&#039;s realm and grant IDs, which you&#039;ll
+ 311  * supply in hook_node_grants().
+ 312  *
+ 313  * Realm names and grant IDs are arbitrary. Official drupal naming
+ 314  * conventions do not cover access realms, but since all realms are
+ 315  * stored in the same database table, it&#039;s probably a good idea to
+ 316  * use descriptive names which follow the module name, such as
+ 317  * &#039;mymodule_realmname&#039;.
+ 318  *
+ 319  * @see node_access_example_node_grants()
+ 320  */
+ 321 function node_access_example_node_access_records($node) {
+ 322   // We only care about the node if it&#039;s been marked private. If not, it is
+ 323   // treated just like any other node and we completely ignore it.
+ 324   if (!empty($node-&gt;private)) {
+ 325     $grants = array();
+ 326     $grants[] = array(
+ 327       &#039;realm&#039; =&gt; &#039;node_access_example_view&#039;,
+ 328       &#039;gid&#039; =&gt; NODE_ACCESS_EXAMPLE_GRANT_ALL,
+ 329       &#039;grant_view&#039; =&gt; 1,
+ 330       &#039;grant_update&#039; =&gt; 0,
+ 331       &#039;grant_delete&#039; =&gt; 0,
+ 332       &#039;priority&#039; =&gt; 0,
+ 333     );
+ 334     $grants[] = array(
+ 335       &#039;realm&#039; =&gt; &#039;node_access_example_edit&#039;,
+ 336       &#039;gid&#039; =&gt; NODE_ACCESS_EXAMPLE_GRANT_ALL,
+ 337       &#039;grant_view&#039; =&gt; 1,
+ 338       &#039;grant_update&#039; =&gt; 1,
+ 339       &#039;grant_delete&#039; =&gt; 1,
+ 340       &#039;priority&#039; =&gt; 0,
+ 341     );
+ 342 
+ 343     // For the node_access_example_author realm, the grant ID (gid) is
+ 344     // equivalent to the node author&#039;s user ID (UID).
+ 345     $grants[] = array(
+ 346       &#039;realm&#039; =&gt; &#039;node_access_example_author&#039;,
+ 347       &#039;gid&#039; =&gt; $node-&gt;uid,
+ 348       &#039;grant_view&#039; =&gt; 1,
+ 349       &#039;grant_update&#039; =&gt; 1,
+ 350       &#039;grant_delete&#039; =&gt; 1,
+ 351       &#039;priority&#039; =&gt; 0,
+ 352     );
+ 353     return $grants;
+ 354   }
+ 355   // Return nothing if the node has not been marked private.
+ 356 }
+ 357 
+ 358 /**
+ 359  * Implements hook_form_alter().
+ 360  *
+ 361  * This module adds a simple checkbox to the node form labeled private. If the
+ 362  * checkbox is checked, only the node author and users with
+ 363  * &#039;access any private content&#039; privileges may see it.
+ 364  */
+ 365 function node_access_example_form_alter(&amp;$form, $form_state) {
+ 366   if (!empty($form[&#039;#node_edit_form&#039;])) {
+ 367     $form[&#039;node_access_example&#039;] = array(
+ 368       &#039;#type&#039; =&gt; &#039;fieldset&#039;,
+ 369       &#039;#title&#039; =&gt; t(&#039;Node Access Example&#039;),
+ 370       &#039;#collapsible&#039; =&gt; TRUE,
+ 371       &#039;#collapsed&#039; =&gt; FALSE,
+ 372       &#039;#weight&#039; =&gt; 8,
+ 373     );
+ 374 
+ 375     $form[&#039;node_access_example&#039;][&#039;private&#039;] = array(
+ 376       &#039;#type&#039; =&gt; &#039;checkbox&#039;,
+ 377       &#039;#title&#039; =&gt; t(&#039;Private&#039;),
+ 378       &#039;#description&#039; =&gt; t(&#039;Check here if this content should be set private and only shown to privileged users.&#039;),
+ 379       &#039;#default_value&#039; =&gt; isset($form[&#039;#node&#039;]-&gt;private) ? $form[&#039;#node&#039;]-&gt;private : FALSE,
+ 380     );
+ 381   }
+ 382 }
+ 383 
+ 384 /**
+ 385  * Implements hook_node_load().
+ 386  *
+ 387  * Gather and add the private setting for the nodes Drupal is loading.
+ 388  * @see nodeapi_example.module
+ 389  */
+ 390 function node_access_example_node_load($nodes, $types) {
+ 391   $result = db_query(&#039;SELECT nid, private FROM {node_access_example} WHERE nid IN(:nids)&#039;, array(&#039;:nids&#039; =&gt; array_keys($nodes)));
+ 392   foreach ($result as $record) {
+ 393     $nodes[$record-&gt;nid]-&gt;private = $record-&gt;private;
+ 394   }
+ 395 }
+ 396 
+ 397 /**
+ 398  * Implements hook_node_delete().
+ 399  *
+ 400  * Delete the node_access_example record when the node is deleted.
+ 401  * @see nodeapi_example.module
+ 402  */
+ 403 function node_access_example_node_delete($node) {
+ 404   db_delete(&#039;node_access_example&#039;)-&gt;condition(&#039;nid&#039;, $node-&gt;nid)-&gt;execute();
+ 405 }
+ 406 
+ 407 /**
+ 408  * Implements hook_node_insert().
+ 409  *
+ 410  * Insert a new access record when a node is created.
+ 411  * @see nodeapi_example.module
+ 412  */
+ 413 function node_access_example_node_insert($node) {
+ 414   if (isset($node-&gt;private)) {
+ 415     db_insert(&#039;node_access_example&#039;)-&gt;fields(array(&#039;nid&#039; =&gt; $node-&gt;nid, &#039;private&#039; =&gt; (int)$node-&gt;private))-&gt;execute();
+ 416   }
+ 417   drupal_set_message(t(&#039;New node @nid was created and private=@private&#039;, array(&#039;@nid&#039; =&gt; $node-&gt;nid, &#039;@private&#039; =&gt; !empty($node-&gt;private) ? 1 : 0)));
+ 418 }
+ 419 
+ 420 /**
+ 421  * Implements hook_node_update().
+ 422  *
+ 423  * If the record in the node_access_example table already exists, we must
+ 424  * update it. If it doesn&#039;t exist, we create it.
+ 425  * @see nodeapi_example.module
+ 426  */
+ 427 function node_access_example_node_update($node) {
+ 428   // Find out if there is already a node_access_example record.
+ 429   $exists =  db_query(&#039;SELECT nid FROM {node_access_example} WHERE nid = :nid&#039;, array(&#039;:nid&#039; =&gt; $node-&gt;nid))-&gt;fetchField();
+ 430 
+ 431   // If there is already a record, update it with the new private value.
+ 432   if ($exists) {
+ 433     $num_updated = db_update(&#039;node_access_example&#039;)
+ 434     -&gt;fields(array(
+ 435         &#039;nid&#039; =&gt; $node-&gt;nid,
+ 436         &#039;private&#039; =&gt; !empty($node-&gt;private) ? 1 : 0,
+ 437     ))
+ 438     -&gt;condition(&#039;nid&#039;, $node-&gt;nid)
+ 439     -&gt;execute();
+ 440     drupal_set_message(t(&quot;Updated node @nid to set private=@private (@num nodes actually updated)&quot;, array(&#039;@private&#039; =&gt; $node-&gt;private, &#039;@num&#039; =&gt; $num_updated, &#039;@nid&#039; =&gt; $node-&gt;nid)));
+ 441   }
+ 442   // Otherwise, create a new record.
+ 443   else {
+ 444     node_access_example_node_insert($node);
+ 445     drupal_set_message(t(&#039;Inserted new node_access nid=@nid, private=@private&#039;, array(&#039;@nid&#039; =&gt; $node-&gt;nid, &#039;@private&#039; =&gt; $node-&gt;private)));
+ 446   }
+ 447 }
+ 448 
+ 449 /**
+ 450  * @} End of &quot;defgroup node_access_example&quot;.
+ 451  */</pre>
+
+</div>
+<!-- EDIT4 SECTION "node_access_example.module" [1015-21273] -->
+<h2 class="sectionedit5" id="node_access_exampletest">node_access_example.test</h2>
+<div class="level2">
+<pre class="code">   1 &lt;?php
+   2 
+   3 /**
+   4  * @file
+   5  * Tests for Node Access example module.
+   6  */
+   7 class NodeAccessExampleTestCase extends DrupalWebTestCase {
+   8 
+   9   public static function getInfo() {
+  10     return array(
+  11       &#039;name&#039; =&gt; &#039;Node Access Example functionality&#039;,
+  12       &#039;description&#039; =&gt; &#039;Checks behavior of Node Access Example.&#039;,
+  13       &#039;group&#039; =&gt; &#039;Examples&#039;,
+  14     );
+  15   }
+  16 
+  17   /**
+  18    * Enable modules and create user with specific permissions.
+  19    */
+  20   public function setUp() {
+  21     parent::setUp(&#039;node_access_example&#039;, &#039;search&#039;);
+  22     node_access_rebuild();
+  23   }
+  24 
+  25   /**
+  26    * Test the &quot;private&quot; node access.
+  27    *
+  28    * - Create 3 users with &quot;access content&quot; and &quot;create article&quot; permissions.
+  29    * - Each user creates one private and one not private article.
+  30    * - Run cron to update search index.
+  31    * - Test that each user can view the other user&#039;s non-private article.
+  32    * - Test that each user cannot view the other user&#039;s private article.
+  33    * - Test that each user finds only appropriate (non-private + own private)
+  34    *   in search results.
+  35    * - Create another user with &#039;view any private content&#039;.
+  36    * - Test that user 4 can view all content created above.
+  37    * - Test that user 4 can search for all content created above.
+  38    * - Test that user 4 cannot edit private content above.
+  39    * - Create another user with &#039;edit any private content&#039;
+  40    * - Test that user 5 can edit private content.
+  41    * - Test that user 5 can delete private content.
+  42    * - Test listings of nodes with &#039;node_access&#039; tag on database search.
+  43    */
+  44   function testNodeAccessBasic() {
+  45     $num_simple_users = 3;
+  46     $simple_users = array();
+  47 
+  48     // nodes keyed by uid and nid: $nodes[$uid][$nid] = $is_private;
+  49     $nodes_by_user = array();
+  50     $titles = array(); // Titles keyed by nid
+  51     $private_nodes = array(); // Array of nids marked private.
+  52     for ($i = 0; $i &lt; $num_simple_users; $i++) {
+  53       $simple_users[$i] = $this-&gt;drupalCreateUser(array(&#039;access content&#039;, &#039;create article content&#039;, &#039;search content&#039;));
+  54     }
+  55     foreach ($simple_users as $web_user) {
+  56       $this-&gt;drupalLogin($web_user);
+  57       foreach (array(0 =&gt; &#039;Public&#039;, 1 =&gt; &#039;Private&#039;) as $is_private =&gt; $type) {
+  58         $edit = array(
+  59           &#039;title&#039; =&gt; t(&#039;@private_public Article created by @user&#039;, array(&#039;@private_public&#039; =&gt; $type, &#039;@user&#039; =&gt; $web_user-&gt;name)),
+  60         );
+  61         if ($is_private) {
+  62           $edit[&#039;private&#039;] = TRUE;
+  63           $edit[&#039;body[und][0][value]&#039;] = &#039;private node&#039;;
+  64         }
+  65         else {
+  66           $edit[&#039;body[und][0][value]&#039;] = &#039;public node&#039;;
+  67         }
+  68         $this-&gt;drupalPost(&#039;node/add/article&#039;, $edit, t(&#039;Save&#039;));
+  69         debug(t(&#039;Created article with private=@private&#039;, array(&#039;@private&#039; =&gt; $is_private)));
+  70         $this-&gt;assertText(t(&#039;Article @title has been created&#039;, array(&#039;@title&#039; =&gt; $edit[&#039;title&#039;])));
+  71         $nid = db_query(&#039;SELECT nid FROM {node} WHERE title = :title&#039;, array(&#039;:title&#039; =&gt; $edit[&#039;title&#039;]))-&gt;fetchField();
+  72         $this-&gt;assertText(t(&#039;New node @nid was created and private=@private&#039;, array(&#039;@nid&#039; =&gt; $nid, &#039;@private&#039; =&gt; $is_private)));
+  73         $private_status = db_query(&#039;SELECT private FROM {node_access_example} where nid = :nid&#039;, array(&#039;:nid&#039; =&gt; $nid))-&gt;fetchField();
+  74         $this-&gt;assertTrue($is_private == $private_status, &#039;Node was properly set to private or not private in node_access_example table.&#039;);
+  75         if ($is_private) {
+  76           $private_nodes[] = $nid;
+  77         }
+  78         $titles[$nid] = $edit[&#039;title&#039;];
+  79         $nodes_by_user[$web_user-&gt;uid][$nid] = $is_private;
+  80       }
+  81     }
+  82     debug($nodes_by_user);
+  83     $this-&gt;cronRun();  // Build the search index.
+  84     foreach ($simple_users as $web_user) {
+  85       $this-&gt;drupalLogin($web_user);
+  86       // Check to see that we find the number of search results expected.
+  87       $this-&gt;checkSearchResults(&#039;Private node&#039;, 1);
+  88       // Check own nodes to see that all are readable.
+  89       foreach (array_keys($nodes_by_user) as $uid) {
+  90         // All of this user&#039;s nodes should be readable to same.
+  91         if ($uid == $web_user-&gt;uid) {
+  92           foreach ($nodes_by_user[$uid] as $nid =&gt; $is_private) {
+  93             $this-&gt;drupalGet(&#039;node/&#039; . $nid);
+  94             $this-&gt;assertResponse(200);
+  95             $this-&gt;assertTitle($titles[$nid] . &#039; | Drupal&#039;, &#039;Correct title for node found&#039;);
+  96           }
+  97         }
+  98         else {
+  99           // Otherwise, for other users, private nodes should get a 403,
+ 100           // but we should be able to read non-private nodes.
+ 101           foreach ($nodes_by_user[$uid] as $nid =&gt; $is_private) {
+ 102             $this-&gt;drupalGet(&#039;node/&#039; . $nid);
+ 103             $this-&gt;assertResponse($is_private ? 403 : 200, format_string(&#039;Node @nid by user @uid should get a @response for this user (@web_user_uid)&#039;, array(&#039;@nid&#039; =&gt; $nid, &#039;@uid&#039; =&gt; $uid, &#039;@response&#039; =&gt; $is_private ? 403 : 200, &#039;@web_user_uid&#039; =&gt; $web_user-&gt;uid)));
+ 104             if (!$is_private) {
+ 105               $this-&gt;assertTitle($titles[$nid] . &#039; | Drupal&#039;, &#039;Correct title for node was found&#039;);
+ 106             }
+ 107           }
+ 108         }
+ 109       }
+ 110 
+ 111       // Check to see that the correct nodes are shown on examples/node_access.
+ 112       $this-&gt;drupalGet(&#039;examples/node_access&#039;);
+ 113       $accessible = $this-&gt;xpath(&quot;//tr[contains(@class,&#039;accessible&#039;)]&quot;);
+ 114       $this-&gt;assertEqual(count($accessible), 1, &#039;One private item accessible&#039;);
+ 115       foreach ($accessible as $row) {
+ 116         $this-&gt;assertEqual($row-&gt;td[2], $web_user-&gt;uid, &#039;Accessible row owned by this user&#039;);
+ 117       }
+ 118     }
+ 119 
+ 120     // Now test that a user with &#039;access any private content&#039; can view content.
+ 121     $access_user = $this-&gt;drupalCreateUser(array(&#039;access content&#039;, &#039;create article content&#039;, &#039;access any private content&#039;, &#039;search content&#039;));
+ 122     $this-&gt;drupalLogin($access_user);
+ 123 
+ 124     // Check to see that we find the number of search results expected.
+ 125     $this-&gt;checkSearchResults(&#039;Private node&#039;, 3);
+ 126 
+ 127     foreach ($nodes_by_user as $uid =&gt; $private_status) {
+ 128       foreach ($private_status as $nid =&gt; $is_private) {
+ 129         $this-&gt;drupalGet(&#039;node/&#039; . $nid);
+ 130         $this-&gt;assertResponse(200);
+ 131       }
+ 132     }
+ 133 
+ 134     // Check to see that the correct nodes are shown on examples/node_access.
+ 135     // This user should be able to see all 3 of them.
+ 136     $this-&gt;drupalGet(&#039;examples/node_access&#039;);
+ 137     $accessible = $this-&gt;xpath(&quot;//tr[contains(@class,&#039;accessible&#039;)]&quot;);
+ 138     $this-&gt;assertEqual(count($accessible), 3);
+ 139 
+ 140 
+ 141     // Test that a user named &#039;foobar&#039; can edit any private node due to
+ 142     // node_access_example_node_access(). Note that this user will not be
+ 143     // able to search for private nodes, and will not have available nodes
+ 144     // shown on examples/node_access, because node_access() is not called
+ 145     // for node listings, only for actual access to a node.
+ 146     $edit_user = $this-&gt;drupalCreateUser(array(&#039;access comments&#039;, &#039;access content&#039;, &#039;post comments&#039;, &#039;skip comment approval&#039;, &#039;search content&#039;));
+ 147     // Update the name of the user to &#039;foobar&#039;.
+ 148     $num_updated = db_update(&#039;users&#039;)
+ 149       -&gt;fields(array(
+ 150           &#039;name&#039; =&gt; &#039;foobar&#039;,
+ 151       ))
+ 152       -&gt;condition(&#039;uid&#039;, $edit_user-&gt;uid)
+ 153       -&gt;execute();
+ 154 
+ 155     $edit_user-&gt;name = &#039;foobar&#039;;
+ 156     $this-&gt;drupalLogin($edit_user);
+ 157 
+ 158     // Try to edit each of the private nodes.
+ 159     foreach ($private_nodes as $nid) {
+ 160       $body = $this-&gt;randomName();
+ 161       $edit = array(&#039;body[und][0][value]&#039; =&gt; $body);
+ 162       $this-&gt;drupalPost(&#039;node/&#039; . $nid . &#039;/edit&#039;, $edit, t(&#039;Save&#039;));
+ 163       $this-&gt;assertText(t(&#039;has been updated&#039;), &#039;Node was updated by &quot;foobar&quot; user&#039;);
+ 164     }
+ 165 
+ 166     // Test that a privileged user can edit and delete private content.
+ 167     // This test should go last, as the nodes get deleted.
+ 168     $edit_user = $this-&gt;drupalCreateUser(array(&#039;access content&#039;, &#039;access any private content&#039;, &#039;edit any private content&#039;));
+ 169     $this-&gt;drupalLogin($edit_user);
+ 170     foreach ($private_nodes as $nid) {
+ 171       $body = $this-&gt;randomName();
+ 172       $edit = array(&#039;body[und][0][value]&#039; =&gt; $body);
+ 173       $this-&gt;drupalPost(&#039;node/&#039; . $nid . &#039;/edit&#039;, $edit, t(&#039;Save&#039;));
+ 174       $this-&gt;assertText(t(&#039;has been updated&#039;));
+ 175       $this-&gt;drupalPost(&#039;node/&#039; . $nid . &#039;/edit&#039;, array(), t(&#039;Delete&#039;));
+ 176       $this-&gt;drupalPost(NULL, array(), t(&#039;Delete&#039;));
+ 177       $this-&gt;assertText(t(&#039;has been deleted&#039;));
+ 178     }
+ 179 
+ 180 
+ 181   }
+ 182 
+ 183   /**
+ 184    * On the search page, search for a string and assert the expected number
+ 185    * of results.
+ 186    * @param $search_query
+ 187    *   String to search for
+ 188    * @param $expected_result_count
+ 189    *   Expected result count
+ 190    */
+ 191   function checkSearchResults($search_query, $expected_result_count) {
+ 192     $this-&gt;drupalPost(&#039;search/node&#039;, array(&#039;keys&#039; =&gt; $search_query), t(&#039;Search&#039;));
+ 193     $search_results = $this-&gt;xpath(&quot;//ol[contains(@class, &#039;search-results&#039;)]/li&quot;);
+ 194     $this-&gt;assertEqual(count($search_results), $expected_result_count, &#039;Found the expected number of search results&#039;);
+ 195   }
+ 196 }</pre>
+
+</div>
+<!-- EDIT5 SECTION "node_access_example.test" [21274-] -->

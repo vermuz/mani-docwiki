@@ -1,0 +1,86 @@
+====== SSH ======
+===== RSA Key Fingerprint =====
+
+Run the following command to retrieve your SSH RSA fingerprint
+
+$ ssh-keygen -lf /path/to/ssh/key
+
+<code>
+$ ssh-keygen -lf ~/.ssh/id_rsa.pub
+</code>
+
+**
+Add rsa key to authorized_keys**
+
+<code>
+mkdir -p ~/.ssh/
+cat <your_key >~/.ssh/authorized_keys
+</code>
+
+===== How to set up ssh so you aren't asked for a password =====
+
+You can create a RSA authentication key to be able to log into a remote site from your account, without having to type your password.
+
+Note that once you've set this up, if an intruder breaks into your account/site, they are given access to the site you are allowed in without a password, too! For this reason, this should never be done from root.
+
+Run ssh-keygen(1) on your machine, and just hit enter when asked for a password. 
+This will generate both a private and a public key. With older SSH versions, they will be stored in ~/.ssh/identity and ~/.ssh/identity.pub; with newer ones, they will be stored in ~/.ssh/id_rsa and ~/.ssh/id_rsa.pub.
+
+Next, add the contents of the public key file into ~/.ssh/authorized_keys on the remote site (the file should be mode 600). 
+If you are a developer and you want to access debian.org systems with such a key, it's possible to have the developer database propagate your key to all of the debian.org machines.
+
+===== How To Use Key-Based Security With SSH On Ubuntu =====
+SSH stands for “secure shell”, and is a network protocol that allows you to securely send commands to a remote machine. SSH is pretty secure, but it does have one weak link – the password. If someone cracks your SSH password, they can gain control over your SSH server.
+
+A more secure method of SSH logons is to use a public/private key. With a public/private key, you create a matched pair of private and public keys. You keep the private key on your personal machine, while you put the public key on the SSH server to which you wish to connect. When configured in this manner, the SSH server will only allow connections from systems that have a matching private key for one of the public keys.
+
+In this post, we’ll show you how to set up key-based logons for SSH in Ubuntu 12.10 Quantal Quetzal.
+
+First, install OpenSSH server on your server. You can find directions on how to do so here.For the rest of this walkthrough, we’ll assume that you installed the SSH server on a machine with the IP address of 192.168.1.100, and that you intend to connect to that server from a client machine with the IP address of 192.168.1.200.
+
+After SSH server has been installed, go to your client machine at 192.168.1.200 and enter this command
+
+<code>
+ssh-keygen -t dsa
+</code>
+
+Press Enter, and the command will save a matched public/private key in the ~/.sshdirectory. Specifically, it creates two files – id_dsa, which is your private key, andid_dsa.pub, which is your public key. It will also ask you to set a passphrase for the use of the key, which is an additional layer of security in case someone gains access to your account. Setting a passphrase is usually a good idea.
+
+After the command is complete, you’ll need to transfer the newly created id_dsa.pubpublic key file to your SSH server at 192.168.1.100. Once you have moved it to your server, copy the file to your user account’s ~/.ssh directory on the server. (If this directory does not already exist, create it with the mkdir command.) Next, change to the~/.ssh directory, and use this command
+
+<code>
+touch authorized_keys
+</code>
+
+This will create a file to store authorized keys in the ~/.ssh directory. Use this command to add your public key to the authorized_keys file
+
+<code>
+cat id_dsa.pub >> authorized_keys
+</code>
+
+Finally, use the chmod command to make authorized_keys read-only to protect from accidental deletion
+
+<code>
+chmod 400 authorized_keys
+</code>
+
+Finally, you’ll need to alter your SSH server’s configuration file to mandate key-based logins, otherwise the server will continue to allow password-based login. Use the vi editor to edit SSH’s main configuration file
+
+<code>
+sudo vi /etc/ssh/sshd_config
+</code>
+
+Once editing the file, make sure the PasswordAuthentication directive is set to no. This will force your SSH server to only allow key-based login attempts. Once you’ve finished editing the file, restart your SSH server with this command
+
+<code>
+sudo service ssh restart
+</code>
+
+Your SSH server will not only permit key-based logons – users must have a private key that matches with a corresponding public key in their ~/.ssh/authorized_keys file in their home folder on the SSH server.
+
+Make sure to back up your private key in a safe place – if you lose it, you will lose access to the SSH server.
+
+**Links**
+
+http://www.noah.org/wiki/SSH_public_keys \\
+http://www.jonathanmoeller.com/screed/?p=3993
